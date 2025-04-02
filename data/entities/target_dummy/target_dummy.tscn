@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3 uid="uid://cys2dvmphwy10"]
+
+[ext_resource type="Script" uid="uid://dhspsladmix1l" path="res://Scripts/Entities/target_dummy.gd" id="1_d47au"]
+[ext_resource type="PackedScene" uid="uid://ht0rssl8am3o" path="res://Scenes/Components/stats.tscn" id="1_pevps"]
+[ext_resource type="PackedScene" uid="uid://vbp752xidmk7" path="res://Scenes/Components/movement.tscn" id="3_16wqd"]
+[ext_resource type="PackedScene" uid="uid://b6pdubcmdvlua" path="res://components/health/health.tscn" id="4_ika71"]
+[ext_resource type="PackedScene" uid="uid://3ggg5e0jg00u" path="res://components/death/death.tscn" id="5_8y62q"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cdmvn"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_mymiv"]
+
+[node name="TargetDummy" type="Node3D" node_paths=PackedStringArray("body")]
+script = ExtResource("1_d47au")
+display_name = "Target Dummy"
+body = NodePath("Body")
+team_id = 10
+
+[node name="Components" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="Health" parent="Components" instance=ExtResource("4_ika71")]
+unique_name_in_owner = true
+
+[node name="Stats" parent="Components" instance=ExtResource("1_pevps")]
+unique_name_in_owner = true
+
+[node name="Movement" parent="Components" node_paths=PackedStringArray("stats", "body") instance=ExtResource("3_16wqd")]
+stats = NodePath("../Stats")
+body = NodePath("../../Body")
+
+[node name="Death" parent="Components" node_paths=PackedStringArray("entity", "health") instance=ExtResource("5_8y62q")]
+entity = NodePath("../..")
+health = NodePath("../Health")
+
+[node name="States" type="Node" parent="."]
+
+[node name="Body" type="CharacterBody3D" parent="."]
+
+[node name="Visual" type="MeshInstance3D" parent="Body"]
+mesh = SubResource("CylinderMesh_cdmvn")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+shape = SubResource("CylinderShape3D_mymiv")

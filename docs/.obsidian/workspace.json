@@ -1,0 +1,198 @@
+{
+  "main": {
+    "id": "59d9c755005a7aaf",
+    "type": "split",
+    "children": [
+      {
+        "id": "db7324632999e2ad",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "20e48ce649f35601",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Skill System/Skill Diagram 0-1.md"
+              },
+              "icon": "lucide-file",
+              "title": "Plugin no longer active"
+            }
+          },
+          {
+            "id": "7b221eacaa025617",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.8.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.8.4"
+            }
+          },
+          {
+            "id": "52be18eb6a2a4594",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Skill System/Skill Diagram 0-1.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "Skill Diagram 0-1"
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "cded6267a4448ac6",
+    "type": "split",
+    "children": [
+      {
+        "id": "fa7b20a9be174afb",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5307c48b8c41504a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "17f84593b3422837",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "44b616e8ba02109e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 241.5,
+    "collapsed": true
+  },
+  "right": {
+    "id": "57180b82613ccc73",
+    "type": "split",
+    "children": [
+      {
+        "id": "994f0656fcf064ac",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "361e24710fc2dfd1",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Skill System/Skill Diagram 0-1.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Skill Diagram 0-1"
+            }
+          },
+          {
+            "id": "a6cd36b89c74447c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Skill System/Skill Diagram 0-1.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Skill Diagram 0-1"
+            }
+          },
+          {
+            "id": "a1373cd60c8a997a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "a04aae08b4718c6d",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Skill System/Skill Diagram 0-1.md"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Skill Diagram 0-1"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "obsidian-excalidraw-plugin:New drawing": false
+    }
+  },
+  "active": "52be18eb6a2a4594",
+  "lastOpenFiles": [
+    "Excalidraw/Drawing 2025-02-07 22.01.24.excalidraw.md",
+    "Skill System",
+    "Welcome.md",
+    "Skill System/Skill Diagram 0-1.md",
+    "Excalidraw"
+  ]
+}

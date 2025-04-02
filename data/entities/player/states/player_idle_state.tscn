@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://b531oyvupifil"]
+
+[ext_resource type="Script" uid="uid://bdtis10tv2mk1" path="res://Scripts/States/Player/player_idle_state.gd" id="1_if6mj"]
+
+[node name="PlayerIdleState" type="Node" node_paths=PackedStringArray("state_machine", "entity")]
+script = ExtResource("1_if6mj")
+id = "idle"
+state_machine = NodePath("")
+entity = NodePath("")

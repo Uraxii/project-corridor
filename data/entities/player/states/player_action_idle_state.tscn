@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://br5hn6p6fvlj7"]
+
+[node name="PlayerActionIdleState" type="Node"]

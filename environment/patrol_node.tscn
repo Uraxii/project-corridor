@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://4tg2rw17el7f"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_s6hqb"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_er506"]
+albedo_color = Color(0, 0.470588, 0.705882, 1)
+emission = Color(0, 0.494519, 0.749587, 1)
+
+[node name="PatrolNode" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_s6hqb")
+surface_material_override/0 = SubResource("StandardMaterial3D_er506")
