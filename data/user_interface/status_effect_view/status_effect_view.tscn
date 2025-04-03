@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhpnpabprw87w"]
+
+[ext_resource type="Script" uid="uid://bnco1khk0eh2b" path="res://data/user_interface/status_effect_view/status_effect_view.gd" id="1_1wktf"]
+[ext_resource type="Texture2D" uid="uid://c63y4b2yf6li4" path="res://data/user_interface/skills/button/skill_cooldown.png" id="2_dwaah"]
+
+[node name="StatusEffectView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+script = ExtResource("1_1wktf")
+
+[node name="RemainingTime" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Icon" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ProgressBar" type="TextureProgressBar" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 200.0
+scale = Vector2(0.5, 0.5)
+step = 0.1
+fill_mode = 5
+texture_over = ExtResource("2_dwaah")
+texture_progress = ExtResource("2_dwaah")
+tint_over = Color(1, 1, 1, 0)
+tint_progress = Color(0.165656, 0.165656, 0.165656, 0.847059)
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
