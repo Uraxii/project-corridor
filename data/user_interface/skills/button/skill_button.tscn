@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://hn6yi37eyo4m"]
 
-[ext_resource type="Texture2D" uid="uid://c63y4b2yf6li4" path="res://user_interface/skills/button/skill_cooldown.png" id="2_f3vk3"]
-[ext_resource type="Script" uid="uid://mqhrit1vabe2" path="res://user_interface/skills/button/skill_button.gd" id="2_u4fgw"]
+[ext_resource type="Texture2D" uid="uid://c63y4b2yf6li4" path="res://data/user_interface/skills/button/skill_cooldown.png" id="2_f3vk3"]
+[ext_resource type="Script" uid="uid://mqhrit1vabe2" path="res://data/user_interface/skills/button/skill_button.gd" id="2_u4fgw"]
 
 [node name="SkillButton" type="TextureButton"]
 custom_minimum_size = Vector2(100, 100)
