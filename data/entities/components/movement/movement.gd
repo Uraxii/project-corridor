@@ -14,9 +14,9 @@ func set_force_movement(velocity: Vector3) -> void:
 
 
 func move_towards(position: Vector3, speed: float) -> void:
-    var direction = position - body.global_transform.origin
-    direction = direction.normalized()
-    _move_velocity = direction * speed
+        var direction = position - body.global_transform.origin
+        direction = direction.normalized()
+        _move_velocity = direction * speed
 
 
 func _get_force_movement() -> Vector3:

@@ -1,10 +1,9 @@
-class_name GameManager extends Node
+extends Node
 
 const GCD_INTERVAL:       float   = 1.0
-const TICK_RATE:          int     = 24
+const TICK_RATE:          int     = 20
 const SECONDS_PER_MINUTE: int     = 60
 
-static var tick_timer: Timer
 static var tick_interval: float
 static var current_tick: int
 
@@ -21,13 +20,6 @@ func _init() -> void:
         current_tick = 0
 
         tick_interval = TICK_RATE/float(SECONDS_PER_MINUTE)
-
-        tick_timer = Timer.new()
-        tick_timer.wait_time = tick_interval
-        tick_timer.timeout.connect(_process_tick)
-        tick_timer.autostart = true
-
-        add_child(tick_timer)
 
 
 static func register_entity(entity: Entity) -> int:
@@ -73,23 +65,6 @@ static func enqueue_cast(request: CastRequest) -> void:
         cast_queue.push_back(request)
 
 
-static func dequeue_cast(request_id: String) -> void:
-        print('dequeue_cast has not been implemented!')
-        pass
-
-
-static func _process_tick() -> void:
-        current_tick = (current_tick + 1)
-
-        if current_tick == TICK_RATE:
-                current_tick = 0
-
-        # print('Processing tick: %d' % [current_tick])
-
-        _process_cast_queue()
-        _process_status_effects()
-
-
 static func _process_cast_queue() -> void:
         # print('Processing cast queue')
 
@@ -114,6 +89,6 @@ static func _process_status_effects() -> void:
                         print(result)
 
 
-static func _sort_request_by_tick(a: CastRequest, b: CastRequest) -> bool:
-        # Used for custom sorting to order the requests by the tick
-        return a.tick_submitted < b.tick_submitted
+func _physics_process(delta: float) -> void:
+        _process_cast_queue()
+        _process_status_effects()

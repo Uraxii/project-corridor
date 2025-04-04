@@ -7,6 +7,8 @@ class_name Player extends Entity
 
 @onready var health: Health = $Components/Health
 
+var player_info: PlayerInfo
+
 var skill_binds: Dictionary = {
         'bar_1_skill_1': 'attack',
         'bar_1_skill_2': 'heal',
@@ -20,8 +22,19 @@ var move        := load_ability('move')
 var jump        := load_ability('jump')
 
 
+func _ready() -> void:
+        super._ready()
+
+        targeting.initialize(self)
+        target_plate.initialize(self, 'changed_target')
+        player_plate.on_changed_target(self)
+
+
 func _process(delta: float) -> void:
         super._process(delta)
+
+        targeting.position = body.position
+        targeting.rotation = body.rotation
 
         if input.target_next:
                 targeting.target_next()
@@ -31,9 +44,9 @@ func _process(delta: float) -> void:
                 set_target(null)
 
 
-func _ready() -> void:
-        super._ready()
+func _physics_process(delta: float) -> void:
+        super._process(delta)
 
-        targeting.initialize(self)
-        target_plate.initialize(self, 'changed_target')
-        player_plate.on_changed_target(self)
+        Server.update_player_info.rpc(body.position, body.rotation)
+
+        player_info = Server.connections[multiplayer.get_unique_id()]

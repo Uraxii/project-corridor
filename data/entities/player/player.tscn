@@ -1,18 +1,18 @@
 [gd_scene load_steps=20 format=3 uid="uid://pw1myqomeom7"]
 
-[ext_resource type="Script" uid="uid://duyin3ykk8d8r" path="res://Scripts/Entities/player.gd" id="1_du1rf"]
-[ext_resource type="PackedScene" uid="uid://ht0rssl8am3o" path="res://Scenes/Components/stats.tscn" id="2_102da"]
-[ext_resource type="PackedScene" uid="uid://vbp752xidmk7" path="res://Scenes/Components/movement.tscn" id="3_yci4h"]
-[ext_resource type="PackedScene" uid="uid://b6pdubcmdvlua" path="res://components/health/health.tscn" id="4_gcjul"]
-[ext_resource type="PackedScene" uid="uid://3ggg5e0jg00u" path="res://components/death/death.tscn" id="5_8sqsr"]
-[ext_resource type="Script" uid="uid://banbhjws8f1uu" path="res://Scripts/States/state_machine.gd" id="5_o5tub"]
-[ext_resource type="PackedScene" uid="uid://b531oyvupifil" path="res://Scenes/States/Player/player_idle_state.tscn" id="6_fh4g5"]
-[ext_resource type="PackedScene" uid="uid://bdsenapllptps" path="res://Scenes/States/Player/player_move_state.tscn" id="7_xx4oc"]
-[ext_resource type="Script" uid="uid://b21on2dx1kubr" path="res://Scripts/States/Player/player_jump_state.gd" id="9_w0851"]
-[ext_resource type="Script" uid="uid://c7gf4p8gtvxqy" path="res://Scripts/States/Player/player_falling_state.gd" id="10_hpuls"]
-[ext_resource type="PackedScene" uid="uid://l386dquxgm0v" path="res://user_interface/name_plate/name_plate.tscn" id="10_lay5f"]
-[ext_resource type="PackedScene" uid="uid://b1bujdj5x0xe2" path="res://user_interface/skills/bar/skillbar.tscn" id="11_fa8ny"]
-[ext_resource type="Script" uid="uid://bn7d5k41r8k5e" path="res://Scenes/Entites/player_camera.gd" id="11_qw1rd"]
+[ext_resource type="Script" uid="uid://duyin3ykk8d8r" path="res://data/entities/player/player.gd" id="1_du1rf"]
+[ext_resource type="PackedScene" uid="uid://ht0rssl8am3o" path="res://data/entities/components/stats/stats.tscn" id="2_102da"]
+[ext_resource type="PackedScene" uid="uid://vbp752xidmk7" path="res://data/entities/components/movement/movement.tscn" id="3_yci4h"]
+[ext_resource type="PackedScene" uid="uid://b6pdubcmdvlua" path="res://data/entities/components/health/health.tscn" id="4_gcjul"]
+[ext_resource type="PackedScene" uid="uid://3ggg5e0jg00u" path="res://data/entities/components/death/death.tscn" id="5_8sqsr"]
+[ext_resource type="Script" uid="uid://banbhjws8f1uu" path="res://data/entities/states/state_machine.gd" id="5_o5tub"]
+[ext_resource type="PackedScene" uid="uid://b531oyvupifil" path="res://data/entities/player/states/player_idle_state.tscn" id="6_fh4g5"]
+[ext_resource type="PackedScene" uid="uid://bdsenapllptps" path="res://data/entities/player/states/player_move_state.tscn" id="7_xx4oc"]
+[ext_resource type="Script" uid="uid://b21on2dx1kubr" path="res://data/entities/player/states/player_jump_state.gd" id="9_w0851"]
+[ext_resource type="Script" uid="uid://c7gf4p8gtvxqy" path="res://data/entities/player/states/player_falling_state.gd" id="10_hpuls"]
+[ext_resource type="PackedScene" uid="uid://l386dquxgm0v" path="res://data/user_interface/name_plate/name_plate.tscn" id="10_lay5f"]
+[ext_resource type="PackedScene" uid="uid://b1bujdj5x0xe2" path="res://data/user_interface/skills/bar/skillbar.tscn" id="11_fa8ny"]
+[ext_resource type="Script" uid="uid://bn7d5k41r8k5e" path="res://data/entities/player/player_camera.gd" id="11_qw1rd"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g00a7"]
 
@@ -81,6 +81,7 @@ player = NodePath("..")
 
 [node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
 transform = Transform3D(1, 0, 0, 0, 0.968148, 0.25038, 0, -0.25038, 0.968148, 0, 0, 0)
+current = true
 
 [node name="Body" type="CharacterBody3D" parent="."]
 collision_layer = 0

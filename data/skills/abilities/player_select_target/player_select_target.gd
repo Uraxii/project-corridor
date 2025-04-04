@@ -18,14 +18,14 @@ func target_next() -> void:
         if target_cache.size() == 0:
                 return
 
-        # print('Current target:', target_cache[next_target].name)
-
-        player_owner.set_target(target_cache[next_target])
-
-        if next_target + 1 > target_cache.size() - 1:
+        if next_target > target_cache.size() - 1:
                 next_target = 0
-        else:
-                next_target += 1
+                
+        # print('Current target:', target_cache[next_target].name)
+        
+        player_owner.set_target(target_cache[next_target])
+        
+        next_target += 1
 
 
 func target_entity(new_target: Entity) -> void:

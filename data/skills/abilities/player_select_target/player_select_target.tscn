@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://pj3o5dsxlbvx"]
 
-[ext_resource type="Script" uid="uid://j42apd0ldaf5" path="res://Abilities/player_select_target/player_select_target.gd" id="1_vqw8p"]
+[ext_resource type="Script" uid="uid://j42apd0ldaf5" path="res://data/skills/abilities/player_select_target/player_select_target.gd" id="1_vqw8p"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_qckfs"]
 
@@ -10,5 +10,5 @@ collision_mask = 17
 script = ExtResource("1_vqw8p")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 24.8682, 0, 0)
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 0, 0)
 shape = SubResource("SphereShape3D_qckfs")

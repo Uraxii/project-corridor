@@ -10,20 +10,12 @@ func _ready() -> void:
 
 
 func host_game() -> void:
-        if not NetworkManager.singleton:
-                print('No networkmanager')
-                return
-
-        NetworkManager.singleton.start_game()
-
+        Server.start_server()
+        Server.load_world()
         queue_free.call_deferred()
 
 
 func join_game() -> void:
-        if not NetworkManager.singleton:
-                print('No networkmanager')
-                return
-
-        NetworkManager.singleton.join_game()
-
+        Server.start_client()
+        Server.load_world()
         queue_free.call_deferred()

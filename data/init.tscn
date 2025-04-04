@@ -1,6 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://bq0mcb6mkgwtu"]
+[gd_scene load_steps=2 format=3 uid="uid://cblo8m3itchq8"]
 
-[ext_resource type="Script" uid="uid://ckbik065f6y3q" path="res://data/init.gd" id="1_pg2mc"]
+[sub_resource type="GDScript" id="GDScript_g3ebb"]
+script/source = "extends Node
+
+var game_manager: Resource = preload(\"res://data/game_manager.tscn\")
+var network_manager: Resource = preload(\"res://data/networking/network_manager.tscn\")
+
+
+func _ready() -> void:
+        var root_node: Node = get_tree().root
+
+        var players_node = Node.new()
+        players_node.name = \"Players\"
+        root_node.add_child.call_deferred(players_node)
+
+        queue_free.call_deferred()
+"
 
 [node name="Init" type="Node"]
-script = ExtResource("1_pg2mc")
+script = SubResource("GDScript_g3ebb")
