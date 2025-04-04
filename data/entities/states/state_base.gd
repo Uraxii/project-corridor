@@ -7,7 +7,8 @@ signal transition
 
 
 func enter(entity) -> void:
-        print('Entered state ', name.to_lower())
+        # print('Entered state ', name.to_lower())
+        pass
 
 
 func frame_update(entity) -> void:
@@ -19,4 +20,5 @@ func physics_update(entity) -> void:
 
 
 func exit(entity) -> void:
-        print('Exited state ', name.to_lower())
+        # print('Exited state ', name.to_lower())
+        pass

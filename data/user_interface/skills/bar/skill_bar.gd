@@ -18,7 +18,8 @@ func init_bar() -> void:
                 button.name = 'bar_%d_skill_%d' % [bar_number, button_number]
                 button_number += 1
                 button.initialize(button.name, entity)
-                print('Created skill button %s' % button.name)
+                
+                # print('Created skill button %s' % button.name)
 
 
 func _ready() -> void:

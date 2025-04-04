@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="project-corridor"
-run/main_scene="uid://bek81rl6qcugn"
+run/main_scene="uid://bxn66u107wx0q"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameManagement="*res://data/game_manager.gd"
+InitNode="*res://data/init.gd"
 
 [dotnet]
 

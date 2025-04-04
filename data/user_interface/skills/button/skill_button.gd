@@ -28,14 +28,14 @@ func initialize(binding: String, owner: Player) -> void:
                 shortcut.events.append_array(inputs)
                 set_shortcut(shortcut)
 
-                print('Set button to %s' % bind_text.text)
+                # print('Set button to %s' % bind_text.text)
 
         if name in owner.skill_binds.keys():
                 skill = owner.load_skill(owner.skill_binds[name])
                 bind_text.text += ' \n' + skill.id
                 icon.texture = skill.icon
 
-        print('Finished initializing button.')
+        # print('Finished initializing button.')
 
 
 func _process(delta: float) -> void:
@@ -46,10 +46,10 @@ func _process(delta: float) -> void:
 
 func _on_pressed() -> void:
         if !skill:
-                print('No Skill assigned to button.')
+                # print('No Skill assigned to button.')
                 return
 
-        print('ON cooldown')
+        # print('ON cooldown')
 
         disabled = true
         set_process(true)
@@ -62,7 +62,7 @@ func _on_pressed() -> void:
         )
 
         # cast_result = skill.cast(caster, caster.target)
-        GameManagement.enqueue_cast(cast_request)
+        GameManager.enqueue_cast(cast_request)
 
         if cast_result:
                 print(cast_result)

@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bek81rl6qcugn"]
+[gd_scene load_steps=8 format=3 uid="uid://bek81rl6qcugn"]
 
-[ext_resource type="PackedScene" uid="uid://pw1myqomeom7" path="res://Scenes/Entites/player.tscn" id="1_3yghb"]
-[ext_resource type="PackedScene" uid="uid://8brs8d84ngt8" path="res://entities/strafer/strafer.tscn" id="2_8703a"]
-[ext_resource type="PackedScene" uid="uid://cys2dvmphwy10" path="res://entities/target_dummy/target_dummy.tscn" id="2_vwa2n"]
+[ext_resource type="PackedScene" uid="uid://8brs8d84ngt8" path="res://data/entities/strafer/strafer.tscn" id="2_8703a"]
+[ext_resource type="PackedScene" uid="uid://cys2dvmphwy10" path="res://data/entities/target_dummy/target_dummy.tscn" id="2_vwa2n"]
 [ext_resource type="PackedScene" uid="uid://4tg2rw17el7f" path="res://environment/patrol_node.tscn" id="4_sl7vw"]
 
 [sub_resource type="Environment" id="Environment_hav7s"]
@@ -34,9 +33,6 @@ skeleton = NodePath("")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.361191, 0.459575, -0.811377, 0.797676, 0.298382, 0.5241, 0.482963, -0.836516, -0.258819, -12.733, 26.8861, 0)
 light_energy = 1.068
-
-[node name="Player" parent="." instance=ExtResource("1_3yghb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.80564, 3.69442)
 
 [node name="Strafer" parent="." node_paths=PackedStringArray("state_machines") instance=ExtResource("2_8703a")]
 transform = Transform3D(0.830907, 0, 0.556412, 0, 1, 0, -0.556412, 0, 0.830907, -2.03697, 6.09112, 0)
