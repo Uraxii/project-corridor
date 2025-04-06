@@ -8,7 +8,7 @@ var player_owner: Entity = null
 
 
 func initialize(player: Entity):
-        print('targeting')
+        # print('targeting')
 
         player_owner = player
 
@@ -20,7 +20,7 @@ func _ready() -> void:
 
         var collisions = get_overlapping_bodies()
 
-        print('collisions size %d' % collisions.size())
+        # print('collisions size %d' % collisions.size())
 
         for body in collisions:
                 _on_body_entered(body)
@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 
 
 func _on_body_entered(body):
-        print('body entered targeting zone.')
+        # print('body entered targeting zone.')
 
         var parent_node = body.get_parent()
 
@@ -45,7 +45,7 @@ func _on_body_entered(body):
 
 
 func _on_body_exited(body):
-        print('body left targeting zone.')
+        # print('body left targeting zone.')
 
         var parent_node = body.get_parent()
 
@@ -56,7 +56,7 @@ func _on_body_exited(body):
 
 
 func target_next() -> void:
-        print('target next')
+        # print('target next')
 
         if potential_targets.size() == 0:
                 return
@@ -64,7 +64,7 @@ func target_next() -> void:
         if next_target > potential_targets.size() - 1:
                 next_target = 0
 
-        print('Current target:', potential_targets[next_target].name)
+        # print('Current target:', potential_targets[next_target].name)
 
         player_owner.set_target(potential_targets[next_target])
 
