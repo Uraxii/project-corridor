@@ -5,7 +5,7 @@ signal transition
 
 
 func enter(entity) -> void:
-        print('Entered state ', name.to_lower())
+        # print('Entered state ', name.to_lower())
         pass
 
 
