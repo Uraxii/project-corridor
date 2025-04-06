@@ -43,6 +43,7 @@ ability_container = NodePath("Abilities")
 [node name="Stats" parent="Components" instance=ExtResource("2_102da")]
 
 [node name="Movement" parent="Components" node_paths=PackedStringArray("stats", "body") instance=ExtResource("3_yci4h")]
+unique_name_in_owner = true
 stats = NodePath("../Stats")
 body = NodePath("../../Body")
 

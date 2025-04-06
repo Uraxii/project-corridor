@@ -1,14 +1,13 @@
-class_name PlayerMoveState
-
-extends PlayerState
-
+class_name PlayerMoveState extends PlayerState
 
 var direction := Vector3.ZERO
 var velocity := Vector3.ZERO
 
 
 func frame_update(entity: Player) -> void:
-        entity.move.cast(entity.input.move, entity.body, entity.stats.current_speed)
+        # entity.move.cast(entity.input.move, entity.body, entity.stats.current_speed)
+
+        entity.movement.move_with_input(entity.input.move, entity.stats.current_speed)
 
         if entity.input.jump:
                 transition.emit(self, 'jump')

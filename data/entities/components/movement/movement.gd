@@ -1,50 +1,90 @@
 class_name Movement extends Node
 
 const FORCE_GRAVITY: float = 0.8
+const FORCE_JUMP_GRAVIY: float = 0.4
 
 @export var stats: Stats
 @export var body: CharacterBody3D
 
-var _move_velocity := Vector3.ZERO
-var _move_velocity_cache := Vector3.ZERO
+var current_gravity: float = 0.0
+
+var move_velocity := Vector3.ZERO
+
+var is_jumping: bool = false
+var jump_influence := Vector3.ZERO
 
 
 func set_force_movement(velocity: Vector3) -> void:
-        _move_velocity = velocity
+        move_velocity = velocity
 
 
 func move_towards(position: Vector3, speed: float) -> void:
         var direction = position - body.global_transform.origin
         direction = direction.normalized()
-        _move_velocity = direction * speed
+        move_velocity = direction * speed
 
 
-func _get_force_movement() -> Vector3:
-        var velocity: Vector3 = _move_velocity
-        _move_velocity = Vector3.ZERO
+func jump(jump_force: float, input: Vector2, speed: float) -> void:
+        jump_influence = body.transform.basis * Vector3(input.x, 0, input.y).normalized()
+        jump_influence = jump_influence * speed
+        jump_influence.y = jump_force
 
-        return velocity
+
+func move_with_input(input: Vector2, speed: float):
+        var direction = body.transform.basis * Vector3(input.x, 0, input.y).normalized()
+        move_velocity = direction * speed
 
 
-func _get_force_gravity() -> float:
+func _apply_gravity(current_velocity: Vector3) -> Vector3:
         if body.is_on_floor():
-                return 0
+                current_gravity = 0
+                current_velocity.y = 0
+                return current_velocity
 
-        if stats.current_gravity_scale == 1:
-                return FORCE_GRAVITY
+        var gravity_to_apply: float
 
-        if stats.current_gravity_scale == 0:
-                return 0
+        if is_jumping and jump_influence.y > 0:
+                gravity_to_apply = FORCE_JUMP_GRAVIY
+        else:
+                gravity_to_apply = FORCE_GRAVITY
 
-        return FORCE_GRAVITY * stats.current_gravity_scale
+        current_gravity -= gravity_to_apply * stats.current_gravity_scale
+        current_velocity.y += current_gravity
+
+        return current_velocity
+
+
+func _apply_jump_influence(current_velocity: Vector3) -> Vector3:
+        if is_jumping and body.is_on_floor() or jump_influence == Vector3.ZERO:
+                is_jumping = false
+                jump_influence = Vector3.ZERO
+                return current_velocity
+
+        is_jumping = true
+
+        # print('Current jump influence y %3f' % jump_influence.y)
+
+        current_velocity += jump_influence
+
+        if jump_influence.y > 0:
+                jump_influence.y -= FORCE_JUMP_GRAVIY
+
+        return current_velocity
+
+
+func _apply_movement(current_velocity: Vector3) -> Vector3:
+        current_velocity += move_velocity
+
+        move_velocity = Vector3.ZERO
+
+        return current_velocity
 
 
 func _physics_process(delta: float) -> void:
-        _move_velocity_cache = _get_force_movement()
-        body.velocity += _move_velocity_cache
-        body.velocity.y -= _get_force_gravity()
+        body.velocity = _apply_gravity(body.velocity)
+        body.velocity = _apply_jump_influence(body.velocity)
+        body.velocity = _apply_movement(body.velocity)
 
         body.move_and_slide()
 
-        if _move_velocity_cache != Vector3.ZERO:
-                body.velocity -= _move_velocity_cache
+        body.velocity = Vector3.ZERO

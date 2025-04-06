@@ -6,6 +6,7 @@ class_name Player extends Entity
 @export var target_plate: NamePlate
 
 @onready var health: Health = $Components/Health
+@onready var movement: Movement = %Movement
 
 var player_info: PlayerInfo
 
@@ -18,7 +19,7 @@ var skill_binds: Dictionary = {
 
 var targeting   := load_ability('player_select_target')
 var input       := load_ability('player_input')
-var move        := load_ability('move')
+# var move        := load_ability('move')
 var jump        := load_ability('jump')
 
 
