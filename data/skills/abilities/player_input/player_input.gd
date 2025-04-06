@@ -26,7 +26,7 @@ var actions: Dictionary = {
 
 
 func _ready() -> void:
-        Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+        Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
 func _process(delta: float) -> void:
@@ -42,8 +42,6 @@ func _process(delta: float) -> void:
         camera_rotation_enabled = Input.is_action_pressed('camera_rotation_enabled')
         camera_rotation = mouse_motion_delta if camera_rotation_enabled || camera_look_enabled else Vector2.ZERO
         mouse_motion_delta = Vector2.ZERO
-
-
 
 
 func _input(event: InputEvent) -> void:

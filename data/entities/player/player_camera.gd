@@ -24,7 +24,7 @@ func _process(delta: float) -> void:
 
 
         if player.input.camera_rotation != Vector2.ZERO:
-                Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED_HIDDEN)
+                Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
                 rotation.y -= player.input.camera_rotation.x * sensativity
                 rotation.x -= player.input.camera_rotation.y * sensativity
@@ -35,5 +35,5 @@ func _process(delta: float) -> void:
                 if player.input.camera_look_enabled:
                         player.body.rotation.y = rotation.y
 
-        elif !player.input.camera_rotation_enabled && !player.input.camera_look_enabled && Input.mouse_mode == Input.MOUSE_MODE_CONFINED_HIDDEN:
-                Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+        elif !player.input.camera_rotation_enabled && !player.input.camera_look_enabled && Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+                Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
