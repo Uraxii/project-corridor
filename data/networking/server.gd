@@ -4,11 +4,21 @@ signal client_connected(id: int)
 signal client_disconnected(id: int)
 signal server_disconnected
 
+signal process_tick
+
 const DEFAULT_SERVER_IP: String = "localhost"
 const PORT: int = 7000
 const MAX_CONNECTIONS: int = 2
 
 const HOST_ID: int = 1
+
+const GCD_INTERVAL:       float   = 1.0
+const TICK_RATE:          int     = 24
+const SECONDS_PER_MINUTE: int     = 60
+
+static var tick_timer: Timer
+static var tick_interval: float
+static var current_tick: int
 
 var entry_scene:        Resource = preload("res://data/maps/test_scene.tscn")
 var lobby_scene:        Resource = preload("res://data/maps/test_scene.tscn")
@@ -18,6 +28,25 @@ var remote_player_scene:Resource = preload("res://data/entities/player/remote_pl
 
 var connections: Dictionary[int, PlayerInfo] = {}
 var current_scene: Node
+
+
+func _ready() -> void:
+        multiplayer.peer_connected.connect(_on_client_connected)
+        multiplayer.peer_disconnected.connect(_on_client_disconnected)
+        multiplayer.connected_to_server.connect(_on_connected_ok)
+        multiplayer.connection_failed.connect(_on_connected_fail)
+        multiplayer.server_disconnected.connect(_on_server_disconnected)
+
+        current_tick = 0
+
+        tick_interval = TICK_RATE/float(SECONDS_PER_MINUTE)
+
+        tick_timer = Timer.new()
+        tick_timer.wait_time = tick_interval
+        tick_timer.timeout.connect(process_tick.emit)
+        tick_timer.autostart = true
+
+        add_child(tick_timer)
 
 
 @rpc("any_peer", "call_local")
@@ -82,14 +111,6 @@ func transition_scene(new_scene: Resource):
 
         current_scene = new_scene.instantiate()
         get_tree().root.add_child(current_scene)
-
-
-func _ready() -> void:
-        multiplayer.peer_connected.connect(_on_client_connected)
-        multiplayer.peer_disconnected.connect(_on_client_disconnected)
-        multiplayer.connected_to_server.connect(_on_connected_ok)
-        multiplayer.connection_failed.connect(_on_connected_fail)
-        multiplayer.server_disconnected.connect(_on_server_disconnected)
 
 
 func _on_client_connected(id: int) -> void:

@@ -58,7 +58,7 @@ func _on_pressed() -> void:
                 skill,
                 caster,
                 caster.target,
-                GameManager.current_tick
+                Server.current_tick
         )
 
         # cast_result = skill.cast(caster, caster.target)

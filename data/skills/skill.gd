@@ -137,7 +137,7 @@ static func cast(skill: Skill, caster: Entity, target: Entity) -> String:
                 target.apply_status_effect(status_effect)
 
         if not skill.effect_type.is_empty():
-                skill.effect_remaining_time -= GameManager.tick_interval
+                skill.effect_remaining_time -= Server.tick_interval
 
                 if skill.effect_remaining_time <= 0:
                         var status_effect_index = target.status_effects.find(skill)

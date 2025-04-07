@@ -1,15 +1,5 @@
 extends Node
 
-signal process_tick
-
-const GCD_INTERVAL:       float   = 1.0
-const TICK_RATE:          int     = 24
-const SECONDS_PER_MINUTE: int     = 60
-
-static var tick_timer: Timer
-static var tick_interval: float
-static var current_tick: int
-
 static var entities: Dictionary[int, Entity] = {}
 
 static var _next_id: int = 0
@@ -19,17 +9,8 @@ static var cast_queue: Array[CastRequest] = []
 static var current_request: CastRequest
 
 
-func _init() -> void:
-        current_tick = 0
-
-        tick_interval = TICK_RATE/float(SECONDS_PER_MINUTE)
-
-        tick_timer = Timer.new()
-        tick_timer.wait_time = tick_interval
-        tick_timer.timeout.connect(_process_tick)
-        tick_timer.autostart = true
-
-        add_child(tick_timer)
+func _ready() -> void:
+        Server.process_tick.connect(_process_tick)
 
 
 static func register_entity(entity: Entity) -> int:
@@ -68,7 +49,7 @@ static func enqueue_cast(request: CastRequest) -> void:
         # TODO: Validate that the conditions are such that the caster CAN cast this skill.
 
         # Invalid tick, drop the request
-        if request.tick_submitted < 0 or request.tick_submitted > TICK_RATE:
+        if request.tick_submitted < 0 or request.tick_submitted > Server.TICK_RATE:
                 return
 
         # Everything looks good, lets add it to the queue.
@@ -76,15 +57,6 @@ static func enqueue_cast(request: CastRequest) -> void:
 
 
 func _process_tick() -> void:
-        current_tick = (current_tick + 1)
-
-        if current_tick == TICK_RATE:
-                current_tick = 0
-
-        # print('Processing tick: %d' % [current_tick])
-
-        process_tick.emit()
-
         _process_cast_queue()
         _process_status_effects()
 
