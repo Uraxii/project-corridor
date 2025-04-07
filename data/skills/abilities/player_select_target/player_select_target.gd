@@ -55,6 +55,10 @@ func _on_body_exited(body):
         potential_targets.erase(parent_node)
 
 
+func set_target(new_target: Entity) -> void:
+        player_owner.set_target(new_target)
+
+
 func target_next() -> void:
         # print('target next')
 
