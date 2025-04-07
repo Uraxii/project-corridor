@@ -1,6 +1,6 @@
 class_name PlayerSelectTarget extends Area3D
 
-const MAX_TARGETING_DISTACNE = 500
+const MAX_TARGETING_DISTACNE = 50
 
 var potential_targets: Array[Entity] = []
 var next_target:int = 0
