@@ -1,0 +1,96 @@
+[gd_scene load_steps=17 format=3 uid="uid://hjy22ephhave"]
+
+[ext_resource type="Script" uid="uid://bndsegf4cfct2" path="res://data/entities/player/remote_player.gd" id="1_lftg0"]
+[ext_resource type="PackedScene" uid="uid://ht0rssl8am3o" path="res://data/entities/components/stats/stats.tscn" id="2_oua5d"]
+[ext_resource type="PackedScene" uid="uid://vbp752xidmk7" path="res://data/entities/components/movement/movement.tscn" id="3_cn5sg"]
+[ext_resource type="PackedScene" uid="uid://b6pdubcmdvlua" path="res://data/entities/components/health/health.tscn" id="4_hqhst"]
+[ext_resource type="PackedScene" uid="uid://3ggg5e0jg00u" path="res://data/entities/components/death/death.tscn" id="5_jbpci"]
+[ext_resource type="Script" uid="uid://banbhjws8f1uu" path="res://data/entities/states/state_machine.gd" id="6_el8li"]
+[ext_resource type="PackedScene" uid="uid://b531oyvupifil" path="res://data/entities/player/states/player_idle_state.tscn" id="7_wut6q"]
+[ext_resource type="PackedScene" uid="uid://bdsenapllptps" path="res://data/entities/player/states/player_move_state.tscn" id="8_sqdtg"]
+[ext_resource type="Script" uid="uid://b21on2dx1kubr" path="res://data/entities/player/states/player_jump_state.gd" id="9_qpoh8"]
+[ext_resource type="Script" uid="uid://c7gf4p8gtvxqy" path="res://data/entities/player/states/player_falling_state.gd" id="10_ramq2"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_g00a7"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_1meu1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xjdgv"]
+albedo_color = Color(0.281187, 0.281187, 0.281187, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_3rqlc"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_r0lv8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_t5uow"]
+height = 1.93918
+
+[node name="RemotePlayer" type="Node3D" node_paths=PackedStringArray("stats", "body")]
+script = ExtResource("1_lftg0")
+stats = NodePath("Components/Stats")
+body = NodePath("Body")
+
+[node name="Components" type="Node" parent="."]
+
+[node name="Stats" parent="Components" instance=ExtResource("2_oua5d")]
+
+[node name="Health" parent="Components" instance=ExtResource("4_hqhst")]
+unique_name_in_owner = true
+
+[node name="Death" parent="Components" node_paths=PackedStringArray("entity", "health") instance=ExtResource("5_jbpci")]
+entity = NodePath("../..")
+health = NodePath("../Health")
+
+[node name="Movement" parent="Components" node_paths=PackedStringArray("stats", "body") instance=ExtResource("3_cn5sg")]
+unique_name_in_owner = true
+stats = NodePath("../Stats")
+body = NodePath("../../Body")
+
+[node name="Abilities" type="Node" parent="."]
+
+[node name="StateMachines" type="Node" parent="."]
+
+[node name="Movement" type="Node" parent="StateMachines" node_paths=PackedStringArray("default_state")]
+script = ExtResource("6_el8li")
+default_state = NodePath("idle")
+
+[node name="idle" parent="StateMachines/Movement" instance=ExtResource("7_wut6q")]
+
+[node name="move" parent="StateMachines/Movement" instance=ExtResource("8_sqdtg")]
+
+[node name="jump" type="Node" parent="StateMachines/Movement"]
+script = ExtResource("9_qpoh8")
+
+[node name="falling" type="Node" parent="StateMachines/Movement"]
+script = ExtResource("10_ramq2")
+
+[node name="Abilities" type="Node" parent="StateMachines"]
+script = ExtResource("6_el8li")
+
+[node name="Body" type="CharacterBody3D" parent="."]
+collision_layer = 4
+
+[node name="Visual" type="MeshInstance3D" parent="Body"]
+mesh = SubResource("CapsuleMesh_g00a7")
+skeleton = NodePath("../..")
+
+[node name="DirectionMarker" type="MeshInstance3D" parent="Body/Visual"]
+transform = Transform3D(0.683087, 0, 0, 0, 0.293705, 0, 0, 0, 0.459851, -0.0136241, 0.490229, -0.42445)
+mesh = SubResource("BoxMesh_1meu1")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_xjdgv")
+
+[node name="DirectionMarker" type="MeshInstance3D" parent="Body/Visual/DirectionMarker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.387005, -1.32943, 0.0808203)
+mesh = SubResource("SphereMesh_3rqlc")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_xjdgv")
+
+[node name="DirectionMarker2" type="MeshInstance3D" parent="Body/Visual/DirectionMarker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.389233, -1.33306, -0.00886428)
+mesh = SubResource("SphereMesh_r0lv8")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_xjdgv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+shape = SubResource("CapsuleShape3D_t5uow")

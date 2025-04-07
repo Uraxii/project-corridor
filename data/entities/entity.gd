@@ -68,8 +68,10 @@ func apply_status_effect(skill: Skill) -> void:
         status_effects.append(skill)
 
 
+
 func _ready() -> void:
         id = GameManager.register_entity(self)
+
         for machine in state_machines:
                 machine.entity = self
 
@@ -80,5 +82,7 @@ func _process(delta):
 
 
 func _physics_process(delta):
+       # _update_world_state(EntityWorldState.new(multiplayer.get_unique_id(), body.position, body.rotation))
+
         for machine in state_machines:
                 machine.process_physics()

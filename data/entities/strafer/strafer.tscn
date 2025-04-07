@@ -47,6 +47,7 @@ default_state = NodePath("patrol")
 script = ExtResource("7_c54u4")
 
 [node name="Body" type="CharacterBody3D" parent="."]
+collision_layer = 8
 
 [node name="Visual" type="MeshInstance3D" parent="Body"]
 transform = Transform3D(0.476007, 0, 0, 0, 1.25716, 0, 0, 0, 1, 0, 0, 0)

@@ -1,6 +1,4 @@
-class_name player_falling_state
-
-extends PlayerState
+class_name player_falling_state extends PlayerState
 
 @export var air_control: float = 0.5
 
@@ -18,3 +16,4 @@ func frame_update(entity: Player) -> void:
 
 func physics_update(entity: Player) -> void:
         entity.move.cast(entity.input.move, entity.body, entity.stats.current_speed)
+

@@ -1,54 +1,71 @@
 class_name PlayerSelectTarget extends Area3D
 
-@export var cooldown:float = 0
-@export var refresh_rate: float = 0.1
+const MAX_TARGETING_DISTACNE = 500
 
-@onready var vision_timer = Timer.new()
-
-var target_cache: Array[Entity] = []
+var potential_targets: Array[Entity] = []
 var next_target:int = 0
 var player_owner: Entity = null
 
 
 func initialize(player: Entity):
+        # print('targeting')
+
         player_owner = player
 
-
-func target_next() -> void:
-        if target_cache.size() == 0:
-                return
-
-        # print('Current target:', target_cache[next_target].name)
-
-        player_owner.set_target(target_cache[next_target])
-
-        if next_target + 1 > target_cache.size() - 1:
-                next_target = 0
-        else:
-                next_target += 1
+        set_monitoring(true)
 
 
-func target_entity(new_target: Entity) -> void:
-        player_owner.set_target(new_target)
-
-
-func refresh_targets() -> void :
+func _ready() -> void:
         position = player_owner.body.position
 
         var collisions = get_overlapping_bodies()
 
-        target_cache.clear()
+        # print('collisions size %d' % collisions.size())
 
         for body in collisions:
-                var entity = body.get_parent()
-                if entity is Entity and entity != player_owner:
-                        target_cache.append(entity)
-
-        # print('Refreshed target_cache. Size:', target_cache.size())
+                _on_body_entered(body)
 
 
-func _ready() -> void:
-        vision_timer.wait_time = refresh_rate
-        add_child(vision_timer)
-        vision_timer.timeout.connect(refresh_targets)
-        vision_timer.start()
+func _process(delta: float) -> void:
+        position = player_owner.body.position
+
+        if player_owner.target == null or position.distance_to(player_owner.target.body.position) > MAX_TARGETING_DISTACNE:
+                player_owner.set_target(null)
+
+
+func _on_body_entered(body):
+        # print('body entered targeting zone.')
+
+        var parent_node = body.get_parent()
+
+        if parent_node == player_owner or parent_node is not Entity:
+                return
+
+        potential_targets.append(parent_node)
+
+
+func _on_body_exited(body):
+        # print('body left targeting zone.')
+
+        var parent_node = body.get_parent()
+
+        if parent_node is not Entity or not (parent_node in potential_targets):
+                return
+
+        potential_targets.erase(parent_node)
+
+
+func target_next() -> void:
+        # print('target next')
+
+        if potential_targets.size() == 0:
+                return
+
+        if next_target > potential_targets.size() - 1:
+                next_target = 0
+
+        # print('Current target:', potential_targets[next_target].name)
+
+        player_owner.set_target(potential_targets[next_target])
+
+        next_target += 1
