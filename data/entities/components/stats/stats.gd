@@ -1,4 +1,5 @@
-class_name Stats extends Node
+# class_name Stats
+extends Node
 
 @export var base_health:		float = 100
 @onready var current_health:		float = base_health
