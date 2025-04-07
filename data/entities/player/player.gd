@@ -68,15 +68,13 @@ func set_target(new_target: Entity) -> void:
                                 element.set_surface_override_material(0, target_original_material)
 
 
-        if new_target == null:
-                return
+        if new_target != null:
+                target_visuals = new_target.body.get_children()
 
-        target_visuals = new_target.body.get_children()
-
-        for element in target_visuals:
-                if element is MeshInstance3D:
-                        target_original_material = element.get_surface_override_material(0)
-                        element.set_surface_override_material(0, SHADER_HIGHLIGHT)
+                for element in target_visuals:
+                        if element is MeshInstance3D:
+                                target_original_material = element.get_surface_override_material(0)
+                                element.set_surface_override_material(0, SHADER_HIGHLIGHT)
 
         target = new_target
         changed_target.emit(target)
