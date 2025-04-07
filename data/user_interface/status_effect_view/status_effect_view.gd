@@ -21,7 +21,5 @@ func initialize(skill: Skill) -> void:
         remaining_time.text = '%3.1f' % timer.time_left
         progress_bar.value = (timer.time_left/skill.effect_duration) * 100
 
-        print(progress_bar.value, '-', timer.time_left, '-', skill.effect_duration)
-
         if not skill or skill.effect_remaining_time <= 0:
                 queue_free.call_deferred()
