@@ -68,7 +68,7 @@ script = ExtResource("10_ramq2")
 script = ExtResource("6_el8li")
 
 [node name="Body" type="CharacterBody3D" parent="."]
-collision_layer = 0
+collision_layer = 4
 
 [node name="Visual" type="MeshInstance3D" parent="Body"]
 mesh = SubResource("CapsuleMesh_g00a7")

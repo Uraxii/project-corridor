@@ -36,6 +36,7 @@ health = NodePath("../Health")
 [node name="States" type="Node" parent="."]
 
 [node name="Body" type="CharacterBody3D" parent="."]
+collision_layer = 8
 
 [node name="Visual" type="MeshInstance3D" parent="Body"]
 mesh = SubResource("CylinderMesh_cdmvn")

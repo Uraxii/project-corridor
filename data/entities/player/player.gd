@@ -50,4 +50,4 @@ func _physics_process(delta: float) -> void:
 
         Server.update_player_info.rpc(body.position, body.rotation)
 
-        player_info = Server.connections[multiplayer.get_unique_id()]
+        # player_info = Server.connections[multiplayer.get_unique_id()]

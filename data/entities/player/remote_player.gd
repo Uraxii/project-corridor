@@ -23,8 +23,8 @@ func _physics_process(delta: float) -> void:
 
         player_info = Server.connections[player_info.owner]
 
-        if body.rotation.distance_to(player_info.direction) > 0.05:
+        if body.rotation.distance_to(player_info.direction) > 0.1:
                 body.rotation = player_info.direction
 
-        if body.position.distance_to(player_info.position) > 0.05:
+        if body.position.distance_to(player_info.position) > 0.1:
                 movement.move_towards(player_info.position, stats.current_speed)
