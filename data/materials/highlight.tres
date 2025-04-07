@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://d2gm2eocxqpis"]
+
+[ext_resource type="Shader" uid="uid://b0w0p87816aq1" path="res://data/shaders/highlight.gdshader" id="1_rmtl0"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_rmtl0")
+shader_parameter/highlight_color = Color(1, 1, 1, 1)
+shader_parameter/highlight_power = 3.0
+shader_parameter/highlight_intensity = 0.2
+shader_parameter/rim_power = 3.0
