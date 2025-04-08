@@ -12,10 +12,11 @@ func _ready() -> void:
 func host_game() -> void:
         Server.start_server()
         Server.load_world()
-        queue_free.call_deferred()
+        self.visible = false
+
 
 
 func join_game() -> void:
         Server.start_client()
         Server.load_world()
-        queue_free.call_deferred()
+        self.visible = false

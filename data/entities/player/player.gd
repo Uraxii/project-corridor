@@ -2,13 +2,8 @@ class_name Player extends Entity
 
 const SHADER_HIGHLIGHT: Resource = preload("res://data/materials/highlight.tres")
 
-@export var stats: Stats
-
-@export var player_plate: NamePlate
-@export var target_plate: NamePlate
-
-@onready var health: Health = $Components/Health
-@onready var movement: Movement = %Movement
+@onready var player_plate: NamePlate = %PlayerPlate
+@onready var target_plate: NamePlate = %TargetPlate
 
 var player_info: PlayerInfo
 
@@ -21,22 +16,26 @@ var skill_binds: Dictionary = {
         'bar_1_skill_4': 'apply_regenerate',
 }
 
-var targeting   := load_ability('player_select_target')
-var input       := load_ability('player_input')
-# var move        := load_ability('move')
-var jump        := load_ability('jump')
+var targeting = null
+var input = null
+
+var local_enabled: bool = false
 
 
 func _ready() -> void:
         super._ready()
-
-        targeting.initialize(self)
-        target_plate.initialize(self, 'changed_target')
-        player_plate.on_changed_target(self)
+        $UI.visible = false
 
 
-func _process(delta: float) -> void:
-        super._process(delta)
+func frame_update(delta: float) -> void:
+        if not is_multiplayer_authority():
+                return
+                
+        if not local_enabled:
+                enable_local_control()
+                
+                
+        super.frame_update(delta)
 
         targeting.position = body.position
         targeting.rotation = body.rotation
@@ -49,12 +48,28 @@ func _process(delta: float) -> void:
                 set_target(null)
 
 
-func _physics_process(delta: float) -> void:
-        super._process(delta)
+func enable_local_control() -> void:
+        if not is_multiplayer_authority() or local_enabled:
+                return
 
-        Server.update_player_info.rpc(body.position, body.rotation)
+        local_enabled = true
 
-        # player_info = Server.connections[multiplayer.get_unique_id()]
+        $UI.visible = true
+
+        %SkillBar.initialize(self)
+        targeting   = load_ability('player_select_target')
+        input       = load_ability('player_input')
+
+        targeting.initialize(self)
+        target_plate.initialize(self, 'changed_target') 
+        player_plate.on_changed_target(self)
+
+        add_child(preload("res://data/entities/player/camera.tscn").instantiate())
+
+
+func send_state_data() -> void:
+        # Server.update_player_info.rpc(body.position, body.rotation)
+        pass
 
 
 func set_target(new_target: Entity) -> void:

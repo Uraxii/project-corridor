@@ -14,4 +14,4 @@ func _init(skill: Skill, caster: Entity, target: Entity, current_tick: int):
         self.tick_submitted     = current_tick
 
         # TODO: Add some session ID data to make this _less_ spoofable
-        self.id = '%s-%s-%s-%d' % [self.skill.id, self.caster.id, self.target.id, self.tick_submitted]
+        self.id = '%s-%s-%s-%d' % [self.skill, self.caster, self.target, self.tick_submitted]

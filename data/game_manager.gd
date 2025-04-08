@@ -1,39 +1,35 @@
 extends Node
 
-static var entities: Dictionary[int, Entity] = {}
-
-static var _next_id: int = 0
-static var _released_ids = []
+static var entities:    Dictionary[int, Entity] = {}
 
 static var cast_queue: Array[CastRequest] = []
 static var current_request: CastRequest
 
 
 func _ready() -> void:
-        Server.process_tick.connect(_process_tick)
+        Server.network_tick.connect(_process_tick)
 
 
-static func register_entity(entity: Entity) -> int:
-        if entity.id != Entity.INVALID_ID and entity.id in entities.keys():
-                return entity.id
+func _process(delta: float) -> void:
+        for entity in entities.values():
+                        entity.frame_update(delta)
 
-        var id: int = Entity.INVALID_ID
 
-        if _released_ids.size() > 0:
-                id = _released_ids.pop_front()
-        else:
-                id = _next_id
-                _next_id += 1
+func _physics_process(delta: float) -> void:
+        for entity in entities.values():
+                        entity.physics_update(delta)
 
-        print('Assigned ' + entity.display_name + ' ID ' + str(id))
+
+static func register_entity(entity: Entity) -> void:
+        var id = entity.get_instance_id()
 
         entities[id] = entity
 
-        return id
+        print('Assigned ' + entity.get_display_name() + ' ID ' + str(id))
 
 
 static func unregister_entity(entity: Entity):
-        entities.erase(entity.id)
+        entities.erase(entity.get_instance_id())
 
 
 static func get_entity(id: int) -> Entity:
@@ -42,10 +38,8 @@ static func get_entity(id: int) -> Entity:
 
         return entities[id]
 
-
-static func enqueue_cast(request: CastRequest) -> void:
+func enqueue_cast(request: CastRequest) -> void:
         # TODO: Validate that the session which sent the request is the owner of the caster in the request.
-
         # TODO: Validate that the conditions are such that the caster CAN cast this skill.
 
         # Invalid tick, drop the request
@@ -56,7 +50,7 @@ static func enqueue_cast(request: CastRequest) -> void:
         cast_queue.push_back(request)
 
 
-func _process_tick() -> void:
+static func _process_tick() -> void:
         _process_cast_queue()
         _process_status_effects()
 
@@ -69,11 +63,15 @@ static func _process_cast_queue() -> void:
 
         current_request = cast_queue.pop_front()
 
-        Skill.cast(
+        var result = Skill.cast(
                 current_request.skill,
                 current_request.caster,
                 current_request.target
         )
+
+        if not result.is_empty():
+                print(result)
+
 
 static func _process_status_effects() -> void:
         # print('Processing status effects')
@@ -82,7 +80,8 @@ static func _process_status_effects() -> void:
                 # print('%s, %d' % [entity.name, entity.status_effects.size()])
                 for status_effect in entity.status_effects:
                         var result = Skill.cast(status_effect, status_effect.effect_caster, entity)
-                        print(result)
+                        if not result.is_empty():
+                                print(result)
 
 
 static func _sort_request_by_tick(a: CastRequest, b: CastRequest) -> bool:

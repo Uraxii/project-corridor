@@ -6,9 +6,9 @@ class_name SkillButton extends TextureButton
 @onready var cooldown_text = $CooldownText
 @onready var timer = $CooldownTimer
 
-var caster: Entity = null
-var skill = null
-var cast_result = ''
+var caster: Entity
+var skill: Skill
+var cast_result: String
 
 
 func initialize(binding: String, owner: Player) -> void:
@@ -31,7 +31,8 @@ func initialize(binding: String, owner: Player) -> void:
                 # print('Set button to %s' % bind_text.text)
 
         if name in owner.skill_binds.keys():
-                skill = owner.load_skill(owner.skill_binds[name])
+                skill = Skill.new(owner.skill_binds[name])
+                print('skill:' + skill.data_file)
                 bind_text.text += ' \n' + skill.id
                 icon.texture = skill.icon
 
@@ -45,7 +46,7 @@ func _process(delta: float) -> void:
 
 
 func _on_pressed() -> void:
-        if !skill:
+        if not skill:
                 # print('No Skill assigned to button.')
                 return
 
@@ -64,16 +65,11 @@ func _on_pressed() -> void:
         # cast_result = skill.cast(caster, caster.target)
         GameManager.enqueue_cast(cast_request)
 
-        if cast_result:
-                print(cast_result)
-
-
         if skill.cooldown > 0:
                 timer.wait_time = skill.cooldown
                 timer.start()
         else:
                 _on_cooldown_timer_timeout()
-
 
 
 func _on_cooldown_timer_timeout() -> void:

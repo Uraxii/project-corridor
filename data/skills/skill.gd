@@ -1,6 +1,7 @@
 class_name Skill extends Node
 
 ### DATA VALUES ###
+var data_file:          String
 var id:                 String
 var description:        String
 var icon:               ImageTexture
@@ -55,9 +56,14 @@ var sfx_cast:           String
 var sfx_cast_success:   String
 
 
-func _init(skill_name: String) -> void:
+func _init(config_file: String = '') -> void:
+        if config_file.is_empty():
+                return
+
+        self.data_file = config_file
+
         var config = ConfigFile.new()
-        config.load("res://data/skills/data/%s.cfg" % skill_name.to_lower())
+        config.load("res://data/skills/data/%s.cfg" % data_file.to_lower())
 
         self.id                 = config.get_value('data', 'id', '')
         self.description        = config.get_value('data', 'description', '')
@@ -112,11 +118,13 @@ func _init(skill_name: String) -> void:
 
 
 static func cast(skill: Skill, caster: Entity, target: Entity) -> String:
-        # print('Casting %s' % [skill.id])
+        
+        if not skill:
+                return 'Invalid skill'
 
         if target == null:
                 target = caster
-
+        
         if not is_target_valid(skill, caster, target):
                 return 'Invalid target.'
 
@@ -151,18 +159,19 @@ static func cast(skill: Skill, caster: Entity, target: Entity) -> String:
 
 static func damage_entity(target: Entity, base_damage: float) -> void:
         var damage_to_apply = base_damage
-        target.health.damage(damage_to_apply)
+        target.modify_health(-damage_to_apply)
 
 
 static func heal_entity(target: Entity, amount: float) -> void:
-        target.health.heal(amount)
+        var healing_to_apply = amount
+        target.modify_health(healing_to_apply)
 
 
 static func move_entity(speed_modifier: float, input: Vector2, target: Entity) -> void:
         var body = target.body
         var direction = body.transform.basis * Vector3(input.x, 0, input.y).normalized()
 
-        var speed_to_apply: int = target.stats.speed + speed_modifier
+        var speed_to_apply = target.get_speed() + speed_modifier
 
         var velocity = direction * speed_to_apply
 

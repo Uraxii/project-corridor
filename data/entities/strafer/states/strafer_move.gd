@@ -17,7 +17,7 @@ func frame_update(entity: Entity) -> void:
 
 
         entity.body.look_at(target.position +  Vector3(0.001, 0.0, 0.0))
-        entity.move.move_towards(target.position, entity.stats.current_speed * 0.8)
+        entity.move.move_towards(target.position, entity.get_speed() * 0.8)
 
 
 func get_next_target() -> Node3D:

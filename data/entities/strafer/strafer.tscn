@@ -1,10 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://8brs8d84ngt8"]
+[gd_scene load_steps=6 format=3 uid="uid://8brs8d84ngt8"]
 
 [ext_resource type="Script" uid="uid://bhhcltj12sqpp" path="res://data/entities/strafer/strafer.gd" id="1_86phf"]
-[ext_resource type="PackedScene" uid="uid://b6pdubcmdvlua" path="res://data/entities/components/health/health.tscn" id="2_rohca"]
-[ext_resource type="PackedScene" uid="uid://ht0rssl8am3o" path="res://data/entities/components/stats/stats.tscn" id="3_ljoy5"]
-[ext_resource type="PackedScene" uid="uid://vbp752xidmk7" path="res://data/entities/components/movement/movement.tscn" id="4_d6ppk"]
-[ext_resource type="PackedScene" uid="uid://3ggg5e0jg00u" path="res://data/entities/components/death/death.tscn" id="5_tko5s"]
 [ext_resource type="Script" uid="uid://banbhjws8f1uu" path="res://data/entities/states/state_machine.gd" id="6_aqc14"]
 [ext_resource type="Script" uid="uid://x6571s1b7vv1" path="res://data/entities/strafer/states/strafer_move.gd" id="7_c54u4"]
 
@@ -14,28 +10,9 @@
 
 [node name="Strafer" type="Node3D" node_paths=PackedStringArray("body")]
 script = ExtResource("1_86phf")
-display_name = "Strafer"
+config_file = "strafer"
 body = NodePath("Body")
 team_id = 10
-
-[node name="Components" type="Node" parent="."]
-unique_name_in_owner = true
-
-[node name="Health" parent="Components" instance=ExtResource("2_rohca")]
-unique_name_in_owner = true
-
-[node name="Stats" parent="Components" instance=ExtResource("3_ljoy5")]
-unique_name_in_owner = true
-
-[node name="Movement" parent="Components" node_paths=PackedStringArray("stats", "body") instance=ExtResource("4_d6ppk")]
-unique_name_in_owner = true
-stats = NodePath("../Stats")
-body = NodePath("../../Body")
-
-[node name="Death" parent="Components" node_paths=PackedStringArray("entity", "health") instance=ExtResource("5_tko5s")]
-unique_name_in_owner = true
-entity = NodePath("../..")
-health = NodePath("../Health")
 
 [node name="StatesMachines" type="Node" parent="."]
 

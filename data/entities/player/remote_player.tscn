@@ -1,15 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://hjy22ephhave"]
+[gd_scene load_steps=9 format=3 uid="uid://00k760kxib6"]
 
 [ext_resource type="Script" uid="uid://bndsegf4cfct2" path="res://data/entities/player/remote_player.gd" id="1_lftg0"]
-[ext_resource type="PackedScene" uid="uid://ht0rssl8am3o" path="res://data/entities/components/stats/stats.tscn" id="2_oua5d"]
-[ext_resource type="PackedScene" uid="uid://vbp752xidmk7" path="res://data/entities/components/movement/movement.tscn" id="3_cn5sg"]
-[ext_resource type="PackedScene" uid="uid://b6pdubcmdvlua" path="res://data/entities/components/health/health.tscn" id="4_hqhst"]
-[ext_resource type="PackedScene" uid="uid://3ggg5e0jg00u" path="res://data/entities/components/death/death.tscn" id="5_jbpci"]
-[ext_resource type="Script" uid="uid://banbhjws8f1uu" path="res://data/entities/states/state_machine.gd" id="6_el8li"]
-[ext_resource type="PackedScene" uid="uid://b531oyvupifil" path="res://data/entities/player/states/player_idle_state.tscn" id="7_wut6q"]
-[ext_resource type="PackedScene" uid="uid://bdsenapllptps" path="res://data/entities/player/states/player_move_state.tscn" id="8_sqdtg"]
-[ext_resource type="Script" uid="uid://b21on2dx1kubr" path="res://data/entities/player/states/player_jump_state.gd" id="9_qpoh8"]
-[ext_resource type="Script" uid="uid://c7gf4p8gtvxqy" path="res://data/entities/player/states/player_falling_state.gd" id="10_ramq2"]
+[ext_resource type="Script" uid="uid://c8ipqhdtu8w76" path="res://data/entities/entity_data.gd" id="2_88emb"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g00a7"]
 
@@ -25,47 +17,20 @@ albedo_color = Color(0.281187, 0.281187, 0.281187, 1)
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_t5uow"]
 height = 1.93918
 
-[node name="RemotePlayer" type="Node3D" node_paths=PackedStringArray("stats", "body")]
+[node name="RemotePlayer" type="Node3D" node_paths=PackedStringArray("body")]
 script = ExtResource("1_lftg0")
-stats = NodePath("Components/Stats")
+config_file = "player"
 body = NodePath("Body")
 
-[node name="Components" type="Node" parent="."]
+[node name="Data" type="Node" parent="."]
 
-[node name="Stats" parent="Components" instance=ExtResource("2_oua5d")]
+[node name="Base" type="Node" parent="Data"]
+script = ExtResource("2_88emb")
 
-[node name="Health" parent="Components" instance=ExtResource("4_hqhst")]
-unique_name_in_owner = true
-
-[node name="Death" parent="Components" node_paths=PackedStringArray("entity", "health") instance=ExtResource("5_jbpci")]
-entity = NodePath("../..")
-health = NodePath("../Health")
-
-[node name="Movement" parent="Components" node_paths=PackedStringArray("stats", "body") instance=ExtResource("3_cn5sg")]
-unique_name_in_owner = true
-stats = NodePath("../Stats")
-body = NodePath("../../Body")
-
-[node name="Abilities" type="Node" parent="."]
+[node name="Current" type="Node" parent="Data"]
+script = ExtResource("2_88emb")
 
 [node name="StateMachines" type="Node" parent="."]
-
-[node name="Movement" type="Node" parent="StateMachines" node_paths=PackedStringArray("default_state")]
-script = ExtResource("6_el8li")
-default_state = NodePath("idle")
-
-[node name="idle" parent="StateMachines/Movement" instance=ExtResource("7_wut6q")]
-
-[node name="move" parent="StateMachines/Movement" instance=ExtResource("8_sqdtg")]
-
-[node name="jump" type="Node" parent="StateMachines/Movement"]
-script = ExtResource("9_qpoh8")
-
-[node name="falling" type="Node" parent="StateMachines/Movement"]
-script = ExtResource("10_ramq2")
-
-[node name="Abilities" type="Node" parent="StateMachines"]
-script = ExtResource("6_el8li")
 
 [node name="Body" type="CharacterBody3D" parent="."]
 collision_layer = 4
