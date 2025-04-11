@@ -32,7 +32,6 @@ func initialize(binding: String, owner: Player) -> void:
 
         if name in owner.skill_binds.keys():
                 skill = Skill.new(owner.skill_binds[name])
-                print('skill:' + skill.data_file)
                 bind_text.text += ' \n' + skill.id
                 icon.texture = skill.icon
 
@@ -54,16 +53,13 @@ func _on_pressed() -> void:
 
         disabled = true
         set_process(true)
+        if not caster:
+                Logger.error('Caster is null on skill button!', {'button node':name})
+                return
 
-        var cast_request = CastRequest.new(
-                skill,
-                caster,
-                caster.target,
-                Server.current_tick
-        )
+        var request := CastRequest.new(skill.file, caster.name, caster.target.name)
 
-        # cast_result = skill.cast(caster, caster.target)
-        GameManager.enqueue_cast(cast_request)
+        GameManager.queue_cast.rpc(Network.serialize(request))
 
         if skill.cooldown > 0:
                 timer.wait_time = skill.cooldown
@@ -73,7 +69,7 @@ func _on_pressed() -> void:
 
 
 func _on_cooldown_timer_timeout() -> void:
-        print('OFF cooldown.')
+        # print('OFF cooldown.')
 
         disabled = false
         set_process(false)

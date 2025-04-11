@@ -10,13 +10,13 @@ func _ready() -> void:
 
 
 func host_game() -> void:
-        Server.start_server()
-        Server.load_world()
+        Network.start_server()
+        Network.load_world()
         self.visible = false
 
 
 
 func join_game() -> void:
-        Server.start_client()
-        Server.load_world()
+        Network.start_client()
+        Network.load_world()
         self.visible = false

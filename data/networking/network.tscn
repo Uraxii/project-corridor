@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://gsh8a7fu6eo8"]
+
+[ext_resource type="Script" uid="uid://b7m24di4l04pb" path="res://data/networking/network.gd" id="1_frf38"]
+
+[node name="Network" type="Node"]
+script = ExtResource("1_frf38")
+
+[node name="Players" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="Players"]
+unique_name_in_owner = true
+_spawnable_scenes = PackedStringArray("uid://pw1myqomeom7")
+spawn_path = NodePath("..")
+
+[node name="NPCs" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="NpcSpawner" type="MultiplayerSpawner" parent="NPCs"]
+unique_name_in_owner = true
+spawn_path = NodePath("..")
+
+[node name="Levels" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="LevelSpawner" type="MultiplayerSpawner" parent="Levels"]
+unique_name_in_owner = true
+spawn_path = NodePath("..")

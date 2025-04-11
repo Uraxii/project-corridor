@@ -51,7 +51,7 @@ func apply_gravity(current_velocity: Vector3) -> Vector3:
         else:
                 gravity_to_apply = FORCE_GRAVITY
 
-        current_gravity -= gravity_to_apply * entity.get_gravity_scale()
+        current_gravity -= gravity_to_apply * entity.stats.gravity_scale
         current_velocity.y += current_gravity
 
         return current_velocity

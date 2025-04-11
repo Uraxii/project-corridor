@@ -1,89 +1,70 @@
 extends Node
 
-static var entities:    Dictionary[int, Entity] = {}
-
-static var cast_queue: Array[CastRequest] = []
-static var current_request: CastRequest
+static var entities:    Dictionary[String, Entity] = {}
+static var cast_queue:  Array[CastRequest] = []
 
 
 func _ready() -> void:
-        Server.network_tick.connect(_process_tick)
+        Network.network_tick.connect(_process_tick)
+
+func register_entity(entity: Entity) -> void:
+        entities[entity.name] = entity
+        # Logger.debug('Registerd entity.', {'Display Name':entity.stats.display_name,'Node Name':entity.name})
 
 
-func _process(delta: float) -> void:
-        for entity in entities.values():
-                        entity.frame_update(delta)
-
-
-func _physics_process(delta: float) -> void:
-        for entity in entities.values():
-                        entity.physics_update(delta)
-
-
-static func register_entity(entity: Entity) -> void:
-        var id = entity.get_instance_id()
-
-        entities[id] = entity
-
-        print('Assigned ' + entity.get_display_name() + ' ID ' + str(id))
-
-
-static func unregister_entity(entity: Entity):
+func unregister_entity(entity: Entity) -> void:
         entities.erase(entity.get_instance_id())
 
 
-static func get_entity(id: int) -> Entity:
-        if id not in entities:
-                return
-
-        return entities[id]
-
-func enqueue_cast(request: CastRequest) -> void:
-        # TODO: Validate that the session which sent the request is the owner of the caster in the request.
-        # TODO: Validate that the conditions are such that the caster CAN cast this skill.
-
-        # Invalid tick, drop the request
-        if request.tick_submitted < 0 or request.tick_submitted > Server.TICK_RATE:
-                return
-
-        # Everything looks good, lets add it to the queue.
-        cast_queue.push_back(request)
+func get_entity(node_name: String) -> Entity:
+        return entities.get(node_name)
 
 
-static func _process_tick() -> void:
+@rpc("any_peer", "call_local", "reliable")
+func queue_cast(message: Dictionary) -> void:
+        var request = Network.deserialize(CastRequest.new(), message)
+
+        # TODO: !!! Check if sender has authority over cater !!!
+
+        Logger.info('Queued cast.', {'skill': request.skill,'target':request.target,'caster':request.caster,'sender':multiplayer.get_remote_sender_id()})
+
+        cast_queue.push_front(request)
+
+
+func _process_tick() -> void:
         _process_cast_queue()
         _process_status_effects()
 
 
-static func _process_cast_queue() -> void:
-        # print('Processing cast queue')
+func _process_cast_queue() -> void:
+        while cast_queue.size() > 0:
+                var request:    CastRequest = cast_queue.pop_front()
 
-        if cast_queue.size() == 0:
-                return
-
-        current_request = cast_queue.pop_front()
-
-        var result = Skill.cast(
-                current_request.skill,
-                current_request.caster,
-                current_request.target
-        )
-
-        if not result.is_empty():
-                print(result)
+                var skill:      Skill   = Skill.new(request.skill)
+                var caster:     Entity  = get_entity(request.caster)
+                var target:     Entity  = get_entity(request.target)
 
 
-static func _process_status_effects() -> void:
-        # print('Processing status effects')
+                if not skill or not caster:
+                        printerr('INFO=Invalid skill or caster.\tSkill=%s\tCaster=%s' % [request.skill, request.caster])
+                        continue
 
+                var cast_result: CastResult = Skill.cast(skill, caster, target)
+                cast_result.generate_log()
+
+                # Logger.info(cast_result.message)
+
+
+func _process_status_effects() -> void:
+        # Logger.debug('Processing status effects.')
         for entity in entities.values():
-                # print('%s, %d' % [entity.name, entity.status_effects.size()])
                 for status_effect in entity.status_effects:
-                        var result = Skill.cast(status_effect, status_effect.effect_caster, entity)
-                        if not result.is_empty():
-                                print(result)
+                        var cast_result: CastResult = Skill.cast(
+                                status_effect,
+                                status_effect.effect_caster,
+                                entity
+                        )
 
+                        cast_result.generate_log()
 
-static func _sort_request_by_tick(a: CastRequest, b: CastRequest) -> bool:
-        # Used for custom sorting to order the requests by the tick
-        return a.tick_submitted < b.tick_submitted
+                        # Logger.info(cast_result.message)

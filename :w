@@ -1,0 +1,19 @@
+class_name Logger extends Node
+
+
+static func log(message: String, details: Dictionary) -> String:
+        var out: String ='INFO=%s' % message
+
+        for key in details.keys():
+                out += '\t%s=%s' % [str(key), str(details[key])]
+
+        print(out)
+        return out
+
+
+static func netlog(message: String, details: Dictionary) -> String:
+        var out = log(message, details)
+        out = 'PEER=%d' % multiplayer.get_un
+
+        print(out)
+        return out

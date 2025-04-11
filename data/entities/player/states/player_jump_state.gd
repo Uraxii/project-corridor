@@ -7,7 +7,7 @@ var velocity    := Vector3.ZERO
 func enter(entity: Player) -> void:
         super.enter(entity)
 
-        entity.move.jump(entity.get_jump_force(), entity.input.move, entity.get_speed())
+        entity.move.jump(entity.stats.jump_force, entity.input.move, entity.stats.speed)
 
 
 func frame_update(entity: Player) -> void:
@@ -15,7 +15,7 @@ func frame_update(entity: Player) -> void:
         
         entity.move.move_with_input(
                 entity.input.move,
-                entity.get_speed() * entity.get_air_control()
+                entity.stats.jump_force * entity.stats.air_control
         )
 
         if entity.move.jump_influence.y < 0:

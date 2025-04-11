@@ -22,15 +22,13 @@ func on_changed_target(new_target: Entity) -> void:
                 set_process(false)
                 return
 
-        display_name.text = target.get_display_name()
+        display_name.text = target.stats.display_name
         pannel.show()
 
         status_effects.set_target(new_target)
 
         if 'health' in new_target:
                 set_process(true)
-
-        print('Nameplate updated:', display_name.text)
 
 
 func _ready() -> void:
@@ -41,11 +39,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
         if not target:
                 return
-                
-        health_value.text = '%d / %d' % [target.get_health(), target.base.health]
+
+        health_value.text = '%d / %d' % [target.stats.health, target.stats.health_base]
 
         if show_percentage:
-                health_value.text += ' ( %d ' % [target.get_health() / target.base.health * 100] + '% )'
+                health_value.text += ' ( %d ' % [target.stats.health / target.stats.health_base * 100] + '% )'
 
-        if target.get_health() == 0:
+        if target.stats.is_dead:
                 health_value.text += ' (Dead)'

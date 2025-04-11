@@ -1,79 +1,27 @@
-[gd_scene load_steps=17 format=3 uid="uid://pw1myqomeom7"]
+[gd_scene load_steps=20 format=3 uid="uid://pw1myqomeom7"]
 
 [ext_resource type="Script" uid="uid://duyin3ykk8d8r" path="res://data/entities/player/player.gd" id="1_du1rf"]
-[ext_resource type="Script" uid="uid://c8ipqhdtu8w76" path="res://data/entities/entity_data.gd" id="2_3iqhf"]
+[ext_resource type="PackedScene" uid="uid://b11q5vc0osyk2" path="res://data/entities/stats.tscn" id="2_l20xk"]
+[ext_resource type="Script" uid="uid://b7au2j3m5osbc" path="res://data/entities/player/player_input.gd" id="2_llu1g"]
 [ext_resource type="Script" uid="uid://banbhjws8f1uu" path="res://data/entities/states/state_machine.gd" id="5_o5tub"]
 [ext_resource type="PackedScene" uid="uid://b531oyvupifil" path="res://data/entities/player/states/player_idle_state.tscn" id="6_fh4g5"]
 [ext_resource type="PackedScene" uid="uid://bdsenapllptps" path="res://data/entities/player/states/player_move_state.tscn" id="7_xx4oc"]
+[ext_resource type="Script" uid="uid://j42apd0ldaf5" path="res://data/entities/player/player_select_target.gd" id="9_llu1g"]
 [ext_resource type="Script" uid="uid://b21on2dx1kubr" path="res://data/entities/player/states/player_jump_state.gd" id="9_w0851"]
 [ext_resource type="Script" uid="uid://c7gf4p8gtvxqy" path="res://data/entities/player/states/player_falling_state.gd" id="10_hpuls"]
 [ext_resource type="PackedScene" uid="uid://l386dquxgm0v" path="res://data/user_interface/name_plate/name_plate.tscn" id="10_lay5f"]
 [ext_resource type="PackedScene" uid="uid://b1bujdj5x0xe2" path="res://data/user_interface/skills/bar/skillbar.tscn" id="11_fa8ny"]
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3iqhf"]
-properties/0/path = NodePath("Data/Base:file")
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_l20xk"]
+properties/0/path = NodePath("Body:position")
 properties/0/spawn = true
 properties/0/replication_mode = 2
-properties/1/path = NodePath("Data/Base:team")
+properties/1/path = NodePath("Body:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 2
-properties/2/path = NodePath("Data/Base:skills")
+properties/2/path = NodePath("Body:scale")
 properties/2/spawn = true
 properties/2/replication_mode = 2
-properties/3/path = NodePath("Data/Base:health")
-properties/3/spawn = true
-properties/3/replication_mode = 2
-properties/4/path = NodePath("Data/Base:energy")
-properties/4/spawn = true
-properties/4/replication_mode = 2
-properties/5/path = NodePath("Data/Base:mana")
-properties/5/spawn = true
-properties/5/replication_mode = 2
-properties/6/path = NodePath("Data/Base:rage")
-properties/6/spawn = true
-properties/6/replication_mode = 2
-properties/7/path = NodePath("Data/Base:speed")
-properties/7/spawn = true
-properties/7/replication_mode = 2
-properties/8/path = NodePath("Data/Base:jump_force")
-properties/8/spawn = true
-properties/8/replication_mode = 2
-properties/9/path = NodePath("Data/Base:air_jumps")
-properties/9/spawn = true
-properties/9/replication_mode = 2
-properties/10/path = NodePath("Data/Base:air_control")
-properties/10/spawn = true
-properties/10/replication_mode = 2
-properties/11/path = NodePath("Data/Base:gravity_scale")
-properties/11/spawn = true
-properties/11/replication_mode = 2
-properties/12/path = NodePath("Data/Current:display_name")
-properties/12/spawn = true
-properties/12/replication_mode = 2
-properties/13/path = NodePath("Body:position")
-properties/13/spawn = true
-properties/13/replication_mode = 2
-properties/14/path = NodePath("Body:rotation")
-properties/14/spawn = true
-properties/14/replication_mode = 2
-properties/15/path = NodePath("Body:scale")
-properties/15/spawn = true
-properties/15/replication_mode = 2
-properties/16/path = NodePath("Data/Current:team")
-properties/16/spawn = true
-properties/16/replication_mode = 2
-properties/17/path = NodePath("Data/Current:health")
-properties/17/spawn = true
-properties/17/replication_mode = 2
-properties/18/path = NodePath("Data/Current:energy")
-properties/18/spawn = true
-properties/18/replication_mode = 2
-properties/19/path = NodePath("Data/Current:mana")
-properties/19/spawn = true
-properties/19/replication_mode = 2
-properties/20/path = NodePath("Data/Current:rage")
-properties/20/spawn = true
-properties/20/replication_mode = 2
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g00a7"]
 
@@ -89,24 +37,22 @@ albedo_color = Color(0.281187, 0.281187, 0.281187, 1)
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_t5uow"]
 height = 1.93918
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_llu1g"]
+
 [node name="Player" type="Node3D" node_paths=PackedStringArray("body", "state_machines")]
 script = ExtResource("1_du1rf")
 config_file = "player"
 body = NodePath("Body")
 state_machines = [NodePath("StateMachines/Movement")]
 
-[node name="MultiplayerSyncronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_3iqhf")
-
-[node name="Data" type="Node" parent="."]
-
-[node name="Base" type="Node" parent="Data"]
+[node name="Stats" parent="." instance=ExtResource("2_l20xk")]
 unique_name_in_owner = true
-script = ExtResource("2_3iqhf")
 
-[node name="Current" type="Node" parent="Data"]
+[node name="Input" type="MultiplayerSynchronizer" parent="."]
 unique_name_in_owner = true
-script = ExtResource("2_3iqhf")
+process_mode = 4
+replication_config = SubResource("SceneReplicationConfig_l20xk")
+script = ExtResource("2_llu1g")
 
 [node name="StateMachines" type="Node" parent="."]
 
@@ -152,7 +98,19 @@ surface_material_override/0 = SubResource("StandardMaterial3D_xjdgv")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
 shape = SubResource("CapsuleShape3D_t5uow")
 
+[node name="Targeting" type="Area3D" parent="Body"]
+unique_name_in_owner = true
+process_mode = 4
+collision_layer = 2147483648
+collision_mask = 15
+script = ExtResource("9_llu1g")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body/Targeting"]
+transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 0, 0, 0)
+shape = SubResource("SphereShape3D_llu1g")
+
 [node name="UI" type="Control" parent="."]
+process_mode = 4
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -182,3 +140,6 @@ layout_mode = 1
 offset_left = 500.0
 offset_right = 500.0
 scale = Vector2(2, 2)
+
+[connection signal="body_entered" from="Body/Targeting" to="Body/Targeting" method="_on_body_entered"]
+[connection signal="body_exited" from="Body/Targeting" to="Body/Targeting" method="_on_body_exited"]

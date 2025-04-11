@@ -10,7 +10,9 @@ const DEFAULT_SERVER_IP: String = "localhost"
 const PORT: int = 7000
 const MAX_CONNECTIONS: int = 2
 
-const HOST_ID: int = 1
+const INVALID_PEER_ID: int = -1
+const ALL_PEERS: int = 0
+const SERVER_ID: int = 1
 
 const GCD_INTERVAL:       float   = 1.0
 const TICK_RATE:          int     = 24
@@ -28,6 +30,10 @@ static var current_tick: int
 @onready var npc_container:     Node = %NPCs
 @onready var level_container:   Node = %Levels
 
+var logger: Logger
+
+var my_peer_id: int = INVALID_PEER_ID
+
 var entry_scene:        Resource = preload("res://data/maps/test_scene.tscn")
 var lobby_scene:        Resource = preload("res://data/maps/test_scene.tscn")
 var level_scene:        Resource = preload("res://data/maps/test_scene.tscn")
@@ -39,6 +45,8 @@ var current_scene: Node
 
 
 func _ready() -> void:
+        logger = Logger
+
         multiplayer.peer_connected.connect(_on_client_connected)
         multiplayer.peer_disconnected.connect(_on_client_disconnected)
         multiplayer.connected_to_server.connect(_on_connected_ok)
@@ -56,27 +64,61 @@ func _ready() -> void:
         add_child(tick_timer)
 
 
-@rpc("call_local")
-func _give_authority(node_name: String, peer_id: int):
-        print('INFO=Gave authority.\tNode=%s\tPeer ID=%d' % [node_name, peer_id])
-        var player: Player = player_container.get_node(node_name)
-        player.set_multiplayer_authority(peer_id)
+static func serialize(obj: Object) -> Dictionary:
+        var dict = {}
+
+        if not obj:
+                return dict
+
+        var properties: Array[String] = obj.get("PROPERTIES")
+
+        for property in properties:
+                var value = obj.get(property)
+
+                if not value:
+                        Logger.error('Did not find property when serializing! Please ensure the values in your property array are up to date.', {'property':property})
+                        continue
+
+                if value is Array or value is Dictionary:
+                        dict[property] = value.duplicate()
+                else:
+                        dict[property] = value
+
+        return dict
 
 
-func spawn_player(id: int) -> void:
+static func deserialize(obj: Object, data: Dictionary) -> Object:
+        var dict = {}
+
+        if not obj:
+                return dict
+
+        var properties: Array[String] = obj.get("PROPERTIES")
+
+        for property in properties:
+                var value = data.get(property)
+
+                if not value:
+                        Logger.error('Property not found on object when peforming deserialization! Please ensure the values in your property array are up to date.', {'missing property':property, 'all properties':str(properties)})
+                        continue
+
+                obj.set(property, value)
+
+        return obj
+
+
+
+func spawn_player(peer_id: int) -> void:
         if not multiplayer.is_server():
                 return
 
-        print('INFO=Added player.\tID=%d' % id)
+        logger.info('Added player.', {'client id': peer_id})
 
-        var player = player_scene.instantiate()
-
-        player.id = id
-        player.name = str(id)
+        var player: Player = player_scene.instantiate()
+        player.name = str(peer_id)
 
         player_container.add_child(player, true)
-
-        _give_authority.rpc(player.name, id)
+        player.id = peer_id
 
 
 func remove_player(id: int) -> void:
@@ -114,7 +156,7 @@ func start_server():
 
         multiplayer.multiplayer_peer = peer
 
-        spawn_player(HOST_ID)
+        spawn_player(SERVER_ID)
 
 
 func load_world():
@@ -146,6 +188,7 @@ func _on_client_disconnected(id):
 
 func _on_connected_ok() -> void:
         var peer_id: int = multiplayer.get_unique_id()
+        my_peer_id = peer_id
         # var player_info = PlayerInfo.new(multiplayer.get_unique_id(), Vector3.ZERO, Vector3.ZERO)
         # instantiate_player(player_info)
         # spawn_player(peer_id)

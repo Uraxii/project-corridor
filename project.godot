@@ -19,7 +19,8 @@ config/icon="res://icon.svg"
 
 GameManager="*res://data/game_manager.gd"
 PlayerContainer="*res://data/player_container.tscn"
-Server="*res://data/networking/Server.tscn"
+Logger="*res://data/utility/logger.gd"
+Network="*res://data/networking/network.tscn"
 
 [dotnet]
 

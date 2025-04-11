@@ -2,6 +2,18 @@ class_name Player extends Entity
 
 const SHADER_HIGHLIGHT: Resource = preload("res://data/materials/highlight.tres")
 
+@export var id: int = Network.SERVER_ID:
+        set(new_id):
+                Logger.debug('Changed authority id on %s' % name, {'old':id, 'new':new_id})
+                id = new_id
+                %Input.set_multiplayer_authority(id)
+                if id == multiplayer.get_unique_id():
+                        enable_local_player()
+
+
+@onready var input: PlayerInput = %Input
+@onready var targeting: PlayerSelectTarget = %Targeting
+
 @onready var player_plate: NamePlate = %PlayerPlate
 @onready var target_plate: NamePlate = %TargetPlate
 
@@ -16,55 +28,43 @@ var skill_binds: Dictionary = {
         'bar_1_skill_4': 'apply_regenerate',
 }
 
-var targeting = null
-var input = null
-
-var local_enabled: bool = false
-
 
 func _ready() -> void:
         super._ready()
-        $UI.visible = false
+
+        set_process(false)
 
 
-func frame_update(delta: float) -> void:
-        if not is_multiplayer_authority():
+func _process(delta: float) -> void:
+        super._process(delta)
+
+        if not input.is_multiplayer_authority():
                 return
-                
-        if not local_enabled:
-                enable_local_control()
-                
-                
-        super.frame_update(delta)
-
-        targeting.position = body.position
-        targeting.rotation = body.rotation
 
         if input.target_next:
                 targeting.target_next()
-        if input.target_self:
+        elif input.target_self:
                 targeting.set_target(self)
-        if input.cancel:
-                set_target(null)
+        elif input.target_cancel:
+                targeting.set_target(null)
 
 
-func enable_local_control() -> void:
-        if not is_multiplayer_authority() or local_enabled:
-                return
+func enable_local_player() -> void:
+        input.process_mode = Node.PROCESS_MODE_INHERIT
 
-        local_enabled = true
-
-        $UI.visible = true
+        $UI.process_mode = Node.PROCESS_MODE_INHERIT
 
         %SkillBar.initialize(self)
-        targeting   = load_ability('player_select_target')
-        input       = load_ability('player_input')
 
         targeting.initialize(self)
+        targeting.process_mode = Node.PROCESS_MODE_INHERIT
+
         target_plate.initialize(self, 'changed_target') 
         player_plate.on_changed_target(self)
 
         add_child(preload("res://data/entities/player/camera.tscn").instantiate())
+
+        set_process(true)
 
 
 func send_state_data() -> void:

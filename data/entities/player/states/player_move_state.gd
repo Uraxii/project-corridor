@@ -5,7 +5,7 @@ var velocity    := Vector3.ZERO
 
 
 func frame_update(entity: Player) -> void:
-        entity.move.move_with_input(entity.input.move, entity.get_speed())
+        entity.move.move_with_input(entity.input.move, entity.stats.speed)
 
         if entity.input.jump:
                 transition.emit(self, 'jump')

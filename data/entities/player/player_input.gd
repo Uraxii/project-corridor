@@ -1,13 +1,12 @@
-class_name PlayerInput extends Node
+class_name PlayerInput extends MultiplayerSynchronizer
 
 var target_self:                bool = false
 var target_next:                bool = false
-var cancel:                     bool = false
+var target_cancel:                     bool = false
 
-var jump:       bool    = false
-var move:       Vector2 = Vector2.ZERO
-
-var mouse_move = false
+var jump:                       bool    = false
+var move:                       Vector2 = Vector2.ZERO
+var mouse_move:                 bool    = false
 
 var camera_look_enabled:        bool    = false
 var camera_rotation_enabled:    bool    = false
@@ -15,9 +14,10 @@ var camera_rotation:            Vector2 = Vector2.ZERO
 var camera_zoom_out:            bool    = false
 var camera_zoom_in:             bool    = false
 
-var mouse_motion_delta      := Vector2.ZERO
-var current_mouse_position  := Vector2.ZERO
-var previous_mouse_position := Vector2.ZERO
+
+var mouse_motion_delta       := Vector2.ZERO
+var current_mouse_position   := Vector2.ZERO
+var previous_mouse_position  := Vector2.ZERO
 
 var actions: Dictionary = {
         'bar_1_skill_1': func() -> bool: return Input.is_action_just_pressed('bar_1_skill_1'),
@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
         jump = Input.is_action_just_pressed('jump')
         target_self = Input.is_action_just_pressed('target_self')
         target_next = Input.is_action_just_pressed('target_next')
-        cancel = Input.is_action_just_pressed('ui_cancel')
+        target_cancel = Input.is_action_just_pressed('ui_cancel')
 
         camera_zoom_out = Input.is_action_just_pressed('camera_zoom_out')
         camera_zoom_in = Input.is_action_just_pressed('camera_zoom_in')
