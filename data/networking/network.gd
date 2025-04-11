@@ -72,6 +72,10 @@ static func serialize(obj: Object) -> Dictionary:
 
         var properties: Array[String] = obj.get("PROPERTIES")
 
+        if not properties:
+                Logger.error('Did not find PROPERTIES on object when serializing. An empty Dictionary will be returned.')
+                return dict
+
         for property in properties:
                 var value = obj.get(property)
 
@@ -91,9 +95,13 @@ static func deserialize(obj: Object, data: Dictionary) -> Object:
         var dict = {}
 
         if not obj:
-                return dict
+                return obj
 
         var properties: Array[String] = obj.get("PROPERTIES")
+
+        if not properties:
+                Logger.error('Did not find PROPERTIES on object when deserializing! Object will be returned with no changes.')
+                return obj
 
         for property in properties:
                 var value = data.get(property)
