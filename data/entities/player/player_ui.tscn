@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0qftvvqs4ja6"]
+
+[ext_resource type="PackedScene" uid="uid://b1bujdj5x0xe2" path="res://data/user_interface/skills/bar/skillbar.tscn" id="1_orhri"]
+[ext_resource type="PackedScene" uid="uid://l386dquxgm0v" path="res://data/user_interface/name_plate/name_plate.tscn" id="2_ae0ii"]
+
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SkillBar" parent="." instance=ExtResource("1_orhri")]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+number_of_buttons = 5
+
+[node name="PlayerPlate" parent="." instance=ExtResource("2_ae0ii")]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 30.0
+offset_right = 30.0
+scale = Vector2(2, 2)
+
+[node name="TargetPlate" parent="." instance=ExtResource("2_ae0ii")]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 500.0
+offset_right = 500.0
+scale = Vector2(2, 2)

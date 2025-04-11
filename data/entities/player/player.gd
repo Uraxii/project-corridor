@@ -2,13 +2,20 @@ class_name Player extends Entity
 
 const SHADER_HIGHLIGHT: Resource = preload("res://data/materials/highlight.tres")
 
-@export var stats: Stats
+@export var id: int = Network.SERVER_ID:
+        set(new_id):
+                Logger.debug('Changed authority id on %s' % name, {'old':id, 'new':new_id})
+                id = new_id
+                %Input.set_multiplayer_authority(id)
+                if id == multiplayer.get_unique_id():
+                        enable_local_player()
 
-@export var player_plate: NamePlate
-@export var target_plate: NamePlate
 
-@onready var health: Health = $Components/Health
-@onready var movement: Movement = %Movement
+@onready var input: PlayerInput = %Input
+@onready var targeting: PlayerSelectTarget = %Targeting
+
+@onready var player_plate: NamePlate = %PlayerPlate
+@onready var target_plate: NamePlate = %TargetPlate
 
 var player_info: PlayerInfo
 
@@ -21,40 +28,48 @@ var skill_binds: Dictionary = {
         'bar_1_skill_4': 'apply_regenerate',
 }
 
-var targeting   := load_ability('player_select_target')
-var input       := load_ability('player_input')
-# var move        := load_ability('move')
-var jump        := load_ability('jump')
-
 
 func _ready() -> void:
         super._ready()
 
-        targeting.initialize(self)
-        target_plate.initialize(self, 'changed_target')
-        player_plate.on_changed_target(self)
+        set_process(false)
 
 
 func _process(delta: float) -> void:
         super._process(delta)
 
-        targeting.position = body.position
-        targeting.rotation = body.rotation
+        if not input.is_multiplayer_authority():
+                return
 
         if input.target_next:
                 targeting.target_next()
-        if input.target_self:
+        elif input.target_self:
                 targeting.set_target(self)
-        if input.cancel:
-                set_target(null)
+        elif input.target_cancel:
+                targeting.set_target(null)
 
 
-func _physics_process(delta: float) -> void:
-        super._process(delta)
+func enable_local_player() -> void:
+        input.process_mode = Node.PROCESS_MODE_INHERIT
 
-        Server.update_player_info.rpc(body.position, body.rotation)
+        $UI.process_mode = Node.PROCESS_MODE_INHERIT
 
-        # player_info = Server.connections[multiplayer.get_unique_id()]
+        %SkillBar.initialize(self)
+
+        targeting.initialize(self)
+        targeting.process_mode = Node.PROCESS_MODE_INHERIT
+
+        target_plate.initialize(self, 'changed_target') 
+        player_plate.on_changed_target(self)
+
+        add_child(preload("res://data/entities/player/camera.tscn").instantiate())
+
+        set_process(true)
+
+
+func send_state_data() -> void:
+        # Server.update_player_info.rpc(body.position, body.rotation)
+        pass
 
 
 func set_target(new_target: Entity) -> void:

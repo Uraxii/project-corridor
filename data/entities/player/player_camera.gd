@@ -8,8 +8,7 @@ class_name PlayerCamera extends SpringArm3D
 @export var zoom_increment: float = 2.0
 
 @export var sensativity: float = 0.005
-@export var player: Player
-
+@onready var player: Player = get_parent()
 
 
 func _process(delta: float) -> void:

@@ -1,3 +1,1 @@
-class_name PlayerState
-
-extends StateBase
+class_name PlayerState extends StateBase

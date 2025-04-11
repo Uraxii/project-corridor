@@ -8,28 +8,14 @@ var player_owner: Entity = null
 
 
 func initialize(player: Entity):
-        # print('targeting')
-
         player_owner = player
-
         set_monitoring(true)
 
 
-func _ready() -> void:
-        position = player_owner.body.position
-
-        var collisions = get_overlapping_bodies()
-
-        # print('collisions size %d' % collisions.size())
-
-        for body in collisions:
-                _on_body_entered(body)
-
-
 func _process(delta: float) -> void:
-        position = player_owner.body.position
+        global_position = player_owner.body.global_position
 
-        if player_owner.target == null or position.distance_to(player_owner.target.body.position) > MAX_TARGETING_DISTACNE:
+        if player_owner.target != null and position.distance_to(player_owner.target.body.position) > MAX_TARGETING_DISTACNE:
                 player_owner.set_target(null)
 
 
@@ -60,8 +46,6 @@ func set_target(new_target: Entity) -> void:
 
 
 func target_next() -> void:
-        # print('target next')
-
         if potential_targets.size() == 0:
                 return
 

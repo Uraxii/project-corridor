@@ -1,6 +1,9 @@
 class_name Skill extends Node
 
+static var cast_result = CastResult.new()
+
 ### DATA VALUES ###
+var file:               String
 var id:                 String
 var description:        String
 var icon:               ImageTexture
@@ -33,7 +36,7 @@ var speed_boost:        float
 var teleport_range:     float
 
 ### BUFF / DEBUFF / EFFECT OVER TIME ###
-var apply_status_effect: String
+var status_effect_to_apply: String
 
 var effect_type:                String
 var effect_duration:            float
@@ -55,9 +58,11 @@ var sfx_cast:           String
 var sfx_cast_success:   String
 
 
-func _init(skill_name: String) -> void:
+func _init(config_file) -> void:
+        self.file = config_file
+
         var config = ConfigFile.new()
-        config.load("res://data/skills/data/%s.cfg" % skill_name.to_lower())
+        config.load("res://data/skills/data/%s.cfg" % file.to_lower())
 
         self.id                 = config.get_value('data', 'id', '')
         self.description        = config.get_value('data', 'description', '')
@@ -78,7 +83,7 @@ func _init(skill_name: String) -> void:
         self.cast_time          = config.get_value('data', 'cast_time', 0.0)
         self.is_on_gcd          = config.get_value('data', 'is_on_gcd', true)
 
-        self.can_target_self    = config.get_value('data', 'can_target_self', false)
+        self.can_target_self    = config.get_value('data', 'can_target_self', true)
         self.can_target_friend  = config.get_value('data', 'can_target_friend', false)
         self.can_target_enemy   = config.get_value('data', 'can_target_enemy', false)
 
@@ -93,10 +98,10 @@ func _init(skill_name: String) -> void:
 
         self.teleport_range     = config.get_value('data', 'teleport_range', 0.0)
 
-        self.apply_status_effect        = config.get_value('data', 'apply_status_effect', '')
+        self.status_effect_to_apply     = config.get_value('data', 'apply_status_effect', '')
         self.effect_type                = config.get_value('data', 'effect_type', '')
         self.effect_duration            = config.get_value('data', 'effect_duration', 0.0)
-        self.effect_remaining_time      = config.get_value('data', 'effect_remaining_time', 0.0)
+        self.effect_remaining_time      = self.effect_duration
 
         self.trigger_free_cast  = config.get_value('data', 'trigger_free_cast', {})
 
@@ -111,64 +116,69 @@ func _init(skill_name: String) -> void:
         self.effect_timer = Timer.new()
 
 
-static func cast(skill: Skill, caster: Entity, target: Entity) -> String:
-        # print('Casting %s' % [skill.id])
+static func cast(skill: Skill, caster: Entity, target: Entity) -> CastResult:
+        var result = CastResult.new()
+        result.skill = skill.file
 
-        if target == null:
-                target = caster
+        if not skill:
+                return result
 
-        if not is_target_valid(skill, caster, target):
-                return 'Invalid target.'
+        # If this is a normal cast (i.e. not a status effect) then check if the target is valid)
+        if skill.effect_type.is_empty():
+                if target == null:
+                        target = caster
 
-        var cast_result = ''
+                result.caster = caster.name
+                result.target = target.name
+
+                if not is_target_valid(skill, caster, target):
+                        result.success = CastResult.INVALID_TARGET
+                        return result
 
         if skill.heal_amount != 0:
-                heal_entity(target, skill.heal_amount)
-                cast_result += 'healing %d health, ' % [skill.heal_amount]
+                result.heal = heal_health(target, skill.heal_amount)
 
         if skill.damage_amount != 0:
-                damage_entity(target, skill.damage_amount)
-                cast_result += 'dealing %d damage, ' % [skill.damage_amount]
+                result.damage = damage_health(target, skill.damage_amount)
 
-        if not skill.apply_status_effect.is_empty():
-                var status_effect = Skill.new(skill.apply_status_effect)
-                status_effect.effect_caster = caster
-                status_effect.effect_remaining_time = status_effect.effect_duration
-                target.apply_status_effect(status_effect)
+        if not skill.status_effect_to_apply.is_empty():
+                result.apply_status = apply_status_effect(caster, target, skill.status_effect_to_apply)
 
         if not skill.effect_type.is_empty():
-                skill.effect_remaining_time -= Server.tick_interval
+                skill.effect_remaining_time -= Network.tick_interval
+                result.status_remaining = skill.effect_remaining_time
 
                 if skill.effect_remaining_time <= 0:
                         var status_effect_index = target.status_effects.find(skill)
                         target.status_effects.remove_at(status_effect_index)
 
-
-        log_event(caster, target, skill.id, cast_result)
-
-        return ''
+        return result
 
 
-static func damage_entity(target: Entity, base_damage: float) -> void:
+static func damage_health(target: Entity, base_damage: float) -> float:
         var damage_to_apply = base_damage
-        target.health.damage(damage_to_apply)
+
+        var remaining_damage = target.stats.health_extra - damage_to_apply
+        target.stats.health_extra -= damage_to_apply
+
+        # Any remaining damage will be negative beucase we are subtracting from the extra health pool above.
+        if remaining_damage < 0:
+                target.stats.health += remaining_damage
+
+        return damage_to_apply
 
 
-static func heal_entity(target: Entity, amount: float) -> void:
-        target.health.heal(amount)
+static func heal_health(target: Entity, amount: float) -> float:
+        var healing_to_apply = amount
+        target.stats.health += healing_to_apply
+        return healing_to_apply
 
 
-static func move_entity(speed_modifier: float, input: Vector2, target: Entity) -> void:
-        var body = target.body
-        var direction = body.transform.basis * Vector3(input.x, 0, input.y).normalized()
-
-        var speed_to_apply: int = target.stats.speed + speed_modifier
-
-        var velocity = direction * speed_to_apply
-
-        body.velocity += velocity * speed_to_apply
-        body.move_and_slide()
-        body.velocity -= velocity * speed_to_apply
+static func apply_status_effect(caster: Entity, target: Entity, status_effect_file: String) -> String:
+        var status_effect = Skill.new(status_effect_file)
+        status_effect.effect_caster = caster
+        target.apply_status_effect(status_effect)
+        return status_effect_file
 
 
 static func is_target_valid(skill, caster: Entity, target: Entity) -> Entity:
@@ -184,7 +194,3 @@ static func is_target_valid(skill, caster: Entity, target: Entity) -> Entity:
                 return null
 
         return target
-
-
-static func log_event(caster: Entity, target: Entity, skill_id: String, event: String) -> void:
-        print("%s casted %s on %s, %s" % [caster.name, skill_id, target.name, event])

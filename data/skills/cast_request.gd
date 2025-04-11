@@ -1,17 +1,17 @@
 class_name CastRequest
 
-var id:                 String
-var skill:              Skill
-var caster:             Entity
-var target:             Entity
-var tick_submitted:     int
+const PROPERTIES: Array[String] = [
+        "skill",
+        "caster",
+        "target",
+]
+
+var skill:      String
+var caster:     String
+var target:     String
 
 
-func _init(skill: Skill, caster: Entity, target: Entity, current_tick: int):
-        self.skill              = skill
-        self.caster             = caster
-        self.target             = target
-        self.tick_submitted     = current_tick
-
-        # TODO: Add some session ID data to make this _less_ spoofable
-        self.id = '%s-%s-%s-%d' % [self.skill.id, self.caster.id, self.target.id, self.tick_submitted]
+func _init(skill_file: String = '', caster_node: String = '', target_node: String = ''):
+        self.skill      = skill_file
+        self.caster     = caster_node
+        self.target     = target_node

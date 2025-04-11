@@ -1,18 +1,27 @@
 [gd_scene load_steps=20 format=3 uid="uid://pw1myqomeom7"]
 
 [ext_resource type="Script" uid="uid://duyin3ykk8d8r" path="res://data/entities/player/player.gd" id="1_du1rf"]
-[ext_resource type="PackedScene" uid="uid://ht0rssl8am3o" path="res://data/entities/components/stats/stats.tscn" id="2_102da"]
-[ext_resource type="PackedScene" uid="uid://vbp752xidmk7" path="res://data/entities/components/movement/movement.tscn" id="3_yci4h"]
-[ext_resource type="PackedScene" uid="uid://b6pdubcmdvlua" path="res://data/entities/components/health/health.tscn" id="4_gcjul"]
-[ext_resource type="PackedScene" uid="uid://3ggg5e0jg00u" path="res://data/entities/components/death/death.tscn" id="5_8sqsr"]
+[ext_resource type="PackedScene" uid="uid://b11q5vc0osyk2" path="res://data/entities/stats.tscn" id="2_l20xk"]
+[ext_resource type="Script" uid="uid://b7au2j3m5osbc" path="res://data/entities/player/player_input.gd" id="2_llu1g"]
 [ext_resource type="Script" uid="uid://banbhjws8f1uu" path="res://data/entities/states/state_machine.gd" id="5_o5tub"]
 [ext_resource type="PackedScene" uid="uid://b531oyvupifil" path="res://data/entities/player/states/player_idle_state.tscn" id="6_fh4g5"]
 [ext_resource type="PackedScene" uid="uid://bdsenapllptps" path="res://data/entities/player/states/player_move_state.tscn" id="7_xx4oc"]
+[ext_resource type="Script" uid="uid://j42apd0ldaf5" path="res://data/entities/player/player_select_target.gd" id="9_llu1g"]
 [ext_resource type="Script" uid="uid://b21on2dx1kubr" path="res://data/entities/player/states/player_jump_state.gd" id="9_w0851"]
 [ext_resource type="Script" uid="uid://c7gf4p8gtvxqy" path="res://data/entities/player/states/player_falling_state.gd" id="10_hpuls"]
 [ext_resource type="PackedScene" uid="uid://l386dquxgm0v" path="res://data/user_interface/name_plate/name_plate.tscn" id="10_lay5f"]
 [ext_resource type="PackedScene" uid="uid://b1bujdj5x0xe2" path="res://data/user_interface/skills/bar/skillbar.tscn" id="11_fa8ny"]
-[ext_resource type="Script" uid="uid://bn7d5k41r8k5e" path="res://data/entities/player/player_camera.gd" id="11_qw1rd"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_l20xk"]
+properties/0/path = NodePath("Body:position")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath("Body:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath("Body:scale")
+properties/2/spawn = true
+properties/2/replication_mode = 2
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g00a7"]
 
@@ -28,33 +37,22 @@ albedo_color = Color(0.281187, 0.281187, 0.281187, 1)
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_t5uow"]
 height = 1.93918
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("stats", "player_plate", "target_plate", "body", "state_machines", "ability_container")]
+[sub_resource type="SphereShape3D" id="SphereShape3D_llu1g"]
+
+[node name="Player" type="Node3D" node_paths=PackedStringArray("body", "state_machines")]
 script = ExtResource("1_du1rf")
-stats = NodePath("Components/Stats")
-player_plate = NodePath("UI/PlayerPlate")
-target_plate = NodePath("UI/TargetPlate")
-display_name = "Player"
+config_file = "player"
 body = NodePath("Body")
-state_machines = [NodePath("StateMachines/Movement"), NodePath("StateMachines/Abilities")]
-ability_container = NodePath("Abilities")
+state_machines = [NodePath("StateMachines/Movement")]
 
-[node name="Components" type="Node" parent="."]
-
-[node name="Stats" parent="Components" instance=ExtResource("2_102da")]
-
-[node name="Movement" parent="Components" node_paths=PackedStringArray("stats", "body") instance=ExtResource("3_yci4h")]
-unique_name_in_owner = true
-stats = NodePath("../Stats")
-body = NodePath("../../Body")
-
-[node name="Health" parent="Components" instance=ExtResource("4_gcjul")]
+[node name="Stats" parent="." instance=ExtResource("2_l20xk")]
 unique_name_in_owner = true
 
-[node name="Death" parent="Components" node_paths=PackedStringArray("entity", "health") instance=ExtResource("5_8sqsr")]
-entity = NodePath("../..")
-health = NodePath("../Health")
-
-[node name="Abilities" type="Node" parent="."]
+[node name="Input" type="MultiplayerSynchronizer" parent="."]
+unique_name_in_owner = true
+process_mode = 4
+replication_config = SubResource("SceneReplicationConfig_l20xk")
+script = ExtResource("2_llu1g")
 
 [node name="StateMachines" type="Node" parent="."]
 
@@ -71,18 +69,6 @@ script = ExtResource("9_w0851")
 
 [node name="falling" type="Node" parent="StateMachines/Movement"]
 script = ExtResource("10_hpuls")
-
-[node name="Abilities" type="Node" parent="StateMachines"]
-script = ExtResource("5_o5tub")
-
-[node name="SpringArm3D" type="SpringArm3D" parent="." node_paths=PackedStringArray("player")]
-spring_length = 6.0
-script = ExtResource("11_qw1rd")
-player = NodePath("..")
-
-[node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
-transform = Transform3D(1, 0, 0, 0, 0.968148, 0.25038, 0, -0.25038, 0.968148, 0, 0, 0)
-current = true
 
 [node name="Body" type="CharacterBody3D" parent="."]
 collision_layer = 2
@@ -112,7 +98,19 @@ surface_material_override/0 = SubResource("StandardMaterial3D_xjdgv")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
 shape = SubResource("CapsuleShape3D_t5uow")
 
+[node name="Targeting" type="Area3D" parent="Body"]
+unique_name_in_owner = true
+process_mode = 4
+collision_layer = 2147483648
+collision_mask = 15
+script = ExtResource("9_llu1g")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body/Targeting"]
+transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 0, 0, 0)
+shape = SubResource("SphereShape3D_llu1g")
+
 [node name="UI" type="Control" parent="."]
+process_mode = 4
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -120,23 +118,28 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SkillBar" parent="UI" node_paths=PackedStringArray("entity") instance=ExtResource("11_fa8ny")]
+[node name="SkillBar" parent="UI" instance=ExtResource("11_fa8ny")]
+unique_name_in_owner = true
 layout_mode = 1
 offset_left = 0.0
 offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 0.0
-entity = NodePath("../..")
 number_of_buttons = 5
 
 [node name="PlayerPlate" parent="UI" instance=ExtResource("10_lay5f")]
+unique_name_in_owner = true
 layout_mode = 1
 offset_left = 30.0
 offset_right = 30.0
 scale = Vector2(2, 2)
 
 [node name="TargetPlate" parent="UI" instance=ExtResource("10_lay5f")]
+unique_name_in_owner = true
 layout_mode = 1
 offset_left = 500.0
 offset_right = 500.0
 scale = Vector2(2, 2)
+
+[connection signal="body_entered" from="Body/Targeting" to="Body/Targeting" method="_on_body_entered"]
+[connection signal="body_exited" from="Body/Targeting" to="Body/Targeting" method="_on_body_exited"]

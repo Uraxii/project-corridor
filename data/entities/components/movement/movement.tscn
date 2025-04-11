@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://vbp752xidmk7"]
-
-[ext_resource type="Script" uid="uid://bnavwjly1r3wy" path="res://Scripts/Components/movement.gd" id="1_w8w86"]
-
-[node name="Movement" type="Node" node_paths=PackedStringArray("body")]
-script = ExtResource("1_w8w86")
-body = NodePath("")

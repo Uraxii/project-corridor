@@ -1,7 +1,5 @@
-[gd_scene load_steps=8 format=3 uid="uid://bek81rl6qcugn"]
+[gd_scene load_steps=6 format=3 uid="uid://bek81rl6qcugn"]
 
-[ext_resource type="PackedScene" uid="uid://8brs8d84ngt8" path="res://data/entities/strafer/strafer.tscn" id="2_8703a"]
-[ext_resource type="PackedScene" uid="uid://cys2dvmphwy10" path="res://data/entities/target_dummy/target_dummy.tscn" id="2_vwa2n"]
 [ext_resource type="PackedScene" uid="uid://4tg2rw17el7f" path="res://environment/patrol_node.tscn" id="4_sl7vw"]
 
 [sub_resource type="Environment" id="Environment_hav7s"]
@@ -34,25 +32,8 @@ skeleton = NodePath("")
 transform = Transform3D(0.361191, 0.459575, -0.811377, 0.797676, 0.298382, 0.5241, 0.482963, -0.836516, -0.258819, -12.733, 26.8861, 0)
 light_energy = 1.068
 
-[node name="Strafer" parent="." node_paths=PackedStringArray("state_machines") instance=ExtResource("2_8703a")]
-transform = Transform3D(0.830907, 0, 0.556412, 0, 1, 0, -0.556412, 0, 0.830907, -2.03697, 6.09112, 0)
-state_machines = [NodePath("StatesMachines/LowerBody")]
-
-[node name="patrol" parent="Strafer/StatesMachines/LowerBody" index="0" node_paths=PackedStringArray("patrol_locations")]
-patrol_locations = [NodePath("../../../../PatrolNode"), NodePath("../../../../PatrolNode2")]
-
-[node name="TargetDummy" parent="." instance=ExtResource("2_vwa2n")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.668035, 10.1256, -2.65132)
-display_name = "Target Dummy 1"
-
-[node name="TargetDummy2" parent="." instance=ExtResource("2_vwa2n")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.89992, 7.62867, -0.798707)
-display_name = "Target Dummy 2"
-
 [node name="PatrolNode" parent="." instance=ExtResource("4_sl7vw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.824, 0.5, -8.46895)
 
 [node name="PatrolNode2" parent="." instance=ExtResource("4_sl7vw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.9287, 0.5, 8.9421)
-
-[editable path="Strafer"]

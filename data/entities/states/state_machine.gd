@@ -1,7 +1,4 @@
-class_name StateMachine
-
-extends Node
-
+class_name StateMachine extends Node
 
 @export var default_state: StateBase
 
