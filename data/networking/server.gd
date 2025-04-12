@@ -4,8 +4,8 @@ signal peer_connected(id: int)
 signal peer_disconnected(id: int)
 signal server_disconnected
 
-const DEFAULT_SERVER_IP: String = "localhost"
-const DEFAULT_PORT:      int    = 7000
+const PORT:      int = 7000
+const MAX_CONNS: int = 99
 
 var network = ENetMultiplayerPeer.new()
 
@@ -21,7 +21,7 @@ var poll_rate: int = 24:
 
 func _ready() -> void:
         if not network:
-                Logger.error("Tried creating a client, but network is null!")
+                Logger.error("Tried creating a server, but network is null!")
                 return
 
         multiplayer.peer_connected.connect(_on_peer_connected)
@@ -34,9 +34,7 @@ func _ready() -> void:
         # We want to control this manually.
         get_tree().multiplayer_poll = false
 
-
-func start_client(server_ip: String = DEFAULT_SERVER_IP, port: int = DEFAULT_PORT) -> void:
-        var err = network.create_client(server_ip, port)
+        var err = network.create_server(PORT, MAX_CONNS)
 
         if err != OK:
                 Logger.error("Failed to create server!", {"error code": err})
@@ -56,6 +54,16 @@ func _poll() -> void:
                 var channel     = network.get_packet_channel()
                 var mode        = network.get_packet_mode()
                 var packet      = network.get_packet()
+
+                print("--- SERVER ---")
+
+
+                print("message: ", bytes_to_var(packet))
+
+                print("--------------")
+
+
+
 
 
 func _on_peer_connected(id: int) -> void:

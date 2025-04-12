@@ -64,6 +64,7 @@ func construct(description: String, log_verbosity: level, details: Dictionary = 
 
         for value in details:
                 message += "\t" + value.to_upper() + "=" + str(details[value])
-        message += "\tPEER="+ str(Network.my_peer_id) # + "\tSYSTEM=" + system + "\tNODE=" + node
+        if multiplayer:
+                message += "\tPEER="+ str(multiplayer.get_unique_id()) # + "\tSYSTEM=" + system + "\tNODE=" + node
 
         return message

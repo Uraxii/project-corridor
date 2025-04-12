@@ -1,156 +1,117 @@
 extends Node
 
-signal network_tick
-
-signal client_connected(id: int)
-signal client_disconnected(id: int)
+signal peer_connected(id: int)
+signal peer_disconnected(id: int)
 signal server_disconnected
 
-const SECONDS_PER_MINUTE: float  = 60.0
+const DEFAULT_SERVER_IP: String = "localhost"
+const DEFAULT_PORT:      int    = 7000
+const DEFAULT_MAX_PEERS: int    = 99
+const DEFAULT_ID:        int    = -1
+const SERVER_ID:         int    = 1
+const ALL_PEERS_ID:      int    = 0
 
-const DEFAULT_SERVER_IP:  String = "localhost"
-const PORT:               int    = 7000
-const MAX_CONNECTIONS:    int    = 99
+const MIN_VARIENT_PACKET_SIZE: int = 16
 
-const INVALID_PEER_ID:    int    = -1
-const ALL_PEERS:          int    = 0
-const SERVER_ID:          int    = 1
+var network := ENetMultiplayerPeer.new()
+var is_host: bool = false
 
-var gcd_interal:          float   = 1.0
-var tick_rate:            int     = 24
+var poll_timer: Timer = Timer.new()
 
-static var tick_timer:    Timer
-static var tick_interval: float
-static var current_tick:  int
-
-@onready var player_spawner:    MultiplayerSpawner = %PlayerSpawner
-@onready var npc_spawner:       MultiplayerSpawner = %NpcSpawner
-@onready var level_spawner:     MultiplayerSpawner = %LevelSpawner
-
-@onready var player_container:  Node = %Players
-@onready var npc_container:     Node = %NPCs
-@onready var level_container:   Node = %Levels
-
-var logger: Logger
-
-var my_peer_id: int = INVALID_PEER_ID
-
-var entry_scene:        Resource = preload("res://data/maps/test_scene.tscn")
-var lobby_scene:        Resource = preload("res://data/maps/test_scene.tscn")
-var level_scene:        Resource = preload("res://data/maps/test_scene.tscn")
-var player_scene:       Resource = preload("res://data/entities/player/player.tscn")
-var remote_player_scene:Resource = preload("res://data/entities/player/remote_player.tscn")
-
-var connections:        Dictionary[int, PlayerInfo] = {}
-var current_scene:      Node
+# Number of times per second to poll the network.
+var polling_rate: int = 24:
+        set(value):
+                polling_rate = value
+                # Seconds between each network poll.
+                poll_timer.wait_time = polling_rate / 60.0
 
 
 func _ready() -> void:
-        logger = Logger
-
-        multiplayer.peer_connected.connect(_on_client_connected)
-        multiplayer.peer_disconnected.connect(_on_client_disconnected)
+        multiplayer.peer_connected.connect(_on_peer_connected)
+        multiplayer.peer_disconnected.connect(_on_peer_disconnected)
         multiplayer.connected_to_server.connect(_on_connected_ok)
         multiplayer.connection_failed.connect(_on_connected_fail)
         multiplayer.server_disconnected.connect(_on_server_disconnected)
 
-        current_tick = 0
+        # Disables Godot automatic network polling.
+        # We want to control this manually.
+        get_tree().multiplayer_poll = false
 
-        tick_interval = tick_rate/SECONDS_PER_MINUTE
-
-        tick_timer = Timer.new()
-        tick_timer.wait_time = tick_interval
-        tick_timer.autostart = true
-        tick_timer.timeout.connect(network_tick.emit)
-        add_child(tick_timer)
+        poll_timer.autostart = true
+        poll_timer.timeout.connect(_poll)
 
 
-func spawn_player(peer_id: int) -> void:
-        if not multiplayer.is_server():
+func start_server(port:int, max_peers:int, host:bool):
+        var err = network.create_server(port, max_peers)
+
+        if err != OK:
+                Logger.error("Failed to create server!", {"error code": err})
                 return
 
-        logger.info("Added player.", {"client id": peer_id})
+        if host:
+                is_host = host
+                # TODO: Handle client stuff ...
 
-        var player: Player = player_scene.instantiate()
-        player.name = str(peer_id)
+        multiplayer.multiplayer_peer = network
 
-        player_container.add_child(player, true)
-        player.id = peer_id
+        add_child(poll_timer)
 
 
-func remove_player(id: int) -> void:
-        if not multiplayer.is_server():
+func start_client(address:String, port:int) -> void:
+        var err = network.create_client(address, port)
+
+        if err != OK:
+                Logger.error("Failed to create client!", {"error code": err})
                 return
 
-        print("INFO=Removed player.\tID=%d" % id)
+        multiplayer.multiplayer_peer = network
 
-        if not player_container.has_node(str(id)):
-                return
-
-        player_container.get_node(str(id)).queue_free()
+        add_child(poll_timer)
 
 
-func start_client(address=DEFAULT_SERVER_IP, port=PORT):
-        print("INFO=Started client.\tServer Adress=%s\tPort=%d" % [address, port])
+# Triggered by poll_timer.timeout.
+func _poll() -> void:
+        # Logger.debug("Polling")
 
-        var peer = ENetMultiplayerPeer.new()
-        var error = peer.create_client(address, port)
+        # !!! TODO: Encrypt network traffic !!!
+        # Note: Investigate Godot's Crypto class.
 
-        if error:
-                return error
+        network.poll()
 
-        multiplayer.multiplayer_peer = peer
+        for i in network.get_available_packet_count():
+                var peer_id     = network.get_packet_peer()
+                var channel     = network.get_packet_channel()
+                var mode        = network.get_packet_mode()
+                var packet: PackedByteArray = network.get_packet()
 
+                # Not sure what is causing this condition.
+                # Might just be corrupted packets.
+                if packet.size() < MIN_VARIENT_PACKET_SIZE:
+                        return
 
-func start_server():
-        print("INFO=Started server.\tPort=%d\tMax Connections=%d" % [PORT, MAX_CONNECTIONS])
-
-        var peer = ENetMultiplayerPeer.new()
-        var error = peer.create_server(PORT, MAX_CONNECTIONS)
-
-        if error:
-                return error
-
-        multiplayer.multiplayer_peer = peer
-
-        spawn_player(SERVER_ID)
-
-
-func load_world():
-        transition_scene(lobby_scene)
-
-        if multiplayer.is_server():
-                _on_connected_ok()
+                print("--- PACKET ---")
+                print("sender: ", peer_id)
+                print("message: ", bytes_to_var(packet))
+                print("--------------")
 
 
-func transition_scene(new_scene: Resource):
-        if current_scene != null:
-                current_scene.queue_free()
+func _on_peer_connected(peer_id: int) -> void:
+        # Logger.info("Peer connected.", {"peer_id":peer_id})
+        var peer: ENetPacketPeer = network.get_peer(peer_id)
+        var message: Dictionary = HelloMessage.new("Nicole", "Sup", 21).serialize()
+        var buffer: PackedByteArray = var_to_bytes(message)
+        var channel = 0
 
-        current_scene = new_scene.instantiate()
-        get_tree().root.add_child(current_scene)
-
-
-func _on_client_connected(id: int) -> void:
-        print("INFO=Client connected.\tID=%d" % id)
-        spawn_player(id)
+        peer.send(channel,buffer, ENetPacketPeer.FLAG_RELIABLE)
 
 
-func _on_client_disconnected(id):
-        remove_player(id)
-
-        connections.erase(id)
-        client_disconnected.emit(id)
+func _on_peer_disconnected(id):
+        peer_disconnected.emit(id)
 
 
 func _on_connected_ok() -> void:
         var peer_id: int = multiplayer.get_unique_id()
-        my_peer_id = peer_id
-        # var player_info = PlayerInfo.new(multiplayer.get_unique_id(), Vector3.ZERO, Vector3.ZERO)
-        # instantiate_player(player_info)
-        # spawn_player(peer_id)
-
-        client_connected.emit(peer_id)
+        peer_connected.emit(peer_id)
 
 
 func _on_connected_fail() -> void:
@@ -159,13 +120,4 @@ func _on_connected_fail() -> void:
 
 func _on_server_disconnected():
         multiplayer.multiplayer_peer = null
-        connections.clear()
         server_disconnected.emit()
-
-
-func _exit_tree() -> void:
-        multiplayer.peer_connected.disconnect(_on_client_connected)
-        multiplayer.peer_disconnected.disconnect(_on_client_disconnected)
-        multiplayer.connected_to_server.disconnect(_on_connected_ok)
-        multiplayer.connection_failed.disconnect(_on_connected_fail)
-        multiplayer.server_disconnected.disconnect(_on_server_disconnected)

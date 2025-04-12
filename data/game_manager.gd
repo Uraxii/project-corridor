@@ -5,7 +5,7 @@ static var cast_queue:  Array[CastRequest] = []
 
 
 func _ready() -> void:
-        Network.network_tick.connect(_process_tick)
+        Network.poll_timer.timeout.connect(_process_tick)
 
 
 func register_entity(entity: Entity) -> void:

@@ -10,13 +10,17 @@ func _ready() -> void:
 
 
 func host_game() -> void:
-        Network.start_server()
-        Network.load_world()
+        Network.start_server(
+                Network.DEFAULT_PORT,
+                Network.DEFAULT_MAX_PEERS,
+                true
+        )
+        #Network.load_world()
         self.visible = false
 
 
 
 func join_game() -> void:
-        Network.start_client()
-        Network.load_world()
+        Network.start_client(Network.DEFAULT_SERVER_IP, Network.DEFAULT_PORT)
+        #Network.load_world()
         self.visible = false

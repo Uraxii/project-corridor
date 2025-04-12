@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://bo2d1unbgjjlo"]
+[gd_scene load_steps=2 format=3 uid="uid://b4hto72khdwj0"]
 
 [ext_resource type="Script" uid="uid://b7m24di4l04pb" path="res://data/networking/network.gd" id="1_frf38"]
 
