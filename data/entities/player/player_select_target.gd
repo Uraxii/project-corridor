@@ -2,6 +2,8 @@ class_name PlayerSelectTarget extends Area3D
 
 const MAX_TARGETING_DISTACNE = 50
 
+@onready var body: CharacterBody3D = %Body
+
 var potential_targets: Array[Entity] = []
 var next_target:int = 0
 var player_owner: Entity = null
@@ -13,7 +15,8 @@ func initialize(player: Entity):
 
 
 func _process(delta: float) -> void:
-        global_position = player_owner.body.global_position
+        global_position = body.global_position
+        global_rotation = body.global_rotation
 
         if player_owner.target != null and position.distance_to(player_owner.target.body.position) > MAX_TARGETING_DISTACNE:
                 player_owner.set_target(null)

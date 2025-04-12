@@ -57,9 +57,13 @@ func _on_pressed() -> void:
                 Logger.error('Caster is null on skill button!', {'button node':name})
                 return
 
-        var request := CastRequest.new(skill.file, caster.name, caster.target.name)
+        var request := CastRequest.new()
+        request.load(skill.file, caster.name, caster.target.name)
+        var serialzied_request: Dictionary = request.serialize()
 
-        GameManager.queue_cast.rpc(Network.serialize(request))
+        Logger.debug("Serialized CastReqeust", {"Message":str(serialzied_request)})
+
+        GameManager.queue_cast.rpc(serialzied_request)
 
         if skill.cooldown > 0:
                 timer.wait_time = skill.cooldown

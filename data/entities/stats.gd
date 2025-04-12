@@ -1,4 +1,4 @@
-class_name EntityData extends Node
+class_name EntityData extends MultiplayerSynchronizer
 
 signal death
 
@@ -83,6 +83,13 @@ signal death
 
 @export var gravity_scale_base: float
 @export var gravity_scale:      float
+
+
+func _enter_tree() -> void:
+        replication_interval = Network.tick_interval
+        delta_interval = Network.tick_interval
+
+
 
 var is_dead: bool:
         get():

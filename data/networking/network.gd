@@ -1,26 +1,27 @@
 extends Node
 
+signal network_tick
+
 signal client_connected(id: int)
 signal client_disconnected(id: int)
 signal server_disconnected
 
-signal network_tick
+const SECONDS_PER_MINUTE: float  = 60.0
 
-const DEFAULT_SERVER_IP: String = "localhost"
-const PORT: int = 7000
-const MAX_CONNECTIONS: int = 2
+const DEFAULT_SERVER_IP:  String = "localhost"
+const PORT:               int    = 7000
+const MAX_CONNECTIONS:    int    = 99
 
-const INVALID_PEER_ID: int = -1
-const ALL_PEERS: int = 0
-const SERVER_ID: int = 1
+const INVALID_PEER_ID:    int    = -1
+const ALL_PEERS:          int    = 0
+const SERVER_ID:          int    = 1
 
-const GCD_INTERVAL:       float   = 1.0
-const TICK_RATE:          int     = 24
-const SECONDS_PER_MINUTE: int     = 60
+var gcd_interal:          float   = 1.0
+var tick_rate:            int     = 24
 
-static var tick_timer: Timer
+static var tick_timer:    Timer
 static var tick_interval: float
-static var current_tick: int
+static var current_tick:  int
 
 @onready var player_spawner:    MultiplayerSpawner = %PlayerSpawner
 @onready var npc_spawner:       MultiplayerSpawner = %NpcSpawner
@@ -40,8 +41,8 @@ var level_scene:        Resource = preload("res://data/maps/test_scene.tscn")
 var player_scene:       Resource = preload("res://data/entities/player/player.tscn")
 var remote_player_scene:Resource = preload("res://data/entities/player/remote_player.tscn")
 
-var connections: Dictionary[int, PlayerInfo] = {}
-var current_scene: Node
+var connections:        Dictionary[int, PlayerInfo] = {}
+var current_scene:      Node
 
 
 func _ready() -> void:
@@ -55,7 +56,7 @@ func _ready() -> void:
 
         current_tick = 0
 
-        tick_interval = TICK_RATE/float(SECONDS_PER_MINUTE)
+        tick_interval = tick_rate/SECONDS_PER_MINUTE
 
         tick_timer = Timer.new()
         tick_timer.wait_time = tick_interval
@@ -64,63 +65,11 @@ func _ready() -> void:
         add_child(tick_timer)
 
 
-static func serialize(obj: Object) -> Dictionary:
-        var dict = {}
-
-        if not obj:
-                return dict
-
-        var properties: Array[String] = obj.get("PROPERTIES")
-
-        if not properties:
-                Logger.error('Did not find PROPERTIES on object when serializing. An empty Dictionary will be returned.')
-                return dict
-
-        for property in properties:
-                var value = obj.get(property)
-
-                if not value:
-                        Logger.error('Did not find property when serializing! Please ensure the values in your property array are up to date.', {'property':property})
-                        continue
-
-                if value is Array or value is Dictionary:
-                        dict[property] = value.duplicate()
-                else:
-                        dict[property] = value
-
-        return dict
-
-
-static func deserialize(obj: Object, data: Dictionary) -> Object:
-        var dict = {}
-
-        if not obj:
-                return obj
-
-        var properties: Array[String] = obj.get("PROPERTIES")
-
-        if not properties:
-                Logger.error('Did not find PROPERTIES on object when deserializing! Object will be returned with no changes.')
-                return obj
-
-        for property in properties:
-                var value = data.get(property)
-
-                if not value:
-                        Logger.error('Property not found on object when peforming deserialization! Please ensure the values in your property array are up to date.', {'missing property':property, 'all properties':str(properties)})
-                        continue
-
-                obj.set(property, value)
-
-        return obj
-
-
-
 func spawn_player(peer_id: int) -> void:
         if not multiplayer.is_server():
                 return
 
-        logger.info('Added player.', {'client id': peer_id})
+        logger.info("Added player.", {"client id": peer_id})
 
         var player: Player = player_scene.instantiate()
         player.name = str(peer_id)
@@ -133,7 +82,7 @@ func remove_player(id: int) -> void:
         if not multiplayer.is_server():
                 return
 
-        print('INFO=Removed player.\tID=%d' % id)
+        print("INFO=Removed player.\tID=%d" % id)
 
         if not player_container.has_node(str(id)):
                 return
@@ -142,7 +91,7 @@ func remove_player(id: int) -> void:
 
 
 func start_client(address=DEFAULT_SERVER_IP, port=PORT):
-        print('INFO=Started client.\tServer Adress=%s\tPort=%d' % [address, port])
+        print("INFO=Started client.\tServer Adress=%s\tPort=%d" % [address, port])
 
         var peer = ENetMultiplayerPeer.new()
         var error = peer.create_client(address, port)
@@ -154,7 +103,7 @@ func start_client(address=DEFAULT_SERVER_IP, port=PORT):
 
 
 func start_server():
-        print('INFO=Started server.\tPort=%d\tMax Connections=%d' % [PORT, MAX_CONNECTIONS])
+        print("INFO=Started server.\tPort=%d\tMax Connections=%d" % [PORT, MAX_CONNECTIONS])
 
         var peer = ENetMultiplayerPeer.new()
         var error = peer.create_server(PORT, MAX_CONNECTIONS)
@@ -183,7 +132,7 @@ func transition_scene(new_scene: Resource):
 
 
 func _on_client_connected(id: int) -> void:
-        print('INFO=Client connected.\tID=%d' % id)
+        print("INFO=Client connected.\tID=%d" % id)
         spawn_player(id)
 
 

@@ -24,6 +24,10 @@ var actions: Dictionary = {
         'bar_1_skill_2': func() -> bool: return Input.is_action_just_pressed('bar_1_skill_2'),
 }
 
+func _enter_tree() -> void:
+        replication_interval = Network.tick_interval
+        delta_interval = Network.tick_interval
+        
 
 func _ready() -> void:
         Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

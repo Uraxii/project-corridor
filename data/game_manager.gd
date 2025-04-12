@@ -7,6 +7,7 @@ static var cast_queue:  Array[CastRequest] = []
 func _ready() -> void:
         Network.network_tick.connect(_process_tick)
 
+
 func register_entity(entity: Entity) -> void:
         entities[entity.name] = entity
         # Logger.debug('Registerd entity.', {'Display Name':entity.stats.display_name,'Node Name':entity.name})
@@ -22,7 +23,11 @@ func get_entity(node_name: String) -> Entity:
 
 @rpc("any_peer", "call_local", "reliable")
 func queue_cast(message: Dictionary) -> void:
-        var request = Network.deserialize(CastRequest.new(), message)
+        var request := CastRequest.new().deserialize(message)
+
+        if not request:
+                Logger.error("Failed to deserialize cast request!", {"sender":multiplayer.get_remote_sender_id()})
+                return
 
         # TODO: !!! Check if sender has authority over cater !!!
 
