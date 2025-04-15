@@ -1,4 +1,4 @@
-class_name CastResult
+class_name MessageCastResult
 
 const INIT:             String = 'init'
 const SUCCESS:          String = ''
@@ -36,12 +36,12 @@ var status_exipired:    bool
 
 
 func _init(
-        skill_file:     String  = '',
-        caster_node:    String  = '',
-        target_node:    String  = '',
-        success_value:  String  = INIT,
-        damage_amount:  float   = 0,
-        heal_amount:    float   = 0,
+        skill_file:             String  = '',
+        caster_node:            String  = '',
+        target_node:            String  = '',
+        success_value:          String  = INIT,
+        damage_amount:          float   = 0,
+        heal_amount:            float   = 0,
         status_to_apply:        String  = '',
         status_effect_type:     String = '',
         remaining_status_time:  float = 0,

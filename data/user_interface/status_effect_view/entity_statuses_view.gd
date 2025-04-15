@@ -15,7 +15,8 @@ func set_target(entity: Entity) -> void:
 
 func clear_view() -> void:
         for effect in effect_views:
-                effect.queue_free.call_deferred()
+                if is_instance_valid(effect):
+                        effect.queue_free.call_deferred()
 
         effect_views = []
 
@@ -24,7 +25,7 @@ func update_view() -> void:
         for effect in target.status_effects:
                 var effect_view: StatusEffectView = status_effect_view.instantiate()
                 add_child(effect_view)
-                effect_view.initialize(effect)
+                effect_view.initialize(effect, target)
                 effect_views.append(effect_view)
 
 

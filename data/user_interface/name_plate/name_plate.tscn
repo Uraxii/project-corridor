@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://l386dquxgm0v"]
 
-[ext_resource type="Script" uid="uid://cp7fenjp2cprn" path="res://user_interface/name_plate/name_plate.gd" id="1_pn3dy"]
-[ext_resource type="PackedScene" uid="uid://bjserj8wu2kkx" path="res://user_interface/status_effect_view/entity_statuses_view.tscn" id="2_0xsi7"]
+[ext_resource type="Script" uid="uid://cp7fenjp2cprn" path="res://data/user_interface/name_plate/name_plate.gd" id="1_pn3dy"]
+[ext_resource type="PackedScene" uid="uid://bjserj8wu2kkx" path="res://data/user_interface/status_effect_view/entity_statuses_view.tscn" id="2_0xsi7"]
 
 [node name="NamePlate" type="Control"]
 layout_mode = 3

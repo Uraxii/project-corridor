@@ -1,11 +1,12 @@
 extends Node
 
 static var entities:    Dictionary[String, Entity] = {}
-static var cast_queue:  Array[CastRequest] = []
+static var cast_queue:  Array[Skill] = []
 
 
-func _ready() -> void:
-        Network.network_tick.connect(_process_tick)
+func _process(delta: float) -> void:
+        _process_cast_queue()
+        _process_status_effects()
 
 
 func register_entity(entity: Entity) -> void:
@@ -22,39 +23,42 @@ func get_entity(node_name: String) -> Entity:
 
 
 @rpc("any_peer", "call_local", "reliable")
-func queue_cast(message: Dictionary) -> void:
-        var request := CastRequest.new().deserialize(message)
-
-        if not request:
-                Logger.error("Failed to deserialize cast request!", {"sender":multiplayer.get_remote_sender_id()})
+func queue_targeted_cast(skill_file: String, caster: String, target: String) -> void:
+        if skill_file.is_empty() or caster.is_empty() or target.is_empty():
+                Logger.warn("Received invalid cast request!", {"skill":skill_file,"caster":caster,"target":target,"sender":multiplayer.get_remote_sender_id()})
                 return
+
+        var skill := Skill.new(skill_file)
+        skill.caster = get_entity(caster)
+        skill.target = get_entity(target)
 
         # TODO: !!! Check if sender has authority over cater !!!
 
-        Logger.info('Queued cast.', {'skill': request.skill,'target':request.target,'caster':request.caster,'sender':multiplayer.get_remote_sender_id()})
+        Logger.info('Queued cast.', {'skill':skill.file,'target':skill.target.name,'caster':skill.caster.name,'sender':multiplayer.get_remote_sender_id()})
 
-        cast_queue.push_front(request)
+        cast_queue.push_front(skill)
 
 
-func _process_tick() -> void:
-        _process_cast_queue()
-        _process_status_effects()
+@rpc("any_peer", "call_local", "reliable")
+func queue_area_cast(skill_file: String, caster: String, location: Vector3) -> void:
+        if skill_file.is_empty() or caster.is_empty():
+                Logger.warn("Received invalid cast request!", {"skill":skill_file,"caster":caster,"location":location,"sender":multiplayer.get_remote_sender_id()})
+                return
+
+        # TODO: !!! Check if sender has authority over cater !!!
+        var skill := Skill.new(skill_file)
+        skill.caster = get_entity(caster)
+        skill.location = location
+
+        Logger.info('Queued cast.', {'skill': skill.file,'caster':skill.caster.name,'location':location,'sender':multiplayer.get_remote_sender_id()})
+
+        cast_queue.push_front(skill)
 
 
 func _process_cast_queue() -> void:
         while cast_queue.size() > 0:
-                var request:    CastRequest = cast_queue.pop_front()
-
-                var skill:      Skill   = Skill.new(request.skill)
-                var caster:     Entity  = get_entity(request.caster)
-                var target:     Entity  = get_entity(request.target)
-
-
-                if not skill or not caster:
-                        printerr('INFO=Invalid skill or caster.\tSkill=%s\tCaster=%s' % [request.skill, request.caster])
-                        continue
-
-                var cast_result: CastResult = Skill.cast(skill, caster, target)
+                var skill = cast_queue.pop_front()
+                var cast_result: MessageCastResult = skill.cast()
                 cast_result.generate_log()
 
                 # Logger.info(cast_result.message)
@@ -63,12 +67,8 @@ func _process_cast_queue() -> void:
 func _process_status_effects() -> void:
         # Logger.debug('Processing status effects.')
         for entity in entities.values():
-                for status_effect in entity.status_effects:
-                        var cast_result: CastResult = Skill.cast(
-                                status_effect,
-                                status_effect.effect_caster,
-                                entity
-                        )
+                for status_effect in entity.status_effects.values():
+                        var cast_result: MessageCastResult = status_effect.cast()
 
                         cast_result.generate_log()
 

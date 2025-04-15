@@ -40,7 +40,7 @@ albedo_color = Color(0.281187, 0.281187, 0.281187, 1)
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_t5uow"]
 height = 1.93918
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("body", "state_machines")]
+[node name="Entity" type="Node3D" node_paths=PackedStringArray("body", "state_machines")]
 script = ExtResource("1_du1rf")
 config_file = "player"
 body = NodePath("Body")

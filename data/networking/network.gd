@@ -1,27 +1,32 @@
+#Godot global "Network"
 extends Node
 
-signal network_tick
-
+#region Singals
+signal poll
 signal client_connected(id: int)
 signal client_disconnected(id: int)
 signal server_disconnected
+#endregion
 
-const SECONDS_PER_MINUTE: float  = 60.0
+#region Constansts
+const DEFAULT_SERVER_ADDRESS:   String  = "localhost"
+const DEFAULT_PORT:             int     = 7000
+const DEFAULT_POLLING_RATE:     int     = 30
+const DEFAULT_MAX_CONNECTIONS:  int     = 99
 
-const DEFAULT_SERVER_IP:  String = "localhost"
-const PORT:               int    = 7000
-const MAX_CONNECTIONS:    int    = 99
+const INVALID_PEER_ID:          int     = -1
+const ALL_PEERS:                int     = 0
+const SERVER_ID:                int     = 1
+#endregion
 
-const INVALID_PEER_ID:    int    = -1
-const ALL_PEERS:          int    = 0
-const SERVER_ID:          int    = 1
+#region Instance Variables
+var poll_timer:    Timer = Timer.new()
+var polling_rate:  int   = 30:
+        set(value):
+                polling_rate = value
+                # Inteval in seconds between network polls
+                poll_timer.wait_time = 1.0 / polling_rate
 
-var gcd_interal:          float   = 1.0
-var tick_rate:            int     = 24
-
-static var tick_timer:    Timer
-static var tick_interval: float
-static var current_tick:  int
 
 @onready var player_spawner:    MultiplayerSpawner = %PlayerSpawner
 @onready var npc_spawner:       MultiplayerSpawner = %NpcSpawner
@@ -31,45 +36,50 @@ static var current_tick:  int
 @onready var npc_container:     Node = %NPCs
 @onready var level_container:   Node = %Levels
 
-var logger: Logger
+var my_peer_id: int:
+        get():
+                return multiplayer.get_unique_id()
 
-var my_peer_id: int = INVALID_PEER_ID
 
 var entry_scene:        Resource = preload("res://data/maps/test_scene.tscn")
 var lobby_scene:        Resource = preload("res://data/maps/test_scene.tscn")
 var level_scene:        Resource = preload("res://data/maps/test_scene.tscn")
 var player_scene:       Resource = preload("res://data/entities/player/player.tscn")
-var remote_player_scene:Resource = preload("res://data/entities/player/remote_player.tscn")
 
 var connections:        Dictionary[int, PlayerInfo] = {}
 var current_scene:      Node
+#endregion
 
 
+#region Godot Callback Functions
 func _ready() -> void:
-        logger = Logger
-
         multiplayer.peer_connected.connect(_on_client_connected)
         multiplayer.peer_disconnected.connect(_on_client_disconnected)
         multiplayer.connected_to_server.connect(_on_connected_ok)
         multiplayer.connection_failed.connect(_on_connected_fail)
         multiplayer.server_disconnected.connect(_on_server_disconnected)
 
-        current_tick = 0
-
-        tick_interval = tick_rate/SECONDS_PER_MINUTE
-
-        tick_timer = Timer.new()
-        tick_timer.wait_time = tick_interval
-        tick_timer.autostart = true
-        tick_timer.timeout.connect(network_tick.emit)
-        add_child(tick_timer)
+        # Allows us to manually controll the polling rate.
+        get_tree().multiplayer_poll = false
+        poll_timer.autostart = true
+        poll_timer.timeout.connect(_poll_network_peers)
 
 
+func _exit_tree() -> void:
+        multiplayer.peer_connected.disconnect(_on_client_connected)
+        multiplayer.peer_disconnected.disconnect(_on_client_disconnected)
+        multiplayer.connected_to_server.disconnect(_on_connected_ok)
+        multiplayer.connection_failed.disconnect(_on_connected_fail)
+        multiplayer.server_disconnected.disconnect(_on_server_disconnected)
+#endregion
+
+
+#region Player Management
 func spawn_player(peer_id: int) -> void:
         if not multiplayer.is_server():
                 return
 
-        logger.info("Added player.", {"client id": peer_id})
+        # Logger.debug("Added player.", {"client id": peer_id})
 
         var player: Player = player_scene.instantiate()
         player.name = str(peer_id)
@@ -82,17 +92,30 @@ func remove_player(id: int) -> void:
         if not multiplayer.is_server():
                 return
 
-        print("INFO=Removed player.\tID=%d" % id)
-
         if not player_container.has_node(str(id)):
                 return
 
         player_container.get_node(str(id)).queue_free()
+#endregion
 
 
-func start_client(address=DEFAULT_SERVER_IP, port=PORT):
-        print("INFO=Started client.\tServer Adress=%s\tPort=%d" % [address, port])
+func load_world():
+        _transition_scene(lobby_scene)
 
+        if multiplayer.is_server():
+                _on_connected_ok()
+
+
+func _transition_scene(new_scene: Resource):
+        if current_scene != null:
+                current_scene.queue_free()
+
+        current_scene = new_scene.instantiate()
+        get_tree().root.add_child(current_scene)
+
+
+#region Network Functions
+func start_client(address: String, port: int):
         var peer = ENetMultiplayerPeer.new()
         var error = peer.create_client(address, port)
 
@@ -101,38 +124,33 @@ func start_client(address=DEFAULT_SERVER_IP, port=PORT):
 
         multiplayer.multiplayer_peer = peer
 
+        polling_rate = DEFAULT_POLLING_RATE
+        add_child(poll_timer)
 
-func start_server():
-        print("INFO=Started server.\tPort=%d\tMax Connections=%d" % [PORT, MAX_CONNECTIONS])
 
+func start_server(port: int, max_connections: int):
         var peer = ENetMultiplayerPeer.new()
-        var error = peer.create_server(PORT, MAX_CONNECTIONS)
+        var error = peer.create_server(port, max_connections)
 
         if error:
                 return error
 
         multiplayer.multiplayer_peer = peer
 
+        polling_rate = DEFAULT_POLLING_RATE
+        add_child(poll_timer)
+
         spawn_player(SERVER_ID)
 
 
-func load_world():
-        transition_scene(lobby_scene)
+func _poll_network_peers() -> void:
+        # Logger.debug("Polling.", {"polling rate":polling_rate,"interval":poll_timer.wait_time})
 
-        if multiplayer.is_server():
-                _on_connected_ok()
-
-
-func transition_scene(new_scene: Resource):
-        if current_scene != null:
-                current_scene.queue_free()
-
-        current_scene = new_scene.instantiate()
-        get_tree().root.add_child(current_scene)
+        multiplayer.poll()
+        poll.emit()
 
 
 func _on_client_connected(id: int) -> void:
-        print("INFO=Client connected.\tID=%d" % id)
         spawn_player(id)
 
 
@@ -146,10 +164,6 @@ func _on_client_disconnected(id):
 func _on_connected_ok() -> void:
         var peer_id: int = multiplayer.get_unique_id()
         my_peer_id = peer_id
-        # var player_info = PlayerInfo.new(multiplayer.get_unique_id(), Vector3.ZERO, Vector3.ZERO)
-        # instantiate_player(player_info)
-        # spawn_player(peer_id)
-
         client_connected.emit(peer_id)
 
 
@@ -161,11 +175,4 @@ func _on_server_disconnected():
         multiplayer.multiplayer_peer = null
         connections.clear()
         server_disconnected.emit()
-
-
-func _exit_tree() -> void:
-        multiplayer.peer_connected.disconnect(_on_client_connected)
-        multiplayer.peer_disconnected.disconnect(_on_client_disconnected)
-        multiplayer.connected_to_server.disconnect(_on_connected_ok)
-        multiplayer.connection_failed.disconnect(_on_connected_fail)
-        multiplayer.server_disconnected.disconnect(_on_server_disconnected)
+#endregion

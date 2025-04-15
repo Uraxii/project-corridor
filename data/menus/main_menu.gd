@@ -1,7 +1,7 @@
 class_name MainMenu extends Node
 
-@onready var start:     Button = %Start
-@onready var join:      Button = %Join
+@onready var start: Button = %Start
+@onready var join:  Button = %Join
 
 
 func _ready() -> void:
@@ -10,13 +10,12 @@ func _ready() -> void:
 
 
 func host_game() -> void:
-        Network.start_server()
+        Network.start_server(Network.DEFAULT_PORT, Network.DEFAULT_MAX_CONNECTIONS)
         Network.load_world()
         self.visible = false
 
 
-
 func join_game() -> void:
-        Network.start_client()
+        Network.start_client(Network.DEFAULT_SERVER_ADDRESS, Network.DEFAULT_PORT)
         Network.load_world()
         self.visible = false

@@ -1,6 +1,8 @@
 class_name Entity extends Node3D
 
 signal changed_target(entity: Entity)
+signal targeted
+signal untargeted
 
 const INVALID_ID:       int = -1
 
@@ -15,6 +17,7 @@ const TEAM_NEUTRAL:     int = 3
 @export var team_id: int = 0
 
 @onready var stats: EntityData = %Stats
+@onready var visual: MeshInstance3D = %Visual
 
 var move: Movement
 
@@ -24,7 +27,7 @@ var skin_color: Color
 var body_mesh: Mesh
 
 var skills: Dictionary[String, Skill] = {}
-var status_effects: Array[Skill] = []
+var status_effects: Dictionary[String, Skill] = {}
 
 var target:           Entity    = self
 var alternate_target: String    = name
@@ -33,6 +36,7 @@ var focus_target:     String    = name
 var logger: Logger
 
 
+#region Godot Callback Functions
 func _ready() -> void:
         stats.load(config_file)
 
@@ -58,6 +62,7 @@ func _physics_process(delta: float) -> void:
 
         if move:
                 move.move_entity(delta)
+#endregion
 
 
 func load_skill(skill_id: String) -> Skill:
@@ -75,4 +80,4 @@ func load_skill(skill_id: String) -> Skill:
 
 func apply_status_effect(skill: Skill) -> void:
         # print('Applied %s on %s' % [skill.id, current.display_name])
-        status_effects.append(skill)
+        status_effects[skill.file] = skill

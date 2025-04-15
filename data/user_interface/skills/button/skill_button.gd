@@ -53,17 +53,16 @@ func _on_pressed() -> void:
 
         disabled = true
         set_process(true)
-        if not caster:
-                Logger.error('Caster is null on skill button!', {'button node':name})
-                return
 
-        var request := CastRequest.new()
-        request.load(skill.file, caster.name, caster.target.name)
-        var serialzied_request: Dictionary = request.serialize()
+        if skill.cast_type == "targeted":
+                var target = Skill.is_target_valid(skill, caster, caster.target)
+                if not target:
+                        return
 
-        Logger.debug("Serialized CastReqeust", {"Message":str(serialzied_request)})
-
-        GameManager.queue_cast.rpc(serialzied_request)
+                GameManager.queue_targeted_cast.rpc(skill.file, caster.name, target.name)
+        elif skill.cast_type == "area":
+                var location: Vector3 = Vector3.ZERO
+                GameManager.queue_area_cast.rpc(skill.file, caster.name, location)
 
         if skill.cooldown > 0:
                 timer.wait_time = skill.cooldown

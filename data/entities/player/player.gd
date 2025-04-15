@@ -1,10 +1,8 @@
 class_name Player extends Entity
 
-const SHADER_HIGHLIGHT: Resource = preload("res://data/materials/highlight.tres")
-
 @export var id: int = Network.SERVER_ID:
         set(new_id):
-                Logger.debug('Changed authority id on %s' % name, {'old':id, 'new':new_id})
+                # Logger.debug('Changed authority id on %s' % name, {'old':id, 'new':new_id})
                 id = new_id
                 %Input.set_multiplayer_authority(id)
                 if id == multiplayer.get_unique_id():
@@ -19,13 +17,12 @@ const SHADER_HIGHLIGHT: Resource = preload("res://data/materials/highlight.tres"
 
 var player_info: PlayerInfo
 
-var target_original_material: Material
-
 var skill_binds: Dictionary = {
         'bar_1_skill_1': 'attack',
         'bar_1_skill_2': 'heal',
         'bar_1_skill_3': 'apply_bleed',
         'bar_1_skill_4': 'apply_regenerate',
+        'bar_1_skill_5': 'create_ring_of_fire',
 }
 
 
@@ -73,23 +70,11 @@ func send_state_data() -> void:
 
 
 func set_target(new_target: Entity) -> void:
-        var target_visuals
-
-        if target != null:
-                target_visuals = target.body.get_children()
-
-                for element in target_visuals:
-                        if element is MeshInstance3D:
-                                element.set_surface_override_material(0, target_original_material)
-
-
-        if new_target != null:
-                target_visuals = new_target.body.get_children()
-
-                for element in target_visuals:
-                        if element is MeshInstance3D:
-                                target_original_material = element.get_surface_override_material(0)
-                                element.set_surface_override_material(0, SHADER_HIGHLIGHT)
+        if target:
+                target.untargeted.emit()
 
         target = new_target
+        if target:
+                target.targeted.emit()
+
         changed_target.emit(target)

@@ -2,7 +2,7 @@ class_name PlayerInput extends MultiplayerSynchronizer
 
 var target_self:                bool = false
 var target_next:                bool = false
-var target_cancel:                     bool = false
+var target_cancel:              bool = false
 
 var jump:                       bool    = false
 var move:                       Vector2 = Vector2.ZERO
@@ -14,7 +14,6 @@ var camera_rotation:            Vector2 = Vector2.ZERO
 var camera_zoom_out:            bool    = false
 var camera_zoom_in:             bool    = false
 
-
 var mouse_motion_delta       := Vector2.ZERO
 var current_mouse_position   := Vector2.ZERO
 var previous_mouse_position  := Vector2.ZERO
@@ -24,10 +23,6 @@ var actions: Dictionary = {
         'bar_1_skill_2': func() -> bool: return Input.is_action_just_pressed('bar_1_skill_2'),
 }
 
-func _enter_tree() -> void:
-        replication_interval = Network.tick_interval
-        delta_interval = Network.tick_interval
-        
 
 func _ready() -> void:
         Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

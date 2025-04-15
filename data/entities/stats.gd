@@ -2,12 +2,17 @@ class_name EntityData extends MultiplayerSynchronizer
 
 signal death
 
+#region Info
 @export var file:               String
 @export var display_name:       String
 @export var team:               int
+#endregion
 
+#region Skills
 @export var skills:             Array
+#endregion
 
+#region Statistics
 @export var health_base:        float
 @export var health:             float:
         set(value):
@@ -84,20 +89,22 @@ signal death
 @export var gravity_scale_base: float
 @export var gravity_scale:      float
 
-
-func _enter_tree() -> void:
-        replication_interval = Network.tick_interval
-        delta_interval = Network.tick_interval
-
-
-
-var is_dead: bool:
+var is_dead:                    bool:
         get():
                 return health == 0
+#endregion
 
 
-func load(config_file: String = '') -> void:
+
+func _enter_tree() -> void:
+        # replication_interval = Network.poll_timer.wait_time
+        # delta_interval = Network.poll_timer.wait_time
+        pass
+
+
+func load(config_file: String) -> void:
         if config_file.is_empty():
+                Logger.erro("Tried creating stats with an empty config file!", {"node": self.get_path()})
                 return
 
         file = config_file
