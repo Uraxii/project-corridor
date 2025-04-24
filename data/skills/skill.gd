@@ -78,37 +78,37 @@ func _init(config_file) -> void:
         var config = ConfigFile.new()
         config.load("res://data/skills/data/%s.cfg" % file.to_lower())
 
-        self.id                 = config.get_value('info', 'id', '')
-        self.description        = config.get_value('info', 'description', '')
+        self.id                 = config.get_value("info", "id", "")
+        self.description        = config.get_value("info", "description", "")
         self.cast_type          = config.get_value("info", "cast_type", "")
-        self.is_on_gcd          = config.get_value('info', 'is_on_gcd', true)
+        self.is_on_gcd          = config.get_value("info", "is_on_gcd", true)
 
-        var icon_file: String = config.get_value('info', 'icon_file', 'skill_default_icon')
-        var icon_image = Image.load_from_file('res://art/icons/' + icon_file + '.png')
+        var icon_file: String = config.get_value("info", "icon_file", "skill_default_icon")
+        var icon_image = Image.load_from_file("res://art/icons/" + icon_file + ".png")
         self.icon = ImageTexture.create_from_image(icon_image)
 
-        self.can_target_self    = config.get_value('targets', 'can_target_self', false)
-        self.can_target_friend  = config.get_value('targets', 'can_target_friend', false)
-        self.can_target_enemy   = config.get_value('targets', 'can_target_enemy', false)
+        self.can_target_self    = config.get_value("targets", "can_target_self", false)
+        self.can_target_friend  = config.get_value("targets", "can_target_friend", false)
+        self.can_target_enemy   = config.get_value("targets", "can_target_enemy", false)
 
-        self.cost_mana          = config.get_value('cost', 'cost_mana', 0.0)
-        self.cost_rage          = config.get_value('cost', 'cost_rage', 0.0)
-        self.cost_energy        = config.get_value('cost', 'cost_energy', 0.0)
-        self.cast_range         = config.get_value('cost', 'cast_range', 0.0)
+        self.cost_mana          = config.get_value("cost", "cost_mana", 0.0)
+        self.cost_rage          = config.get_value("cost", "cost_rage", 0.0)
+        self.cost_energy        = config.get_value("cost", "cost_energy", 0.0)
+        self.cast_range         = config.get_value("cost", "cast_range", 0.0)
 
-        self.cooldown           = config.get_value('data', 'cooldown', 0.0)
-        self.charges            = config.get_value('data', 'charges', 0)
-        self.cast_time          = config.get_value('data', 'cast_time', 0.0)
-        self.damage             = config.get_value('data', 'damage', 0.0)
-        self.heal               = config.get_value('data', 'heal', 0.0)
-        self.slow               = config.get_value('data', 'slow', 0.0)
-        self.speed_boost        = config.get_value('data', 'speed_boost', 0.0)
-        self.teleport_range     = config.get_value('data', 'teleport_range', 0.0)
-        self.apply_status       = config.get_value('data', 'apply_status', '')
+        self.cooldown           = config.get_value("data", "cooldown", 0.0)
+        self.charges            = config.get_value("data", "charges", 0)
+        self.cast_time          = config.get_value("data", "cast_time", 0.0)
+        self.damage             = config.get_value("data", "damage", 0.0)
+        self.heal               = config.get_value("data", "heal", 0.0)
+        self.slow               = config.get_value("data", "slow", 0.0)
+        self.speed_boost        = config.get_value("data", "speed_boost", 0.0)
+        self.teleport_range     = config.get_value("data", "teleport_range", 0.0)
+        self.apply_status       = config.get_value("data", "apply_status", "")
         self.create_area        = config.get_value("data", "create_area", "")
 
-        self.status_type        = config.get_value('status', 'type', '')
-        self.status_duration    = config.get_value('status', 'duration', 0.0)
+        self.status_type        = config.get_value("status", "type", "")
+        self.status_duration    = config.get_value("status", "duration", 0.0)
         self.status_timer       = self.status_duration
         self.status_tick_rate   = config.get_value("status", "tick_rate", 0.0)
         self.status_tick_timer  = 0.0
@@ -119,13 +119,13 @@ func _init(config_file) -> void:
         self.area_tick_rate     = config.get_value("area", "tick_rate", 0.0)
         self.area_tick_timer    = 0.0
 
-        self.anim_charge        = config.get_value('anim', 'anim_charge', "")
-        self.anim_cast          = config.get_value('anim', 'anim_cast', "")
-        self.anim_cast_success  = config.get_value('anim', 'anim_cast_success', "")
+        self.anim_charge        = config.get_value("anim", "anim_charge", "")
+        self.anim_cast          = config.get_value("anim", "anim_cast", "")
+        self.anim_cast_success  = config.get_value("anim", "anim_cast_success", "")
 
-        self.sfx_cast_start     = config.get_value('sfx', 'sfx_cast_start', "")
-        self.sfx_cast           = config.get_value('sfx', 'sfx_cast', "")
-        self.sfx_cast_success   = config.get_value('sfx', 'sfx_cast_success', "")
+        self.sfx_cast_start     = config.get_value("sfx", "sfx_cast_start", "")
+        self.sfx_cast           = config.get_value("sfx", "sfx_cast", "")
+        self.sfx_cast_success   = config.get_value("sfx", "sfx_cast_success", "")
 
 
 func cast() -> MessageCastResult:
