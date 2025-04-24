@@ -83,6 +83,7 @@ var target:             Entity          # The entity being targeted
 var location:           Vector3         # Location where the skill is cast (for AOE, projectiles)
 #endregion
 
+
 # Called when a new skill instance is created; loads config data from file.
 func _init(config_file) -> void:
     self.file = config_file
@@ -147,6 +148,7 @@ func _init(config_file) -> void:
     self.sfx_cast_start     = config.get_value("sfx", "sfx_cast_start", "")
     self.sfx_cast           = config.get_value("sfx", "sfx_cast", "")
     self.sfx_cast_success   = config.get_value("sfx", "sfx_cast_success", "")
+
 
 # Main cast method - performs skill logic and returns result
 func cast() -> MessageCastResult:
@@ -213,6 +215,7 @@ func cast() -> MessageCastResult:
 
     return result
 
+
 # Static utility: Applies damage, using the target's health_extra as a shield
 static func damage_health(target: Entity, base_damage: float) -> float:
     var damage_to_apply = base_damage
@@ -226,11 +229,13 @@ static func damage_health(target: Entity, base_damage: float) -> float:
 
     return damage_to_apply
 
+
 # Static utility: Heals the target by a given amount
 static func heal_health(target: Entity, amount: float) -> float:
     var healing_to_apply = amount
     target.stats.health += healing_to_apply
     return healing_to_apply
+
 
 # Static utility: Applies a status effect by creating a new Skill instance and assigning it to the target
 static func apply_status_effect(
@@ -244,9 +249,11 @@ static func apply_status_effect(
     status_target.apply_status_effect(status_effect)
     return skill_file
 
+
 # Static utility: Creates area of effect (placeholder - to be implemented)
 static func create_area_of_effect(caster: Entity):
     pass
+
 
 # Static utility: Checks if a target is valid for a given skill/caster
 static func is_target_valid(
