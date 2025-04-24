@@ -54,13 +54,13 @@ func _on_pressed() -> void:
         disabled = true
         set_process(true)
 
-        if skill.cast_type == "targeted":
+        if skill.skill_type == "targeted":
                 var target = Skill.is_target_valid(skill, caster, caster.target)
                 if not target:
                         return
 
                 GameManager.queue_targeted_cast.rpc(skill.file, caster.name, target.name)
-        elif skill.cast_type == "area":
+        elif skill.skill_type == "area":
                 var location: Vector3 = Vector3.ZERO
                 GameManager.queue_area_cast.rpc(skill.file, caster.name, location)
 
