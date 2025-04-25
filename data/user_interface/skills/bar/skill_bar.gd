@@ -7,9 +7,9 @@ var entity: Player
 
 func initialize(player: Player) -> void:
         entity = player
-        
+
         var button_scene = load('res://data/user_interface/skills/button/skill_button.tscn')
-        
+
         if !button_scene:
                 printerr('Could not load skill button scene resource!')
                 return
@@ -21,5 +21,5 @@ func initialize(player: Player) -> void:
                 button.name = 'bar_%d_skill_%d' % [bar_number, button_number]
                 button_number += 1
                 button.initialize(button.name, entity)
-                
+
                 # print('Created skill button %s' % button.name)

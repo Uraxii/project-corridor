@@ -33,8 +33,6 @@ var target:           Entity    = self
 var alternate_target: String    = name
 var focus_target:     String    = name
 
-var logger: Logger
-
 
 #region Godot Callback Functions
 func _ready() -> void:
@@ -69,7 +67,7 @@ func load_skill(skill_id: String) -> Skill:
         var skill = Skill.new(skill_id)
 
         if not skill:
-                print('Unable to locate skill ' + skill_id )
+                Logger.warn('Unable to locate skill ', {'skill id':skill_id})
                 return
 
         add_child.call_deferred(skill)

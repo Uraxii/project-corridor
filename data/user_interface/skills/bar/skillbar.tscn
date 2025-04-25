@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b1bujdj5x0xe2"]
 
-[ext_resource type="Script" uid="uid://8fp7t8epsc6m" path="res://user_interface/skills/bar/skill_bar.gd" id="1_b2ha1"]
+[ext_resource type="Script" uid="uid://8fp7t8epsc6m" path="res://data/user_interface/skills/bar/skill_bar.gd" id="1_b2ha1"]
 
 [node name="SkillBar" type="HBoxContainer"]
 anchors_preset = 7

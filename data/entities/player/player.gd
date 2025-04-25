@@ -64,11 +64,6 @@ func enable_local_player() -> void:
         set_process(true)
 
 
-func send_state_data() -> void:
-        # Server.update_player_info.rpc(body.position, body.rotation)
-        pass
-
-
 func set_target(new_target: Entity) -> void:
         if target:
                 target.untargeted.emit()

@@ -3,6 +3,8 @@
 
 class_name Skill extends Node
 
+var area_scene: Resource = preload("res://data/skills/aoe.tscn")
+
 #region Info
 # --- General information about the skill ---
 var file:               String          # Name/path of the config file for this skill
@@ -191,13 +193,17 @@ func cast() -> MessageCastResult:
 
     # Handle area skills (like ground AOEs)
     elif skill_type == "area":
-        Logger.debug("Casted area skill. Returning", {"skill":file})
+        Logger.debug("Casted area skill.", {"skill":file})
+        var area_node = area_scene.instantiate()
+        area_node.position = self.location
+        caster.get_tree().root.add_child(area_node)
+
         return result
 
     else:
         Logger.warn(
             "Invalid cast type! Returning",
-            {"skill type":self.skill_type, "skill":file})
+            {"skill type": self.skill_type, "skill": file})
 
         return result
 
@@ -214,6 +220,10 @@ func cast() -> MessageCastResult:
         )
 
     return result
+
+
+func set_area_location(pos: Vector3) -> void:
+    self.location = pos
 
 
 # Static utility: Applies damage, using the target's health_extra as a shield
