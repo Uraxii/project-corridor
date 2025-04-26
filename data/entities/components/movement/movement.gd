@@ -83,7 +83,7 @@ func apply_movement(current_velocity: Vector3) -> Vector3:
         return current_velocity
 
 
-func move_entity(delta: float) -> void:
+func move_entity(_delta: float) -> void:
         body.velocity = apply_gravity(body.velocity)
         body.velocity = apply_jump_influence(body.velocity)
         body.velocity = apply_movement(body.velocity)

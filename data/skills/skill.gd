@@ -56,7 +56,8 @@ var status_tick_timer:  float           # Tracks ticks for periodic effects
 
 #region Area of Effect
 # --- Data for skills that create an area effect ---
-var is_area:            bool            # Is this skill an area effect?
+var area_exit_removes:  bool            # Should the appied skill be removed upon exiting the area?
+var area_cast_delay:    float           # Amount of time to wait before casting after being placed
 var area_size:          float           # Area radius/size
 var area_duration:      float           # Duration of the area effect
 var area_timer:         float           # Tracks remaining area duration
@@ -91,7 +92,10 @@ func _init(config_file) -> void:
     self.file = config_file
 
     var config = ConfigFile.new()
-    config.load("res://data/skills/data/%s.cfg" % file.to_lower())
+    var err = config.load("res://data/skills/data/%s.cfg" % file.to_lower())
+
+    if err:
+        Logger.error("Failed to load skill!", {"skill":config_file,"error":err})
 
     # --- Info section ---
     self.id                 = config.get_value("info", "id", "")
@@ -135,6 +139,8 @@ func _init(config_file) -> void:
     self.status_tick_timer  = 0.0
 
     # --- Area section ---
+    self.area_exit_removes  = config.get_value("area", "exit_removes", false)
+    self.area_cast_delay    = config.get_value("area", "cast_delay", 0.2)
     self.area_size          = config.get_value("area", "size", 0.0)
     self.area_duration      = config.get_value("area", "duration", 0.0)
     self.area_timer         = self.area_duration
@@ -161,45 +167,12 @@ func cast() -> MessageCastResult:
 
     result.skill = file
 
-    # Handle targeted skills
     if skill_type == "targeted":
-        if target == null:
-            target = caster
-
-        result.caster = caster.name
-        result.target = target.name
-
-        # Check if the target is valid for this skill
-        if not is_target_valid(self, caster, target):
-            result.success = MessageCastResult.INVALID_TARGET
-            return result
-
-    # Handle status skills (e.g. DoT, HoT, stun, etc.)
+        _handle_targeted(result)
     elif skill_type == "status":
-        # If the effect's duration is over, remove the status
-        if status_timer <= 0:
-            if target.status_effects.get(file) == self:
-                target.status_effects.erase(file)
-            return result
-        else:
-            status_timer -= Network.poll_timer.wait_time
-            result.status_remaining = status_timer
-            # Handle status ticking (periodic effect application)
-            if status_tick_timer > 0:
-                status_tick_timer -= Network.poll_timer.wait_time
-                return result
-            else:
-                status_tick_timer = status_tick_rate
-
-    # Handle area skills (like ground AOEs)
+        _handle_status(result)
     elif skill_type == "area":
-        Logger.debug("Casted area skill.", {"skill":file})
-        var area_node = area_scene.instantiate()
-        area_node.position = self.location
-        caster.get_tree().root.add_child(area_node)
-
-        return result
-
+        _handle_area(result)
     else:
         Logger.warn(
             "Invalid cast type! Returning",
@@ -224,6 +197,48 @@ func cast() -> MessageCastResult:
 
 func set_area_location(pos: Vector3) -> void:
     self.location = pos
+
+
+func _handle_targeted(result: MessageCastResult) -> MessageCastResult:
+        if target == null:
+            target = caster
+
+        result.caster = caster.name
+        result.target = target.name
+
+        # Check if the target is valid for this skill
+        if not is_target_valid(self, caster, target):
+            result.success = MessageCastResult.INVALID_TARGET
+
+        return result
+
+
+func _handle_status(result: MessageCastResult) -> MessageCastResult:
+        # If the effect's duration is over, remove the status
+        if status_timer <= 0:
+            if target.status_effects.get(file) == self:
+                target.status_effects.erase(file)
+            return result
+        else:
+            status_timer -= Network.poll_timer.wait_time
+            result.status_remaining = status_timer
+            # Handle status ticking (periodic effect application)
+            if status_tick_timer > 0:
+                status_tick_timer -= Network.poll_timer.wait_time
+                return result
+            else:
+                status_tick_timer = status_tick_rate
+
+        return result
+
+
+func _handle_area(result: MessageCastResult) -> MessageCastResult:
+        Logger.debug("Casted area skill.", {"skill":file})
+        var area_node = area_scene.instantiate()
+        area_node.position = self.location
+        caster.get_tree().root.add_child(area_node)
+
+        return result
 
 
 # Static utility: Applies damage, using the target's health_extra as a shield

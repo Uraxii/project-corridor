@@ -36,7 +36,7 @@ func _ready() -> void:
         health_value.text = ''
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
         if not target:
                 return
 

@@ -1,13 +1,20 @@
 extends Node
 
+static var skills := SkillNew.new()
+
 static var entities:    Dictionary[String, Entity] = {}
 static var cast_queue:  Array[Skill] = []
 
+#region Godot Callback Functions
+func _ready() -> void:
+        SkillNew.initialize()
 
-func _process(delta: float) -> void:
+
+func _process(_delta: float) -> void:
         _process_cast_queue()
         _process_status_effects()
 
+#enregion
 
 func register_entity(entity: Entity) -> void:
         entities[entity.name] = entity

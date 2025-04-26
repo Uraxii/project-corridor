@@ -29,7 +29,7 @@ func update_view() -> void:
                 effect_views.append(effect_view)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
         if target == null:
                 clear_view()
                 return

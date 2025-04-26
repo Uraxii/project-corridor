@@ -35,7 +35,7 @@ func _ready() -> void:
         Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
         target_self = Input.is_action_just_pressed("target_self")
         target_next = Input.is_action_just_pressed("target_next")
         target_cancel = Input.is_action_just_pressed("ui_cancel")

@@ -1,69 +1,70 @@
 extends Node
 
-var node:       String
-var system:     String = OS.get_unique_id()
-var component:  String = ''
-var verbosity:  level
+const NOT_SET:  int = -1 # Initial value
+const SUPRESS:  int = 0  # Show no log messages
+const ERROR:    int = 1  # Show errors
+const WARN:     int = 2  # Show warning
+const INFO:     int = 3  # Show info logs
+const VERBOSE:  int = 4  # Show verbose logs
+const DEBUG:    int = 5  # Show debug logs
 
-enum level {
-        ERROR,
-        WARNING,
-        INFO,
-        VERBOSE,
-        DEBUG
-}
+var level:      int     = ERROR
+var system:     String  = OS.get_unique_id()
+var node:       String  = ""
+var component:  String  = ""
 
 
-func _init(node_name: String='', verbosity_level=level.DEBUG) -> void:
+func _init(node_name:String='', log_level:int=DEBUG) -> void:
         self.node = node_name
-        self.verbosity = verbosity_level
+        self.level = log_level
 
 
 func error(description: String, details: Dictionary = {}) -> void:
-        if level.ERROR > verbosity:
+        if ERROR >= level:
                 return
-        var message := construct(description, level.ERROR, details)
 
+        var message := _construct(description, "ERROR", details)
         printerr(message)
 
 
 func warn(description: String, details: Dictionary = {}) -> void:
-        if level.WARNING > verbosity:
-                return	
-        var message := construct(description, level.WARNING, details)
+        if WARN >= level:
+                return
 
+        var message := _construct(description, "WARN", details)
         print(message)
 
 
 func info(description: String, details: Dictionary = {}) -> void:
-        if level.INFO > verbosity:
-                return	
+        if INFO >= level:
+                return
 
-        var message := construct(description, level.INFO, details) 
+        var message := _construct(description, "INFO", details) 
         print(message)
 
 
 func verbose(description: String, details: Dictionary = {}) -> void:
-        if level.VERBOSE > verbosity:
+        if VERBOSE >= level:
                 return
 
-        var message := construct(description, level.VERBOSE, details) 
+        var message := _construct(description, "VERBOSE", details) 
         print_verbose(message)
 
 
 func debug(description: String, details: Dictionary = {}) -> void:
-        if level.DEBUG > verbosity:
+        if DEBUG >= level:
                 return
 
-        var message := construct(description, level.DEBUG, details)
+        var message := _construct(description, "DEBUG", details)
         print(message)
 
 
-func construct(description: String, log_verbosity: level, details: Dictionary = {}) -> String:
-        var message: String = level.keys()[log_verbosity] + "=" + description
+func _construct(description: String, level_str: String, details: Dictionary = {}) -> String:
+        var message: String = "%s=%s" % [level_str, description]
 
         for value in details:
                 message += "\t" + value.to_upper() + "=" + str(details[value])
+
         message += "\tPEER="+ str(Network.my_peer_id) # + "\tSYSTEM=" + system + "\tNODE=" + node
 
         return message

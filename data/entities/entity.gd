@@ -49,7 +49,7 @@ func _ready() -> void:
         GameManager.register_entity(self)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
         for machine in state_machines:
                 machine.process_frame()
 

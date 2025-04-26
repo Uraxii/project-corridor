@@ -14,7 +14,7 @@ func initialize(player: Entity):
         set_monitoring(true)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
         global_position = body.global_position
         global_rotation = body.global_rotation
 

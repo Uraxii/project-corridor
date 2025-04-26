@@ -11,7 +11,7 @@ class_name PlayerCamera extends SpringArm3D
 @onready var player: Player = get_parent()
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
         position.x = player.body.position.x + x_offset
         position.y = player.body.position.y + y_offset
         position.z = player.body.position.z + z_offset
