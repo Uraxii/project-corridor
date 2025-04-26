@@ -127,12 +127,6 @@ static func load(file:String) -> SkillNew:
             {"id":skill.id})
 
     skill.desc   = cfg.get_value("skill", "desc", "")
-    skill.kind   = cfg.get_value("skill", "kind", "")
-
-    if skill.kind.is_empty():
-        Logger.warn(
-            "Skill does not define kind!",
-            {"id":skill.id,"name":skill.name})
 
     var icon_file: String = cfg.get_value("skill", "icon", "skill_default_icon")
 
@@ -165,6 +159,16 @@ static func load(file:String) -> SkillNew:
         if con:
             skill.conditions.append(con)
 
+    skill.kind = cfg.get_value("cast_type", "kind", "")
+
+    if skill.kind.is_empty():
+        Logger.warn(
+            "Skill does not define kind!",
+            {"id":skill.id,"name":skill.name})
+
+    skill.can_target_enemy  = cfg.get_value("cast_type", "can_target_enemy", false)
+    skill.can_target_friend = cfg.get_value("cast_type", "can_target_friend", false)
+    skill.can_target_self   = cfg.get_value("cast_type", "can_target_self", false)
 
     skill.cooldown  = cfg.get_value("skill", "cooldown", 1)
     skill.max_range = cfg.get_value("skill", "max_range", 10)
@@ -247,6 +251,10 @@ func _handle_targeted():
         effect.apply(caster, target)
 
 
+func _handle_modify_stat(stat: String, amount: int) -> void:
+    pass
+
+
 func _heal(target:Entity, amount:float) -> void:
     target.stats.health += amount
 
@@ -261,7 +269,7 @@ func _damage(target:Entity, amount:float) -> void:
 
 
 static func _load_condition(file: String) -> ConditionBase:
-    var id_str:= file.replace("con-", "").replace(".gd", "")
+    var id_str:= file.replace("con-", "")
     var id_int := int(id_str)
 
     if id_int == 0:
@@ -275,7 +283,7 @@ static func _load_condition(file: String) -> ConditionBase:
 
     # If this is a new condition, create a new instance of the condition.
     if not condition:
-        var script: Resource = load("%s/%s" % [CONDITION_PATH, file])
+        var script: Resource = load("%s/%s.gd" % [CONDITION_PATH, file])
 
         if script:
             condition = script.new() as ConditionBase
