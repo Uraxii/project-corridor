@@ -18,11 +18,7 @@ class_name Player extends Entity
 var player_info: PlayerInfo
 
 var skill_binds: Dictionary = {
-        'bar_1_skill_1': 'attack',
-        'bar_1_skill_2': 'heal',
-        'bar_1_skill_3': 'apply_bleed',
-        'bar_1_skill_4': 'apply_regenerate',
-        'bar_1_skill_5': 'create_ring_of_fire',
+        'bar_1_skill_1': 3,
 }
 
 

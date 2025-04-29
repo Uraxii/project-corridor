@@ -40,10 +40,10 @@ func _process(_delta: float) -> void:
         if not target:
                 return
 
-        health_value.text = '%d / %d' % [target.stats.health, target.stats.health_base]
+        health_value.text = '%d / %d' % [target.stats.hp, target.stats.hp_base]
 
         if show_percentage:
-                health_value.text += ' ( %d ' % [target.stats.health / target.stats.health_base * 100] + '% )'
+                health_value.text += ' ( %d ' % [target.stats.hp / target.stats.hp_base * 100] + '% )'
 
         if target.stats.is_dead:
                 health_value.text += ' (Dead)'

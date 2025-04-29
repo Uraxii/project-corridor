@@ -5,8 +5,5 @@ func _init() -> void:
     self.desc = "Checks if the target is the caster."
 
 
-func check(caster: Entity, target: Entity, _content) -> String:
-    if caster == target:
-        return Condition.OK
-    
-    return "Target is not self."
+func check(caster: Entity, target: Entity, _content) -> bool:
+    return caster == target

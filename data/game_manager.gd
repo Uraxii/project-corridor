@@ -1,13 +1,9 @@
 extends Node
 
 static var entities:    Dictionary[String, Entity] = {}
-static var cast_queue:  Array[Skill] = []
+static var cast_queue:  Array[SkillNew] = []
 
 #region Godot Callback Functions
-func _ready() -> void:
-        SkillNew.initialize()
-
-
 func _process(_delta: float) -> void:
         _process_cast_queue()
         _process_status_effects()
@@ -28,32 +24,47 @@ func get_entity(node_name: String) -> Entity:
 
 
 @rpc("any_peer", "call_local", "reliable")
-func queue_targeted_cast(skill_file: String, caster: String, target: String) -> void:
-        if skill_file.is_empty() or caster.is_empty() or target.is_empty():
-                Logger.warn("Received invalid cast request!", {"skill":skill_file,"caster":caster,"target":target,"sender":multiplayer.get_remote_sender_id()})
-                return
+func queue_targeted_cast(skill_id:int, caster:String, target:String) -> void:
+        if skill_id == 0 or caster.is_empty() or target.is_empty():
+                Logger.warn("Received invalid cast request!",
+                        {"skill":skill_id,"caster":caster,"target":target,
+                                "sender":multiplayer.get_remote_sender_id()})
 
-        var skill := Skill.new(skill_file)
-        skill.caster = get_entity(caster)
-        skill.target = get_entity(target)
+                return
 
         # TODO: !!! Check if sender has authority over cater !!!
 
-        Logger.info('Queued cast.', {'skill':skill.file,'target':skill.target.name,'caster':skill.caster.name,'sender':multiplayer.get_remote_sender_id()})
+        var skill: SkillNew = SkillNew.load("", skill_id)
+
+        skill.caster = get_entity(caster)
+        skill.target = get_entity(target)
+
+        Logger.info('Queued cast.',
+                {'skill':skill.title,'target':skill.target.name,
+                        'caster':skill.caster.name,
+                        'sender':multiplayer.get_remote_sender_id()})
 
         cast_queue.push_front(skill)
 
 
 @rpc("any_peer", "call_local", "reliable")
-func queue_area_cast(skill_file: String, caster: String, location: Vector3) -> void:
-        if skill_file.is_empty() or caster.is_empty():
-                Logger.warn("Received invalid cast request!", {"skill":skill_file,"caster":caster,"location":location,"sender":multiplayer.get_remote_sender_id()})
+func queue_area_cast(
+        skill_id:int, caster:String, location:Vector3, rotation:Vector3
+) -> void:
+        if caster.is_empty():
+                Logger.warn("Received invalid cast request!",
+                {"skill":skill_id,"caster":caster,"location":location,
+                        "sender":multiplayer.get_remote_sender_id()})
+
                 return
 
         # TODO: !!! Check if sender has authority over cater !!!
-        var skill := Skill.new(skill_file)
+
+        var skill: SkillNew = SkillNew.load("", skill_id)
+
         skill.caster = get_entity(caster)
         skill.location = location
+        skill.rotation = rotation
 
         Logger.info('Queued cast.', {'skill': skill.file,'caster':skill.caster.name,'location':location,'sender':multiplayer.get_remote_sender_id()})
 
@@ -63,8 +74,7 @@ func queue_area_cast(skill_file: String, caster: String, location: Vector3) -> v
 func _process_cast_queue() -> void:
         while cast_queue.size() > 0:
                 var skill = cast_queue.pop_front()
-                var cast_result: MessageCastResult = skill.cast()
-                cast_result.generate_log()
+                skill.run_cast()
 
                 # Logger.info(cast_result.message)
 

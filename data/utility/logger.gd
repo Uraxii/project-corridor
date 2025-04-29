@@ -23,7 +23,7 @@ func error(description: String, details: Dictionary = {}) -> void:
         if ERROR >= level:
                 return
 
-        var message := _construct(description, "ERROR", details)
+        var message := _construct(description, "", details)
         printerr(message)
 
 
@@ -55,12 +55,15 @@ func debug(description: String, details: Dictionary = {}) -> void:
         if DEBUG >= level:
                 return
 
-        var message := _construct(description, "DEBUG", details)
+        var message := _construct(description, "", details)
         print(message)
 
 
 func _construct(description: String, level_str: String, details: Dictionary = {}) -> String:
-        var message: String = "%s=%s" % [level_str, description]
+        var message: String = description
+
+        if level_str:
+                message = "%s=%s" % [level_str, message]
 
         for value in details:
                 message += "\t" + value.to_upper() + "=" + str(details[value])

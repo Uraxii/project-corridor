@@ -8,9 +8,6 @@ func _init() -> void:
     self.desc = "Checks if the caster's health is below " + percent_str + "%."
 
 
-func check(caster: Entity, _target: Entity, _content) -> String:
-    if caster.stats.health/caster.stats.health_base < percent_threshold:
-        return Condition.OK
-        
-    return "Too much health."
+func check(caster: Entity, _target: Entity, _content) -> bool:
+    return caster.stats.health/caster.stats.health_base < percent_threshold
             

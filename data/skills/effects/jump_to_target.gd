@@ -14,4 +14,4 @@ func apply(caster: Entity, target: Entity, _context) -> String:
 
     caster.body.position = target.body.position
 
-    return "%s teleported to %s." % []
+    return "%s teleported to %s." % [caster.name, target.name]

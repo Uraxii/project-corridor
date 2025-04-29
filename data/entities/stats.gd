@@ -176,10 +176,13 @@ func help(stat:String, amount, is_percent:bool=false):
 
         var new_value = get(stat)
 
+        Logger.info("Helping", {"stat":stat,"new value":new_value})
+
         return new_value - old_value 
 
 
 func hurt(stat:String, amount, is_percent:bool=false):
+
         var modify_by = amount
         var old_value = get(stat)
 
@@ -190,5 +193,6 @@ func hurt(stat:String, amount, is_percent:bool=false):
 
         var new_value = get(stat)
 
-        return old_value - new_value
+        Logger.info("Hurting.", {"stat":stat,"new value":new_value})
 
+        return old_value - new_value

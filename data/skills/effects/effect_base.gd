@@ -7,18 +7,18 @@ const EFFECTS_PATH: String = "res://data/skills/effects"
 
 const ERR_STR = "ERROR APPLYING STEP."
 
-static var pool: Dictionary[String, Effect] = {}
 
 static func load(effect_name: String) -> Effect:
-    var effect: Effect = pool.get(effect_name)
+    var script_path: String = "%s/%s.gd" % [EFFECTS_PATH, effect_name]
+    var script: Resource = load(script_path)
 
-    if not effect:
-        var script: Resource = load(
-        "%s/%s.gd" % [EFFECTS_PATH, effect_name])
+    if not script:
+        Logger.error("Unable to load effect script!",
+            {"path":script_path})
 
-        if script:
-            effect = script.new() as Effect
-            pool[effect_name] = effect
+        return
+
+    var effect: Effect = script.new() as Effect
 
     Logger.info("Loaded effect.", {"effect": effect_name})
 
@@ -27,4 +27,5 @@ static func load(effect_name: String) -> Effect:
 
 func apply(_caster: Entity, _target: Entity, _context:Dictionary) -> String:
     Logger.error("Called apply function on base effect!")
+
     return ERR_STR

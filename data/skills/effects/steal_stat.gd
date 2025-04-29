@@ -2,18 +2,16 @@ extends Effect
 
 
 func apply(caster:Entity, target:Entity, context) -> String:
-    var stat = context.get("from_stat")
-    var amount = context.get("amount")
-    var is_percent = context.get("is_percent")
+    var stat: String = context.get("from_stat")
+    var amount: float = context.get("amount")
+    var is_percent: float = context.get("is_percent")
 
-    var to_steal = target.hurt(stat, amount, is_percent)
+    var to_steal = target.stats.hurt(stat, amount, is_percent)
 
     stat = context.get("to_stat")
-    var efficiency = context.get("efficiency")
+    var efficiency: float = context.get("efficiency")
+    var healing: float = to_steal * efficiency
 
-    if is_percent:
-        to_steal = to_steal * efficiency
+    caster.stats.help(stat, healing)
 
-    caster.help(stat, to_steal, is_percent)
-
-    return ""
+    return "%s did %d damage to %s and healed %s for %d." % [caster.name, to_steal, target.name, caster.name, healing]

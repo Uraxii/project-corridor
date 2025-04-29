@@ -1,6 +1,6 @@
 class_name AOE extends Area3D
 
-var skill: Skill = null
+var skill: SkillNew = null
 var caster: Entity = null
 
 var entities_in_area: Array[Entity] = []
@@ -13,7 +13,7 @@ func _ready() -> void:
 
 
 func initialize(skill_file: String, skill_caster: Entity) -> void:
-    skill = Skill.new(skill_file)
+    skill = SkillNew.load(skill_file)
     caster = skill_caster
 
 
@@ -27,10 +27,10 @@ func _on_area_entered(area: Area3D) -> void:
     if not target:
         return
 
-    GameManager.queue_targeted_cast(skill.file, caster.name, target.name)
+    GameManager.queue_targeted_cast(skill.id, caster.name, target.name)
 
 
-func _on_area_exited(area: Area3D) -> void:
+func _on_area_exited(_area: Area3D) -> void:
     if not skill:
         return
 

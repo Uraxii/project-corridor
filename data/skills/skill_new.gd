@@ -1,24 +1,20 @@
-class_name SkillNew
+class_name SkillNew extends Node
 
-const INVALID_ID:       int     = -1
-const INVALID_NAME:     String  = ""
-const CONFIG_PATH:      String  = "res://data/skills/configs"
+const INVALID_ID:   int     = -1
+const INVALID_NAME: String  = "INVALID_NAME"
+const CONFIG_PATH:  String  = "res://data/skills/configs"
 
-# Pool of skills that have already been loaded.
-# Skill are duplicated as needed.
-# Saves us a trip to disk after a skill has been loaded for the first time.
-static var skill_pool:  Dictionary[int, SkillNew] = {}
-
-static var aoe_scene:   Resource = preload("res://data/skills/aoe.tscn")
+static var aoe_scene: Resource = preload("res://data/skills/aoe.tscn")
 
 #region Skill Info
-var id:     int
-var name:   String
-var desc:   String
-var kind:   String
-var icon:   ImageTexture
+var id:             int
+var title:          String
+var desc:           String
+var kind:           String
+var icon:           ImageTexture
 
-var conditions: Array[Condition] = []
+var start_cast:     Callable
+var conditions:     Array[Condition] = []
 #endregion
 
 #region Cost
@@ -36,7 +32,7 @@ var impact_enemy:   bool
 var impact_friend:  bool
 var impact_caster:  bool
 
-#region AOE Skill
+#region AOE Data
 var aoe_on_exit:    bool     # Should the appied skill be removed upon exiting the area?
 var aoe_delay:      float    # Amount of time to wait before casting after being placed
 var aoe_size:       float    # Area radius/size
@@ -47,9 +43,10 @@ var aoe_tick_timer: float    # Tracks ticks for area periodic effects
 
 var aoe_targets:    Array[Entity] = []
 var aoe_location:   Vector3
+var aoe_rotation:   Vector3
 #endregion
 
-#region Status Effect Skill
+#region Status Effect Data
 var status_type:        String  # Type of status effect
 var status_duration:    float   # Duration of the effect
 var status_timer:       float   # Tracks remaining time for status effect
@@ -59,48 +56,24 @@ var status_tick_timer:  float   # Tracks ticks for periodic effects
 var status_target:      Entity
 #endregion
 
-#region Targeted Skill
-var can_target_self:    bool    # Can the skill target the caster themselves?
-var can_target_friend:  bool    # Can the skill target allies?
-var can_target_enemy:   bool    # Can the skill target enemies?
-
-var targeted_target:    Entity
-#endregion
-
+var start_cast_functions: Dictionary[String, Callable] = {}
 var steps: Array[SkillStep]
-
 var caster: Entity
+var target: Entity
+var is_cast_canceled: bool
 
+# region Static Functions
+static func load(file:String="", skill_id:int=0) -> SkillNew:
+    if not file.is_empty():
+        skill_id = int(file.replace("skill-", "").replace(".cfg", ""))
+    else:
+        file = "skill-%d.cfg" % skill_id
 
-static func initialize() -> void:
-    var dir = DirAccess.open(CONFIG_PATH)
-
-    if not dir:
-        Logger.error("Unable to open skill data directory!",
-            {"dir":CONFIG_PATH})
-
-        return
-
-    dir.list_dir_begin()
-
-    for file:String in dir.get_files():
-        SkillNew.load(file)
-
-
-static func load(file:String) -> SkillNew:
-    var id_str := file.replace("skill-", "").replace(".cfg", "")
-    var id_int := int(id_str)
-
-    if id_int == 0:
-        Logger.error("Skill ID is 0. This is invalid.",
+    if skill_id == 0:
+        Logger.error("Skill ID is 0. This is not allowed.",
             {"file": file})
 
-
-    var existing_skill = SkillNew.skill_pool.get(id_int)
-
-    # If there is a copy of the skill in the pool, no need to load it from disk.
-    if existing_skill:
-        return existing_skill.duplicate()
+        return
 
     var cfg := ConfigFile.new()
     var df = "%s/%s" % [CONFIG_PATH, file]
@@ -120,15 +93,19 @@ static func load(file:String) -> SkillNew:
 
     var skill := SkillNew.new()
 
-    skill.id    = id_int
-    skill.name  = cfg.get_value("skill", "name", INVALID_NAME)
+    skill.start_cast_functions = {
+        "targeted": skill._start_targeted_cast,
+        "aoe":      skill._start_aoe_cast,}
 
-    if skill.name == INVALID_NAME:
-        skill.name = str(skill.id)
-        Logger.warn("Skill does not define name!",
+    skill.id    = skill_id
+    skill.title  = cfg.get_value("skill", "title", INVALID_NAME)
+
+    if skill.title == INVALID_NAME:
+        skill.title = str(skill.id)
+        Logger.warn("Skill does not define title!",
             {"id":skill.id})
 
-    skill.desc   = cfg.get_value("skill", "desc", "")
+    skill.desc = cfg.get_value("skill", "desc", "")
 
     var icon_file: String = cfg.get_value("skill", "icon", "skill_default_icon")
 
@@ -164,16 +141,12 @@ static func load(file:String) -> SkillNew:
     skill.kind = cfg.get_value("skill", "cast_type", "")
 
     if skill.kind.is_empty():
-        Logger.warn(
-            "Skill does not define kind!",
-            {"id":skill.id,"name":skill.name})
+        Logger.error("Skill does not define cast_type!",
+            {"id":skill.id,"name":skill.title})
 
-    skill.can_target_enemy  = cfg.get_value("cast_type",
-        "can_target_enemy", false)
-    skill.can_target_friend = cfg.get_value("cast_type",
-        "can_target_friend", false)
-    skill.can_target_self   = cfg.get_value("cast_type",
-        "can_target_self", false)
+        return
+
+    skill.start_cast = skill.start_cast_functions[skill.kind]
 
     skill.cooldown  = cfg.get_value("skill", "cooldown", 1)
     skill.max_range = cfg.get_value("skill", "max_range", 10)
@@ -204,79 +177,86 @@ static func load(file:String) -> SkillNew:
         curr_step = step_base + str(i)
 
 
-    Logger.info("Loaded skill.",{"name":skill.name,"file":file})
+    Logger.info("Loaded skill.",{"name":skill.title,"file":file})
 
     return skill
+#endregion
+
+func run_cast():
+    for s in steps:
+        var result := s.effect.apply(caster, target, s.effect_context)
+        Logger.info("Applied effect", {"result":result})
 
 
-func cast() -> void:
-    if kind == "aoe":
-        _handle_aoe()
-    elif kind == "around_caster":
-        _handle_around_caster()
-    elif kind == "status":
-        _handle_status()
-    elif kind == "targeted":
-        _handle_targeted()
-    else:
-        Logger.warn("Invalid cast type! Returning",
-            {"kind":kind,"skill": id})
+func _start_aoe_cast():
+    aoe_location = await _run_select_aoe_location()
+    aoe_rotation = caster.body.global_rotation
 
+    if is_cast_canceled:
+        return
 
-func _handle_aoe():
-    Logger.info("Casted AOE.", {"skill":name})
+    GameManager.queue_area_cast.rpc(
+                id,
+                caster.name,
+                aoe_location,
+                aoe_rotation)
+
+    Logger.info("Casted AOE.", {"skill":title})
 
     var aoe_node = aoe_scene.instantiate()
     aoe_node.position = aoe_location
     caster.get_tree().root.add_child(aoe_node)
 
 
-func _handle_around_caster():
+func _start_directional_cast():
     pass
 
 
-func _handle_status():
-    if not status_target:
-        Logger.warn("No target set status.",{"id":id,"caster":caster})
-        return
+func _start_targeted_cast():
+    # These are client side checks. This logic *must* be moved to the server.
 
+    Logger.info("skill called", {"skill":self})
 
-
-func _handle_targeted():
-    var target: Entity = _get_target()
-
-    if not target:
-        Logger.info("Invalid target")
-        return
-
-
-func _process_effects():
-    pass
-
-# Static utility: Checks if a target is valid for a given skill/caster
-func _get_target() -> Entity:
     if not caster:
+        Logger.error("No caster!", {"skill":title})
         return
 
-    var target: Entity = targeted_target
+    target = caster.target
 
     if not target:
+        Logger.info("No target. Target set to caster.")
         target = caster
 
-    # Self targeting
-    if caster == target:
-        if can_target_self:
-            return caster
-        else:
+    for con in conditions:
+        if not con.check(caster, target, {}):
+            Logger.info("Condition failed!", {"condition":con})
+
             return
 
-    # Ally and enemy checks
-    if caster.team_id == target.team_id && not can_target_friend:
-        return
-    elif caster.team_id != target.team_id && not can_target_enemy:
-        if caster.team_id == target.team_id && not can_target_friend:
-            return
-        elif caster.team_id != target.team_id && not can_target_enemy:
-            return
+    GameManager.queue_targeted_cast(id, caster.name, target.name)
 
-    return target
+
+func _run_select_aoe_location() -> Vector3:
+    is_cast_canceled = false
+
+    while not is_cast_canceled:
+        await caster.get_tree().process_frame
+
+        if caster.input.select_location:
+            var viewport = caster.get_viewport()
+            var camera = viewport.get_camera_3d()
+            var mouse_pos = viewport.get_mouse_position()
+            # Create a ray from the camera
+            var from = camera.project_ray_origin(mouse_pos)
+            var to = from + camera.project_ray_normal(mouse_pos) * 1000
+
+            # Y-normal plane at origin
+            var plane = Plane(Vector3(0, 1, 0), 0)
+            var position_3d = plane.intersects_ray(from, to)
+
+            return position_3d
+
+        if caster.input.cancel:
+            is_cast_canceled = true
+
+    return Vector3.ZERO
