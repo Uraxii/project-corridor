@@ -3,10 +3,12 @@ class_name SkillNew
 const INVALID_ID:       int     = -1
 const INVALID_NAME:     String  = ""
 const CONFIG_PATH:      String  = "res://data/skills/configs"
-const CONDITION_PATH:   String  = "res://data/skills/conditions"
 
+# Pool of skills that have already been loaded.
+# Skill are duplicated as needed.
+# Saves us a trip to disk after a skill has been loaded for the first time.
 static var skill_pool:  Dictionary[int, SkillNew] = {}
-static var con_pool:    Dictionary[int, ConditionBase] = {}
+
 static var aoe_scene:   Resource = preload("res://data/skills/aoe.tscn")
 
 #region Skill Info
@@ -16,7 +18,7 @@ var desc:   String
 var kind:   String
 var icon:   ImageTexture
 
-var conditions: Array[ConditionBase] = []
+var conditions: Array[Condition] = []
 #endregion
 
 #region Cost
@@ -35,13 +37,13 @@ var impact_friend:  bool
 var impact_caster:  bool
 
 #region AOE Skill
-var aoe_exit_removes:  bool     # Should the appied skill be removed upon exiting the area?
-var aoe_cast_delay:    float    # Amount of time to wait before casting after being placed
-var aoe_size:          float    # Area radius/size
-var aoe_duration:      float    # Duration of the area effect
-var aoe_timer:         float    # Tracks remaining area duration
-var aoe_tick_rate:     float    # Rate of area effect periodic application
-var aoe_tick_timer:    float    # Tracks ticks for area periodic effects
+var aoe_on_exit:    bool     # Should the appied skill be removed upon exiting the area?
+var aoe_delay:      float    # Amount of time to wait before casting after being placed
+var aoe_size:       float    # Area radius/size
+var aoe_duration:   float    # Duration of the area effect
+var aoe_timer:      float    # Tracks remaining area duration
+var aoe_tick_rate:  float    # Rate of area effect periodic application
+var aoe_tick_timer: float    # Tracks ticks for area periodic effects
 
 var aoe_targets:    Array[Entity] = []
 var aoe_location:   Vector3
@@ -65,7 +67,7 @@ var can_target_enemy:   bool    # Can the skill target enemies?
 var targeted_target:    Entity
 #endregion
 
-var steps: Array[Effect] = []
+var steps: Array[SkillStep]
 
 var caster: Entity
 
@@ -154,21 +156,24 @@ static func load(file:String) -> SkillNew:
                     "expected type":TYPE_STRING_NAME,
                     "got type": type_string(typeof(script))})
 
-        var con: ConditionBase = _load_condition(script)
+        var con: Condition = Condition.load(script)
 
         if con:
             skill.conditions.append(con)
 
-    skill.kind = cfg.get_value("cast_type", "kind", "")
+    skill.kind = cfg.get_value("skill", "cast_type", "")
 
     if skill.kind.is_empty():
         Logger.warn(
             "Skill does not define kind!",
             {"id":skill.id,"name":skill.name})
 
-    skill.can_target_enemy  = cfg.get_value("cast_type", "can_target_enemy", false)
-    skill.can_target_friend = cfg.get_value("cast_type", "can_target_friend", false)
-    skill.can_target_self   = cfg.get_value("cast_type", "can_target_self", false)
+    skill.can_target_enemy  = cfg.get_value("cast_type",
+        "can_target_enemy", false)
+    skill.can_target_friend = cfg.get_value("cast_type",
+        "can_target_friend", false)
+    skill.can_target_self   = cfg.get_value("cast_type",
+        "can_target_self", false)
 
     skill.cooldown  = cfg.get_value("skill", "cooldown", 1)
     skill.max_range = cfg.get_value("skill", "max_range", 10)
@@ -181,27 +186,26 @@ static func load(file:String) -> SkillNew:
     skill.status_tick_timer  = 0.0
 
     # --- Area section ---
-    skill.aoe_exit_removes  = cfg.get_value("aoe", "exit_removes", false)
-    skill.aoe_cast_delay    = cfg.get_value("aoe", "cast_delay", 0.2)
+    skill.aoe_delay    = cfg.get_value("aoe", "cast_delay", 0.2)
     skill.aoe_size          = cfg.get_value("aoe", "size", 0.0)
     skill.aoe_duration      = cfg.get_value("aoe", "duration", 0.0)
     skill.aoe_timer         = skill.aoe_duration
     skill.aoe_tick_rate     = cfg.get_value("aoe", "tick_rate", 0.0)
     skill.aoe_tick_timer    = 0.0
 
-
     var i := 1
     var step_base = "step-"
     var curr_step= step_base + str(i)
 
     while cfg.has_section(curr_step):
-        skill.steps.append( Effect.new(skill, cfg, curr_step) )
+        skill.steps.append( SkillStep.new(cfg, curr_step) )
 
         i += 1
         curr_step = step_base + str(i)
 
 
-    Logger.info("Loaded skill.",{"skill":file})
+    Logger.info("Loaded skill.",{"name":skill.name,"file":file})
+
     return skill
 
 
@@ -236,8 +240,6 @@ func _handle_status():
         Logger.warn("No target set status.",{"id":id,"caster":caster})
         return
 
-    for effect in steps:
-        effect.apply(caster, status_target)
 
 
 func _handle_targeted():
@@ -247,52 +249,9 @@ func _handle_targeted():
         Logger.info("Invalid target")
         return
 
-    for effect in steps:
-        effect.apply(caster, target)
 
-
-func _handle_modify_stat(stat: String, amount: int) -> void:
+func _process_effects():
     pass
-
-
-func _heal(target:Entity, amount:float) -> void:
-    target.stats.health += amount
-
-
-func _damage(target:Entity, amount:float) -> void:
-    var remaining_damage = target.stats.health_extra - amount
-    target.stats.health_extra -= amount
-
-    # If health_extra is depleted, reduce main health by the remainder
-    if remaining_damage < 0:
-        target.stats.health += remaining_damage
-
-
-static func _load_condition(file: String) -> ConditionBase:
-    var id_str:= file.replace("con-", "")
-    var id_int := int(id_str)
-
-    if id_int == 0:
-        Logger.error("Condition ID is 0. This is invalid.",
-            {"file": file})
-
-        return
-
-    # If we already loaded the conditon, use the existing object.
-    var condition: ConditionBase = con_pool.get(id_int)
-
-    # If this is a new condition, create a new instance of the condition.
-    if not condition:
-        var script: Resource = load("%s/%s.gd" % [CONDITION_PATH, file])
-
-        if script:
-            condition = script.new() as ConditionBase
-            con_pool[id_int] = condition 
-
-    Logger.info("Loaded conditon.", {"condition":condition.desc})
-
-    return condition
-
 
 # Static utility: Checks if a target is valid for a given skill/caster
 func _get_target() -> Entity:

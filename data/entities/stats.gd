@@ -9,72 +9,77 @@ signal death
 #endregion
 
 #region Skills
-@export var skills:             Array
+@export var skills: Array
 #endregion
 
 #region Statistics
-@export var health_base:        float
-@export var health:             float:
+@export var hp_base: float
+@export var hp: float:
         set(value):
-                health = clamp(value, 0, health_base)
-                if health == 0:
+                hp = clamp(value, 0, hp_base)
+                if hp == 0:
                         death.emit()
 
-
-@export var health_extra:       float:
+@export var hp_extra: float:
         set(value):
-                health_extra = clamp(value, 0, 9999)
+                hp_extra = clamp(value, 0, 9999)
+
+@export var hp_increae: float
+@export var hp_reduction: float
 
 
-@export var armour_base:        float
-@export var armour:             float:
+@export var armour_base: float
+@export var armour: float:
         set(value):
                 armour = clamp(value, 0, armour_base)
 
-
-@export var armour_extra:       float:
+@export var armour_extra: float:
         set(value):
                 armour_extra = clamp(value, 0, 9999)
 
+@export var armour_reduction: float
 
-@export var energy_base:        float
-@export var energy:             float:
+@export var energy_base: float
+@export var energy: float:
         set(value):
                 energy = clamp(value, 0, energy_base)
 
-
-@export var energy_extra:       float:
+@export var energy_extra: float:
         set(value):
                 energy_extra = clamp(value, 0, 9999)
 
+@export var energy_reduction: float
 
-@export var mana_base:          float
-@export var mana:               float:
+
+@export var mana_base: float
+@export var mana: float:
         set(value):
                 mana = clamp(value, 0, mana_base)
 
-@export var mana_extra:         float:
+@export var mana_extra: float:
         set(value):
                 mana_extra = clamp(value, 0, 9999)
 
+@export var mana_reduction: float
 
-@export var rage_base:          float
-@export var rage:               float:
+
+@export var rage_base: float
+@export var rage: float:
         set(value):
                 clamp(value, 0, rage_base)
 
-
-@export var rage_extra:         float:
+@export var rage_extra: float:
         set(value):
                 clamp(value, 0, 9999)
 
+@export var rage_reduction: float
 
-@export var can_move:           bool
+@export var can_move: bool
 
-@export var speed_base:         float
-@export var speed:              float
+@export var speed_base: float
+@export var speed: float
 
-@export var can_jump:           bool
+@export var can_jump: bool
 
 @export var jump_force_base:    float
 @export var jump_force:         float
@@ -89,9 +94,9 @@ signal death
 @export var gravity_scale_base: float
 @export var gravity_scale:      float
 
-var is_dead:                    bool:
+var is_dead: bool:
         get():
-                return health == 0
+                return hp == 0
 #endregion
 
 
@@ -121,9 +126,9 @@ func load(config_file: String) -> void:
 
         self.skills             = config.get_value('stats', 'skills', [])
 
-        self.health_base        = config.get_value('stats', 'health', 0)
-        self.health             = self.health_base
-        self.health_extra       = 0
+        self.hp_base            = config.get_value('stats', 'hp', 0)
+        self.hp                 = self.hp_base
+        self.hp_extra           = 0
 
         self.armour_base        = config.get_value('stats', 'armour', 0)
         self.armour             = self.armour_base
@@ -158,3 +163,32 @@ func load(config_file: String) -> void:
 
         self.gravity_scale_base = config.get_value('stats', 'gravity_scale', 1)
         self.gravity_scale      = self.gravity_scale_base
+
+
+func help(stat:String, amount, is_percent:bool=false):
+        var modify_by = amount
+        var old_value = get(stat)
+
+        if is_percent:
+                modify_by = old_value * amount
+
+        set(stat, old_value + modify_by)
+
+        var new_value = get(stat)
+
+        return new_value - old_value 
+
+
+func hurt(stat:String, amount, is_percent:bool=false):
+        var modify_by = amount
+        var old_value = get(stat)
+
+        if is_percent:
+                modify_by = old_value * amount
+
+        set(stat, old_value - modify_by)
+
+        var new_value = get(stat)
+
+        return old_value - new_value
+

@@ -181,8 +181,8 @@ func cast() -> MessageCastResult:
         return result
 
     # Apply heal and damage
-    result.heal = heal_health(target, heal)
-    result.damage = damage_health(target, damage)
+    result.heal = heal_hp(target, heal)
+    result.damage = damage_hp(target, damage)
 
     # Apply status if specified
     if apply_status:
@@ -241,24 +241,24 @@ func _handle_area(result: MessageCastResult) -> MessageCastResult:
         return result
 
 
-# Static utility: Applies damage, using the target's health_extra as a shield
-static func damage_health(target: Entity, base_damage: float) -> float:
+# Static utility: Applies damage, using the target's hp_extra as a shield
+static func damage_hp(target: Entity, base_damage: float) -> float:
     var damage_to_apply = base_damage
 
-    var remaining_damage = target.stats.health_extra - damage_to_apply
-    target.stats.health_extra -= damage_to_apply
+    var remaining_damage = target.stats.hp_extra - damage_to_apply
+    target.stats.hp_extra -= damage_to_apply
 
-    # If health_extra is depleted, reduce main health by the remainder
+    # If hp_extra is depleted, reduce main hp by the remainder
     if remaining_damage < 0:
-        target.stats.health += remaining_damage
+        target.stats.hp += remaining_damage
 
     return damage_to_apply
 
 
 # Static utility: Heals the target by a given amount
-static func heal_health(target: Entity, amount: float) -> float:
+static func heal_hp(target: Entity, amount: float) -> float:
     var healing_to_apply = amount
-    target.stats.health += healing_to_apply
+    target.stats.hp += healing_to_apply
     return healing_to_apply
 
 

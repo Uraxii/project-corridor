@@ -1,7 +1,5 @@
 extends Node
 
-static var skills := SkillNew.new()
-
 static var entities:    Dictionary[String, Entity] = {}
 static var cast_queue:  Array[Skill] = []
 
