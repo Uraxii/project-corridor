@@ -17,10 +17,11 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://data/game_manager.gd"
-PlayerContainer="*res://data/player_container.tscn"
-Logger="*res://data/utility/logger.gd"
-Network="*res://data/networking/network.tscn"
+GameManager="*res://singletons/game_manager.gd"
+PlayerContainer="*res://player_container.tscn"
+Logger="*res://utility/logger.gd"
+Network="*res://networking/network.tscn"
+Messages="*res://messages/message_bus.gd"
 
 [dotnet]
 

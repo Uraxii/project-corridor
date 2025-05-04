@@ -4,47 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "db7324632999e2ad",
+        "id": "3188b5d964f7c9d0",
         "type": "tabs",
         "children": [
           {
-            "id": "20e48ce649f35601",
+            "id": "e71759ca649c55ab",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "markdown",
               "state": {
-                "file": "Skill System/Skill Diagram 0-1.md"
+                "file": "Welcome.md",
+                "mode": "source",
+                "source": false
               },
               "icon": "lucide-file",
-              "title": "Plugin no longer active"
-            }
-          },
-          {
-            "id": "7b221eacaa025617",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.8.4"
-              },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.8.4"
-            }
-          },
-          {
-            "id": "52be18eb6a2a4594",
-            "type": "leaf",
-            "state": {
-              "type": "excalidraw",
-              "state": {
-                "file": "Skill System/Skill Diagram 0-1.md"
-              },
-              "icon": "excalidraw-icon",
-              "title": "Skill Diagram 0-1"
+              "title": "Welcome"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -63,7 +40,8 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical"
+                "sortOrder": "alphabetical",
+                "autoReveal": false
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -100,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 241.5,
-    "collapsed": true
+    "width": 241.5
   },
   "right": {
     "id": "57180b82613ccc73",
@@ -187,12 +164,12 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "52be18eb6a2a4594",
+  "active": "e71759ca649c55ab",
   "lastOpenFiles": [
+    "Skill System/Skill Diagram 0-1.md",
+    "Welcome.md",
     "Excalidraw/Drawing 2025-02-07 22.01.24.excalidraw.md",
     "Skill System",
-    "Welcome.md",
-    "Skill System/Skill Diagram 0-1.md",
     "Excalidraw"
   ]
 }

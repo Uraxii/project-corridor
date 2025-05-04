@@ -1,0 +1,194 @@
+[gd_scene load_steps=7 format=3 uid="uid://brt7cig3yk254"]
+
+[ext_resource type="Script" uid="uid://boq2mgmvu5wb4" path="res://to_move/character_data/character_creation/character_creation.gd" id="1_r3j1p"]
+[ext_resource type="Script" uid="uid://13kimkad8qp8" path="res://to_move/character_data/character_creation/origin_select.gd" id="2_1jj0c"]
+[ext_resource type="Script" uid="uid://bh7050ba6iflu" path="res://to_move/character_data/character_creation/name_input.gd" id="2_x0w0t"]
+[ext_resource type="Script" uid="uid://be1fp7iqoyaa2" path="res://to_move/character_data/character_creation/skin_color_select.gd" id="3_435x6"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_rgmqr"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g43fh"]
+
+[node name="CharacterCreation" type="Node3D" node_paths=PackedStringArray("character_preview", "name_input", "origin_select", "skin_color_select", "done_button")]
+script = ExtResource("1_r3j1p")
+character_preview = NodePath("PlayerPreview")
+name_input = NodePath("UI/CharacterNameInput")
+origin_select = NodePath("UI/AppearanceOptions/Origin")
+skin_color_select = NodePath("UI/AppearanceOptions/SkinColor")
+done_button = NodePath("UI/CreateButton")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="CharacterNameInput" type="LineEdit" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -73.0
+offset_right = 100.0
+offset_bottom = -42.0
+grow_horizontal = 2
+grow_vertical = 0
+placeholder_text = "Character Name"
+max_length = 12
+clear_button_enabled = true
+caret_blink = true
+script = ExtResource("2_x0w0t")
+
+[node name="CreateButton" type="Button" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -102.0
+offset_top = -73.0
+offset_right = -42.0
+offset_bottom = -42.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Create"
+
+[node name="AppearanceOptions" type="VBoxContainer" parent="UI"]
+custom_minimum_size = Vector2(0, 9.15)
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_top = 100.0
+offset_right = 200.0
+offset_bottom = -248.0
+grow_vertical = 2
+
+[node name="Origin" type="Control" parent="UI/AppearanceOptions" node_paths=PackedStringArray("previous", "label", "next")]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+script = ExtResource("2_1jj0c")
+previous = NodePath("Selection/PreviousButton")
+label = NodePath("Selection/Current")
+next = NodePath("Selection/NextButton")
+
+[node name="Label" type="Label" parent="UI/AppearanceOptions/Origin"]
+layout_mode = 2
+offset_right = 150.0
+offset_bottom = 25.0
+text = "Origin"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Selection" type="HBoxContainer" parent="UI/AppearanceOptions/Origin"]
+layout_mode = 0
+offset_top = 35.0
+offset_right = 156.0
+offset_bottom = 80.0
+
+[node name="PreviousButton" type="Button" parent="UI/AppearanceOptions/Origin/Selection"]
+layout_mode = 2
+text = "<="
+
+[node name="Current" type="Label" parent="UI/AppearanceOptions/Origin/Selection"]
+layout_mode = 2
+text = "{ CURRENT }"
+
+[node name="NextButton" type="Button" parent="UI/AppearanceOptions/Origin/Selection"]
+layout_mode = 2
+text = "=>"
+
+[node name="SkinColor" type="Control" parent="UI/AppearanceOptions" node_paths=PackedStringArray("color_picker")]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+script = ExtResource("3_435x6")
+color_picker = NodePath("ColorPickerButton")
+
+[node name="Label" type="Label" parent="UI/AppearanceOptions/SkinColor"]
+layout_mode = 2
+offset_right = 150.0
+offset_bottom = 25.0
+text = "Skin Color"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="UI/AppearanceOptions/SkinColor"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 30.0
+offset_right = 100.0
+offset_bottom = 80.0
+
+[node name="Voice" type="Control" parent="UI/AppearanceOptions"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/AppearanceOptions/Voice"]
+layout_mode = 2
+offset_right = 324.0
+offset_bottom = 100.0
+
+[node name="VoiceType" type="Control" parent="UI/AppearanceOptions/Voice/HBoxContainer"]
+custom_minimum_size = Vector2(160, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/AppearanceOptions/Voice/HBoxContainer/VoiceType"]
+layout_mode = 2
+offset_right = 150.0
+offset_bottom = 25.0
+text = "Voice"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Selection" type="HBoxContainer" parent="UI/AppearanceOptions/Voice/HBoxContainer/VoiceType"]
+layout_mode = 0
+offset_top = 35.0
+offset_right = 156.0
+offset_bottom = 80.0
+
+[node name="PreviousButton" type="Button" parent="UI/AppearanceOptions/Voice/HBoxContainer/VoiceType/Selection"]
+layout_mode = 2
+text = "<="
+
+[node name="Current" type="Label" parent="UI/AppearanceOptions/Voice/HBoxContainer/VoiceType/Selection"]
+layout_mode = 2
+text = "{ CURRENT }"
+
+[node name="NextButton" type="Button" parent="UI/AppearanceOptions/Voice/HBoxContainer/VoiceType/Selection"]
+layout_mode = 2
+text = "=>"
+
+[node name="VoicePitch" type="Control" parent="UI/AppearanceOptions/Voice/HBoxContainer"]
+custom_minimum_size = Vector2(160, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/AppearanceOptions/Voice/HBoxContainer/VoicePitch"]
+layout_mode = 2
+offset_right = 150.0
+offset_bottom = 25.0
+text = "Pitch
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PitchValue" type="HSlider" parent="UI/AppearanceOptions/Voice/HBoxContainer/VoicePitch"]
+custom_minimum_size = Vector2(150, 10)
+layout_mode = 0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 66.0
+min_value = -10.0
+max_value = 10.0
+step = 0.1
+ticks_on_borders = true
+
+[node name="CameraArm" type="SpringArm3D" parent="."]
+spring_length = 6.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraArm"]
+
+[node name="PlayerPreview" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.878817, 0, 0.477159, 0, 1, 0, -0.477159, 0, 0.878817, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_rgmqr")
+surface_material_override/0 = SubResource("StandardMaterial3D_g43fh")
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.66453, 0)
