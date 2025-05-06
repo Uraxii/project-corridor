@@ -13,15 +13,17 @@ config_version=5
 config/name="project-corridor"
 run/main_scene="uid://bxn66u107wx0q"
 config/features=PackedStringArray("4.4", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://server/icon.svg"
 
 [autoload]
 
-GameManager="*res://singletons/game_manager.gd"
-PlayerContainer="*res://player_container.tscn"
-Logger="*res://utility/logger.gd"
-Network="*res://networking/network.tscn"
-Messages="*res://messages/message_bus.gd"
+AddonManager="*res://shared/singletons/game_addon_manager.gd"
+Logger="*res://shared/utility/logger.gd"
+CombatLogger="*res://shared/singletons/combat_log.gd"
+Commands="*res://shared/singletons/command_bus.gd"
+Console="*res://shared/singletons/game_console.gd"
+EntityManager="*res://shared/singletons/game_entity_manager.gd"
+WorldManager="*res://shared/singletons/game_world_manager.gd"
 
 [dotnet]
 

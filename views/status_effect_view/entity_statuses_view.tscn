@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bjserj8wu2kkx"]
-
-[ext_resource type="Script" uid="uid://cyd2kioxqf4q0" path="res://views/status_effect_view/entity_statuses_view.gd" id="1_fbcnk"]
-
-[node name="EntityStatusesView" type="HBoxContainer"]
-layout_direction = 2
-script = ExtResource("1_fbcnk")

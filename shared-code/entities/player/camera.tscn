@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://da7isqblpfxyb"]
+
+[ext_resource type="Script" uid="uid://bn7d5k41r8k5e" path="res://shared/entities/player/player_camera.gd" id="1_m4c2o"]
+
+[node name="Camera" type="SpringArm3D"]
+spring_length = 6.0
+script = ExtResource("1_m4c2o")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.968148, 0.25038, 0, -0.25038, 0.968148, 0, 0, 0)
+current = true
