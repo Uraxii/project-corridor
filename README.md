@@ -10,10 +10,11 @@ This repo contains **3** Godot projects!
 Shared code is exposed to the client and server via links (shown below).
 
 ```
-/shared-code/
-  utils.gd
-/client/
-  shared/ -> symlink to ../shared-code
-/server/
-  shared/ -> symlink to ../shared-code
+/project-corridor
+    shared-code/
+        utils.gd
+    pc-client/
+        shared/ -> symlink to ../shared-code
+    pc-server/
+        shared/ -> symlink to ../shared-code
 ```
