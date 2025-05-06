@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c63y4b2yf6li4"
-path="res://.godot/imported/skill_cooldown.png-7e5719bfe74004d64d0f42c575a7062c.ctex"
+path="res://.godot/imported/skill_cooldown.png-93edc7772a4c9ce531ba4572c6d19fa0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://client/views/skills/button/skill_cooldown.png"
-dest_files=["res://.godot/imported/skill_cooldown.png-7e5719bfe74004d64d0f42c575a7062c.ctex"]
+source_file="res://views/skills/button/skill_cooldown.png"
+dest_files=["res://.godot/imported/skill_cooldown.png-93edc7772a4c9ce531ba4572c6d19fa0.ctex"]
 
 [params]
 

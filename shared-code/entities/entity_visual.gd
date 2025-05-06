@@ -4,7 +4,9 @@ const PREDICTION_FACTOR: float = 0.5  # How much to predict future position base
 const INTERPOLATION_SPEED_ROTATION: float = 15
 const SNAP_THRESHOLD: float = 20
 const ERROR_TOLLERANCE: float = 0.01
-const SHADER_HIGHLIGHT: Resource = preload("res://entities/materials/highlight.tres")
+const SHADER_HIGHLIGHT: Resource = preload(
+    "res://shared-code/entities/materials/highlight.tres")
+    
 const VELOCITY_SMOOTHING: float = 0.3  # How much to smooth velocity changes
 
 # Vertical movement settings

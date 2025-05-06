@@ -11,5 +11,17 @@ config_version=5
 [application]
 
 config/name="pc-server"
+run/main_scene="uid://djp0qmo054aq5"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Network="*res://server.gd"
+NetCmd="*res://shared-code/networking/network_commands.gd"
+UsersDb="*res://users/users_database.gd"
+ServerCmd="*res://server_commands.gd"
+
+[editor]
+
+run/main_run_args="--max-players=23"

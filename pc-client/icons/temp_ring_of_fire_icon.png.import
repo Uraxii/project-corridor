@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvte3lutpljqk"
-path="res://.godot/imported/temp_ring_of_fire_icon.png-21f00d0f17f99778a72e9d2c2ef9671d.ctex"
+path="res://.godot/imported/temp_ring_of_fire_icon.png-f11546f2e758d268f3074506e5037542.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://client/icons/temp_ring_of_fire_icon.png"
-dest_files=["res://.godot/imported/temp_ring_of_fire_icon.png-21f00d0f17f99778a72e9d2c2ef9671d.ctex"]
+source_file="res://icons/temp_ring_of_fire_icon.png"
+dest_files=["res://.godot/imported/temp_ring_of_fire_icon.png-f11546f2e758d268f3074506e5037542.ctex"]
 
 [params]
 

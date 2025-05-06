@@ -11,5 +11,23 @@ config_version=5
 [application]
 
 config/name="pc-client"
+run/main_scene="uid://bxn66u107wx0q"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Logger="*res://shared-code/utility/logger.gd"
+CombatLog="*res://loggers/combat_log.gd"
+Commands="*res://modules/command_bus.gd"
+Console="*res://loggers/console.gd"
+WorldManager="*res://world/client_world_manager.gd"
+Client="*res://network/client_manager.gd"
+Modules="*res://modules/module_manager.gd"
+Entities="*res://shared-code/entities/entity_manager.gd"
+NetCmd="*res://shared-code/networking/network_commands.gd"
+ClientCmd="*res://network/ClientCommands.gd"
+
+[editor]
+
+run/main_run_args="--test_modules"

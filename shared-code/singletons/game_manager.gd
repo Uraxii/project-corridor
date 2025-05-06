@@ -9,7 +9,7 @@ func _process(_delta: float) -> void:
         _process_cast_queue()
         _process_status_effects()
 
-#enregion
+#endregion
 
 func register_entity(entity: Entity) -> void:
         entities[entity.name] = entity

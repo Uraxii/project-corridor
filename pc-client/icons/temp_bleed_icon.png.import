@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4dccp45t0hfc"
-path="res://.godot/imported/temp_bleed_icon.png-3590edd7a66722a0bbac01f8701ab72d.ctex"
+path="res://.godot/imported/temp_bleed_icon.png-7daf02fd27bd113c2fe4d5e7978687d1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://client/icons/temp_bleed_icon.png"
-dest_files=["res://.godot/imported/temp_bleed_icon.png-3590edd7a66722a0bbac01f8701ab72d.ctex"]
+source_file="res://icons/temp_bleed_icon.png"
+dest_files=["res://.godot/imported/temp_bleed_icon.png-7daf02fd27bd113c2fe4d5e7978687d1.ctex"]
 
 [params]
 
