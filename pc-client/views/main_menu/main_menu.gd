@@ -1,4 +1,4 @@
-class_name MainMenu extends Node
+class_name MainMenu extends Control
 
 @onready var join:  Button = %Join
 
@@ -8,5 +8,5 @@ func _ready() -> void:
 
 
 func join_game() -> void:
-        Client.start()
-        self.visible = false
+        Network.connect_to_server()
+        hide()

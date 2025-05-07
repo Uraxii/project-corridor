@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b11q5vc0osyk2"]
 
-[ext_resource type="Script" uid="uid://c8ipqhdtu8w76" path="res://shared/resources/entity_stats.gd" id="1_vdm8u"]
+[ext_resource type="Script" uid="uid://c8ipqhdtu8w76" path="res://shared-code/entities/entity_stats.gd" id="1_vdm8u"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_3iqhf"]
 properties/0/path = NodePath("Stats:file")

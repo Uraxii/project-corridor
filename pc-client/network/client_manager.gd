@@ -1,7 +1,6 @@
 # Global Client
 class_name ClientManager extends Node
 
-
 #region Singals
 signal poll(delta: float)
 signal change_polling_rate(new_rate: int)
@@ -71,8 +70,6 @@ func start():
 
     polling_rate = DEFAULT_POLLING_RATE
     add_child(poll_timer)
-
-
 
 
 func _poll_network_peers() -> void:

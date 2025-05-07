@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://00k760kxib6"]
 
-[ext_resource type="Script" uid="uid://bndsegf4cfct2" path="res://shared/entities/player/remote_player.gd" id="1_lftg0"]
-[ext_resource type="Script" uid="uid://c8ipqhdtu8w76" path="res://shared/resources/entity_stats.gd" id="2_88emb"]
+[ext_resource type="Script" uid="uid://bndsegf4cfct2" path="res://shared-code/entities/player/remote_player.gd" id="1_lftg0"]
+[ext_resource type="Script" uid="uid://c8ipqhdtu8w76" path="res://shared-code/entities/entity_stats.gd" id="2_88emb"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g00a7"]
 

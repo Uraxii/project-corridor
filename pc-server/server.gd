@@ -1,32 +1,35 @@
 # Global Network
 class_name Server extends Node
 
-#region Singals
-signal poll(delta: float)
 signal change_polling_rate(new_rate: int)
-signal client_connected(id: int)
-signal client_disconnected(id: int)
-#endregion
 
 #region Constansts
 const DEFAULT_PORT:             int     = 7000
 const DEFAULT_POLLING_RATE:     int     = 30
 const DEFAULT_MAX_CONNECTIONS:  int     = 99
 
-const INVALID_PEER_ID:          int     = -1
-const ALL_PEERS:                int     = 0
-const SERVER_ID:                int     = 1
+const CONTROLLERS_DIR: String = "res://controllers"
 #endregion
 
 #region Instance Variables
+var server := TCPServer.new()
+# Dictionary of peer => StreamPeerBuffer
+var buffers := {}
+
+var clients: Array[StreamPeerTCP] = []
+var message_controller := MessageController.new()
+
 var port        := DEFAULT_PORT
 var max_conns   := DEFAULT_MAX_CONNECTIONS
 
-var permit_ips: PackedStringArray = []
-var deny_ips:  PackedStringArray = []
+var permit_list: PackedStringArray = []
+var deny_list:  PackedStringArray = []
+
+var logged_in_users: Dictionary[int, String] = {}
+var ready_clients: Array[int] = []
+var unready_clients: Array[int] = []
 
 var poll_timer := Timer.new()
-
 var polling_rate := 30:
     set(value):
         polling_rate = value
@@ -34,57 +37,89 @@ var polling_rate := 30:
         poll_timer.wait_time = 1.0 / polling_rate
         change_polling_rate.emit(value)
 
-var logged_in_users: Dictionary[int, String] = {}
-var ready_clients: Array[int] = []
-var unready_clients: Array[int] = []
+var _running := false
 #endregion
 
 #region Godot Callback Functions
 func _ready() -> void:
-    multiplayer.peer_connected.connect(_on_client_connected)
-    multiplayer.peer_disconnected.connect(_on_client_disconnected)
-
-    # Allows us to manually controll the polling rate.
-    get_tree().multiplayer_poll = false
+    message_controller.load_controllers_from_directory(CONTROLLERS_DIR)
+    
     poll_timer.autostart = true
-    poll_timer.timeout.connect(_on_poll_timer_timeout)
-    change_polling_rate.connect(_on_change_polling_rate)
 #endregion
 
-#region Network Functions
-func start_server():
-    print("Server Starting...")
-    
-    var peer = ENetMultiplayerPeer.new()
-    var err = peer.create_server(port, max_conns)
 
-    if err:
-        print("Failed to start server! Error: ", error_string(err))
-        return err
-
-    multiplayer.multiplayer_peer = peer
-
-    polling_rate = DEFAULT_POLLING_RATE
+func start_server() -> void:
     add_child(poll_timer)
     
-    print("Server listening...")
+    server.listen(port)
+    print("Server listening on port %d..." % port)
+    
+    _running = true
+    _start_polling()
 
 
-func _on_poll_timer_timeout() -> void:
-    #print_debug("Polling. Wait Time=", poll_timer.wait_time)
-    multiplayer.poll()
-    poll.emit(polling_rate)
+func _start_polling() -> void: 
+    print("Polling started...")
+    await poll_timer.timeout
+    
+    while _running:
+        handle_new_clients()
+
+        # Step 2: Poll each client
+        for client in clients:
+            client.poll()
+            # Skip errored clients
+            if client.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+                continue
+                
+            # Step 3: Read data and append to buffer
+            var buf = buffers[client]
+            if client.get_available_bytes() > 0:
+                var data = client.get_data(client.get_available_bytes())
+                if data.size() > 0:
+                    buf.data_array.append_array(data)
+
+            # Step 4: Reset read head and process lines
+            buf.seek(0)
+
+            while buf.get_position() < buf.get_size():
+                var line = buf.get_line()
+                print("line: ", line)
+                if line.strip_edges() == "":
+                    continue
+
+                print("Received: ", line)
+                var msg = JSON.parse_string(line)
+                if typeof(msg) == TYPE_DICTIONARY:
+                    handle_dispatch(client, msg)
+                else:
+                    printerr("Invalid JSON or message type: ", line)
+
+            # Step 5: Clear the buffer after processing
+            buf.data_array = PackedByteArray()
+                
+        await poll_timer.timeout
+    
+    print("Polling finished...")
 
 
-func _on_change_polling_rate(new_rate: int) -> void:
-    for client_id in multiplayer.get_peers():
-        NetCmd.client_change_polling_rate.rpc(client_id, new_rate)
+func handle_new_clients() -> void:
+    if not server.is_connection_available():
+        return
+        
+    var peer := server.take_connection()
+    
+    if peer.get_connected_host() not in deny_list:
+        print("New peer ", peer.get_connected_host(), " connected.")
+        clients.append(peer)
+        buffers[peer] = StreamPeerBuffer.new()
+    else:
+        print("Blocked ", peer.get_connected_host(), " from connecting.")
 
 
-func _on_client_connected(id: int) -> void:
-    print("Connected new peer ", id)
+func handle_dispatch(peer: StreamPeerTCP, msg: Dictionary) -> void:
+    print("New message: ", msg)
+    var result = await message_controller.dispatch(peer, msg)
 
-
-func _on_client_disconnected(id: int):
-    print("Peer ", id, " disconnected.")
-#endregion
+    if typeof(result) == TYPE_DICTIONARY:
+        peer.put_utf8_string(JSON.stringify(result) + "\n")
