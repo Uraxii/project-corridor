@@ -17,19 +17,12 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+Signals="*res://signal_bus.gd"
+Controllers="*res://controllers/controller_manager.gd"
+Network="*res://network/client_api.gd"
+Views="*res://views/view_manager.gd"
 Logger="*res://shared-code/utility/logger.gd"
-CombatLog="*res://loggers/combat_log.gd"
-Commands="*res://modules/command_bus.gd"
-Console="*res://loggers/console.gd"
-WorldManager="*res://world/client_world_manager.gd"
-Modules="*res://modules/module_manager.gd"
-Entities="*res://shared-code/entities/entity_manager.gd"
-NetCmd="*res://shared-code/networking/network_commands.gd"
-ClientCmd="*res://network/ClientCommands.gd"
-Network="*res://network/client.gd"
-Controllers="*res://controllers/Controller_manager.tscn"
-Views="*res://views/view_manager.tscn"
 
 [editor]
 
-run/main_run_args="--test_modules"
+run/main_run_args="--auto_connect"

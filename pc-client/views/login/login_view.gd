@@ -1,17 +1,28 @@
-class_name LoginView extends Control
+class_name LoginView extends View
 
+@onready var login_controller: LoginController = Controllers.find("login")
 
 func _ready() -> void:
-    hide()
-    Network.connected.connect(func(): show())
-    Controllers.login.login_success.connect(func(): hide())
-    
+    Signals.login.connect(_on_login)
     var submit_button: Button = %SubmitButton
     submit_button.pressed.connect(_on_submit_pressed)
+
+
+func get_type() -> String:
+    return "login"
 
     
 func _on_submit_pressed() -> void:
     var user_field: TextEdit = %UserNameField
     var pass_field: TextEdit = %PasswordField
     
-    Controllers.login.login(user_field.text, pass_field.text)
+    var request := LoginRequest.new()
+    request.username = user_field.text
+    request.password = pass_field.text
+    
+    login_controller.login(request)
+
+
+func _on_login(respone: LoginResponse) -> void:
+    if respone.success:
+        despawn()

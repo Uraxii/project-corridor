@@ -6,9 +6,9 @@ var user_name: String
 var characters: Dictionary
 
 
-static func generate(user_name: String) -> User:
+static func generate(username: String) -> User:
     var user := User.new()
-    user.user_name = user_name
+    user.user_name = username
     user.unique_id = randi()
     user.characters = {}
     

@@ -1,29 +1,43 @@
-# Global Network
-extends Node
+class_name Init extends Node
 
 
 func _ready() -> void:
+    handle_arguments()
+
+
+func handle_arguments() -> void:
     var args := ArgParser.parse()
     
     print("Args=", args)
     
-    Network.port = args.get("port", Network.DEFAULT_PORT)
+    var server: ServerAPI = Network
     
-    Network.max_conns = args.get(
-        "max-players", Network.DEFAULT_MAX_CONNECTIONS)
+    server.port = args.get("port", server.DEFAULT_PORT)
+    
+    server.max_conns = args.get(
+        "max-players", server.DEFAULT_MAX_CONNECTIONS)
         
-    Network.permit_list = args.get("permit", [])
-    Network.deny_list = args.get("deny", [])
+    server.permit_list = args.get("permit", [])
+    server.deny_list = args.get("deny", [])
     
-    Network.polling_rate = args.get(
-        "polling-rate", Network.DEFAULT_POLLING_RATE)
+    server.polling_rate = args.get(
+        "polling-rate", server.DEFAULT_POLLING_RATE)
     
-    print("Ports=", Network.port)
-    print("Max Players=", Network.max_conns)
-    print("Permited IPs=", Network.permit_list)
-    print("Deneied IPs=", Network.deny_list)
-    print("Polling Rate=", Network.polling_rate)
+    print("Ports=", server.port)
+    print("Max Players=", server.max_conns)
+    print("Permited IPs=", server.permit_list)
+    print("Deneied IPs=", server.deny_list)
+    print("Polling Rate=", server.polling_rate)
     
     if OS.has_feature("headless"):
         print("Running in headless mode.")
-        Network.start_server()
+        server.start_server(server.port, server.max_conns)
+
+
+func load_controllers() -> void:
+    var controller_manager = Controllers
+    
+    controller_manager.load_controllers_from_directory(
+        "res://controllers")
+    controller_manager.load_controllers_from_directory(
+        "res://shared-code/controllers")

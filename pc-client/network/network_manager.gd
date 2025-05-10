@@ -1,4 +1,5 @@
-class_name NetworkManager extends Node
+#class_name NetworkManager
+extends Node
 
 #region Singals
 signal poll(delta: float)

@@ -68,6 +68,6 @@ func _construct(description: String, level_str: String, details: Dictionary = {}
         for value in details:
                 message += "\t" + value.to_upper() + "=" + str(details[value])
 
-        message += "\tPEER="+ str(Network.my_peer_id) # + "\tSYSTEM=" + system + "\tNODE=" + node
+        message += "\tPEER=" #+ str(Network.my_peer_id) # + "\tSYSTEM=" + system + "\tNODE=" + node
 
         return message

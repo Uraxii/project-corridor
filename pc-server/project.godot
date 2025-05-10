@@ -18,7 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 UsersDb="*res://users/users_database.gd"
-Network="*res://server.gd"
+Network="*res://server_api.gd"
+Controllers="*res://controllers/controller_manager.gd"
 
 [editor]
 
