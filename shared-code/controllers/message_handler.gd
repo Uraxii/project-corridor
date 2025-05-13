@@ -23,8 +23,8 @@ func set_default_controller(controller: Callable) -> void:
 func generate_routes(controllers: Array[Controller]) -> void:
     for controller in controllers:
         for route in controller.get_routes():
-            var message_type: String = route.get("message_type", "")
-            var handler_method: String = route.get("handler_method", "")
+            var message_type: String = route.get("type", "")
+            var handler_method: String = route.get("handler", "")
                 
             if message_type.is_empty() or handler_method.is_empty():
                 printerr("Controller route is missing type or handler!")

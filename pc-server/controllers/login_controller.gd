@@ -2,10 +2,10 @@ class_name LoginController extends Controller
 
 
 func get_routes() -> Array[Dictionary]:
-    return [{"message_type": "login", "handler_method": "login"}]
+    return [{"type": "login", "handler": "_on_login"}]
 
 
-func login(peer_id: int, data: Dictionary) -> Dictionary:
+func _on_login(peer_id: int, data: Dictionary) -> Dictionary:
     var request := LoginRequest.new()
     request.deserialize(data)
     

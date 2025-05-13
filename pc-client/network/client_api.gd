@@ -58,9 +58,23 @@ func _on_server_response(response: Dictionary) -> void:
     _pending_requests.erase(request_id)
 
 
-func send(action: String, data: Dictionary) -> Signal:
+func send(action: String, message: Message) -> Signal:
     var request_id = _request_id_counter
     _request_id_counter += 1
+    var message_signal = SignalAwaiter.new()
+    _pending_requests[request_id] = message_signal
+    
+    """
+    Note: This is client side validation.
+    The server should NOT trust that this check has been done!
+    """ 
+    if not message.validate():
+        Signals.log_new_error.emit(
+            "Failed validate outgoing message:" + str(message.serialize()))
+
+        return message_signal.completed
+
+    var data: Dictionary = message.serialize()
     
     var msg := {
         "action": action,
@@ -70,11 +84,7 @@ func send(action: String, data: Dictionary) -> Signal:
 
     print("[Client] Sending request:", msg)
 
-    var message_signal = SignalAwaiter.new()
-    _pending_requests[request_id] = message_signal
-
     _on_client_request.rpc_id(1, msg)
-
     return message_signal.completed
 
 

@@ -22,6 +22,7 @@ Controllers="*res://controllers/controller_manager.gd"
 Network="*res://network/client_api.gd"
 Views="*res://views/view_manager.gd"
 Logger="*res://shared-code/utility/logger.gd"
+Console="*res://loggers/text_console.gd"
 
 [editor]
 

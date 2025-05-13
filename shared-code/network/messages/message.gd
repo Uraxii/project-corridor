@@ -1,4 +1,4 @@
-class_name Message extends Resource
+class_name Message extends Object
 
 
 # Used to route messages
@@ -17,4 +17,5 @@ func deserialize(dict: Dictionary) -> void:
 
 
 func validate() -> bool:
-    return true
+    push_error("validate() must be implemented!")
+    return false

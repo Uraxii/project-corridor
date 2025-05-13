@@ -15,3 +15,7 @@ func serialize() -> Dictionary:
 func deserialize(dict: Dictionary) -> void:
     success = dict.get("success", false)
     session_token = dict.get("session_token", "")
+
+
+func validate() -> bool:
+    return session_token != ""
