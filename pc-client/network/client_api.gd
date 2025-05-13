@@ -15,7 +15,7 @@ func _ready() -> void:
     multiplayer.connected_to_server.connect(_on_connected_to_server)
     multiplayer.connection_failed.connect(_on_connection_failed)
     multiplayer.server_disconnected.connect(_on_server_disconnected)
-    
+
     message_handler.generate_routes(Controllers.active)
 
 
@@ -24,9 +24,9 @@ func start_client(server_address: String, port: int):
         peer = ENetMultiplayerPeer.new()
     elif peer.get_connection_status() != peer.CONNECTION_DISCONNECTED:
         peer.close()
-        
+
     var result = peer.create_client(server_address, port)
-    
+
     if result != OK:
         print("[Client] Failed to connect to server: ", result)
         return
@@ -35,7 +35,7 @@ func start_client(server_address: String, port: int):
     print("[Client] Connecting to server...")
 
 
-@rpc("any_peer")
+@rpc("any_peer", "call_remote", "reliable", 1)
 func _on_client_request(data: Dictionary) -> void:
     pass
 
@@ -43,17 +43,17 @@ func _on_client_request(data: Dictionary) -> void:
 @rpc("authority")
 func _on_server_response(response: Dictionary) -> void:
     print("[Client] Received response:", response)
-    
+
     var action: String = response.get("action", "")
     var request_id: int = response.get("request_id", -1)
     var data = response.get("data", {})
-    
+
     if not _pending_requests.has(request_id):
         print("[Client] Warning: No pending request for request_id:",
             request_id)
-            
+
         return
-        
+
     _pending_requests[request_id].completed.emit(data)
     _pending_requests.erase(request_id)
 
@@ -63,7 +63,7 @@ func send(action: String, message: Message) -> Signal:
     _request_id_counter += 1
     var message_signal = SignalAwaiter.new()
     _pending_requests[request_id] = message_signal
-    
+
     """
     Note: This is client side validation.
     The server should NOT trust that this check has been done!
@@ -75,7 +75,7 @@ func send(action: String, message: Message) -> Signal:
         return message_signal.completed
 
     var data: Dictionary = message.serialize()
-    
+
     var msg := {
         "action": action,
         "request_id": request_id,

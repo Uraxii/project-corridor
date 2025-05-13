@@ -3,8 +3,8 @@ class_name SpawnPlayerRequest extends Message
 var display_name: String
 
 
-func get_type() -> String:
-    return "SpawnPlayer"
+func get_type() -> Type:
+    return Type.SpawnPlayerRequest
 
 
 func serialize() -> Dictionary:
@@ -17,4 +17,4 @@ func deserialize(data: Dictionary) -> void:
 
 func validate() -> bool:
     return display_name != ""
-    
+

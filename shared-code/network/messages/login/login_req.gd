@@ -1,7 +1,11 @@
-class_name LoginRequest extends Message
+class_name LoginReq extends Message
 
 var username: String = ""
 var password: String = ""
+
+
+func get_type() -> Action:
+    return Action.login_req
 
 
 func serialize() -> Dictionary:

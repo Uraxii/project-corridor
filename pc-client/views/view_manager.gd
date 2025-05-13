@@ -21,6 +21,8 @@ func _ready():
                 continue
                 
     print("Views: ", _scene_map)
+    
+    multiplayer.connected_to_server.connect(func():spawn("login"))
 
 
 func spawn(type: String) -> View:

@@ -1,6 +1,10 @@
 class_name LoginController extends Controller
 
 
+func _ready() -> void:
+    Signals.login_resp.connect(_on_login_resp)
+
+
 func get_type() -> String:
     return "login"
 
@@ -9,12 +13,9 @@ func get_routes() -> Array[Dictionary]:
     return [{"type": "login_response", "handler": "_on_login_response"}]
 
 
-func login(login_request: LoginRequest) -> void:
-    var completed_signal := Network.send("login", login_request)
-    completed_signal.connect(_on_login_response)
+func login(login_request: LoginReq) -> void:
+    Network.client_send(Message.Action.login_req, login_request)
 
 
-func _on_login_response(data: Dictionary):
-    var resp := LoginResponse.new()
-    resp.deserialize(data)
+func _on_login_resp(resp: LoginResp):
     Signals.login.emit(resp)

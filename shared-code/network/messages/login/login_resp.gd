@@ -1,7 +1,11 @@
-class_name LoginResponse extends Message
+class_name LoginResp extends Message
 
 var success: bool = false
 var session_token: String = ""
+
+
+func get_type() -> Action:
+    return Action.login_resp
 
 
 func serialize() -> Dictionary:

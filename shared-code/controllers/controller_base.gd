@@ -12,7 +12,20 @@ func get_type() -> String:
     Returns the type of the controller.
 
     This method must be implemented in a subclass to return the specific type
-    of controller. If not implemented, an error will be thrown.
+    of controller. If not implement
+func _on_login_req(request: LoginRequest) -> void:
+    print("yes")
+    var response := LoginResponse.new()
+
+    if request.username != "" and request.password != "":
+        response.session_token = "insecure"
+        response.success = true
+    else:
+        response.session_token = ""
+        response.success = false
+
+    Network._on_server_message(response.serialize())
+ed, an error will be thrown.
     
     :return: A string representing the controller's type.
     :rtype: String

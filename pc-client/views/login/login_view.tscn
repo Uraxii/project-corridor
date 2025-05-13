@@ -11,50 +11,35 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wcd8y")
 
-[node name="UserNameField" type="TextEdit" parent="."]
-unique_name_in_owner = true
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -34.0
-offset_right = 100.0
-offset_bottom = 11.0
+offset_left = -34.0
+offset_top = -50.5
+offset_right = 34.0
+offset_bottom = 50.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="UsernameField" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 placeholder_text = "Username"
+alignment = 1
 
-[node name="PasswordField" type="TextEdit" parent="."]
+[node name="PasswordField" type="LineEdit" parent="VBoxContainer"]
 unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = 16.0
-offset_right = 100.0
-offset_bottom = 61.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 placeholder_text = "Password"
+alignment = 1
+secret = true
 
-[node name="SubmitButton" type="Button" parent="."]
+[node name="SubmitButton" type="Button" parent="VBoxContainer"]
 unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -25.0
-offset_top = 76.0
-offset_right = 25.0
-offset_bottom = 107.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 text = "Login"

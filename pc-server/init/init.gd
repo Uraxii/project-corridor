@@ -10,7 +10,7 @@ func handle_arguments() -> void:
     
     print("Args=", args)
     
-    var server: ServerAPI = Network
+    var server: NetworkApi = Network
     
     server.port = args.get("port", server.DEFAULT_PORT)
     

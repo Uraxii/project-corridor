@@ -1,4 +1,4 @@
-class_name SpawnPlayerResponse
+class_name SpawnPlayerResponse extends Message
 
 var coordinates: Vector3
 var display_name: String
@@ -6,8 +6,9 @@ var zone: String
 var error: String
 
 
-func get_type() -> String:
-    return "SpawnPlayerResponse"
+func get_type() -> Type:
+    return Type.spawn_player_resp
+
 
 
 func serialize() -> Dictionary:
@@ -29,5 +30,5 @@ func deserialize(data: Dictionary) -> void:
 func validate() -> bool:
     if error:
         return false
-    
+
     return (coordinates != Vector3.ZERO and display_name != "") and zone != ""

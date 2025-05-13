@@ -25,11 +25,11 @@ func generate_routes(controllers: Array[Controller]) -> void:
         for route in controller.get_routes():
             var message_type: String = route.get("type", "")
             var handler_method: String = route.get("handler", "")
-                
+
             if message_type.is_empty() or handler_method.is_empty():
                 printerr("Controller route is missing type or handler!")
                 continue
-                
+
             register(message_type,
                 func(peer, data):
                     return controller.call(handler_method, peer, data))
@@ -37,11 +37,11 @@ func generate_routes(controllers: Array[Controller]) -> void:
 
 func _load_controllers_from_directory(path: String) -> void:
     var dir := DirAccess.open(path)
-    
+
     if not dir:
         printerr("Could not open controllers directory! Dir: %s" % path)
         return
-        
+
     dir.list_dir_begin()
     var file = dir.get_next()
     while file != "":
