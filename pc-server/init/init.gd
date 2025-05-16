@@ -35,8 +35,8 @@ func handle_arguments() -> void:
 
 
 func load_controllers() -> void:
-    var controller_manager = Controllers
-    
+    var controller_manager := Global.controllers
+
     controller_manager.load_controllers_from_directory(
         "res://controllers")
     controller_manager.load_controllers_from_directory(

@@ -6,6 +6,8 @@ This class is meant to be subclassed, and its methods `get_type` and `get_routes
 should be implemented by the subclass to define specific behavior.
 """
 
+@onready var signals := Global.signal_bus
+
 
 func get_type() -> String:
     """

@@ -17,11 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Signals="*res://shared-code/signal_bus.gd"
-Controllers="*res://controllers/controller_manager.gd"
-Views="*res://views/view_manager.gd"
-Logger="*res://shared-code/utility/logger.gd"
-Console="*res://loggers/text_console.gd"
+Global="*res://autoload/global_manager.gd"
 Network="*res://shared-code/network/network_api.gd"
 
 [editor]

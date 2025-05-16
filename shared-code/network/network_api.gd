@@ -11,13 +11,10 @@ const SERVER_ID: int = 1
 #endregion
 
 #region Instance Variable
-var message_routes: Array[MsgRoute] = [
-    MsgRoute.new(Message.Action.base, Message, Signals.trash),
-    MsgRoute.new(Message.Action.login_req, LoginReq, Signals.login_req),
-    MsgRoute.new(Message.Action.login_resp, LoginResp, Signals.login_resp),
-]
+var signals:    SignalBus
+var router:     MessageRouter
 
-var peer := ENetMultiplayerPeer.new()
+var peer        := ENetMultiplayerPeer.new()
 var host        := DEFAULT_HOST_ADDRESS
 var port        := DEFAULT_PORT
 var max_conns   := DEFAULT_MAX_CONNECTIONS
@@ -35,12 +32,25 @@ var polling_rate := 30:
         polling_rate = value
         # Inteval in seconds between network polls
         poll_timer.wait_time = 1.0 / polling_rate
-        Signals.change_polling_rate.emit(value)
+        signals.change_polling_rate.emit(value)
+
+# Peer ID: Session Token
+var clients: Dictionary[int, String] = {}
+
+# Used by the client.
+var _session_token := ""
 #endregion
 
 func _ready() -> void:
-    Signals.connect_to_server.connect(
+    router = Global.message_router
+    
+    signals = Global.signal_bus
+    signals.connect_to_server.connect(
         func(address, port): start_client(address, port))
+    
+    multiplayer.connected_to_server.connect(_on_connected_to_server)
+    multiplayer.connection_failed.connect(_on_connection_failed)
+    multiplayer.server_disconnected.connect(_on_server_disconnected)
 
 
 func start_client(server_address: String, port: int):
@@ -55,10 +65,6 @@ func start_client(server_address: String, port: int):
         print("[Client] Failed to connect to server: ", result)
         return
 
-    multiplayer.connected_to_server.connect(_on_connected_to_server)
-    multiplayer.connection_failed.connect(_on_connection_failed)
-    multiplayer.server_disconnected.connect(_on_server_disconnected)
-
     multiplayer.multiplayer_peer = peer
     print("[Client] Connecting to server...")
 
@@ -72,6 +78,16 @@ func start_server(port, max_conns):
         
     multiplayer.multiplayer_peer = peer
     print("[Server] Started listening on port 9000")
+
+
+func register_client(peer_id: int, session_token: String) -> void:
+    # TODO: Token rotation process.
+    clients[peer_id] = session_token
+
+
+func set_client_session_token(token: String) -> void:
+    _session_token = token
+    print("[Client] set session token:", _session_token)
 
 
 func server_send(action: Message.Action, msg: Message) -> void:
@@ -97,7 +113,7 @@ func client_send(action: Message.Action, msg: Message) -> void:
     The server should NOT trust that this check has been done!
     """ 
     if not msg.validate():
-        Signals.log_new_error.emit(
+        signals.log_new_error.emit(
             "[Client] Failed to validate outgoing msg:" +
                 str(msg.serialize()))
 
@@ -105,6 +121,7 @@ func client_send(action: Message.Action, msg: Message) -> void:
 
     var packet := {
         "a": action,
+        "t": _session_token,
         "m": msg.serialize(),
     }
 
@@ -119,7 +136,21 @@ func _on_client_message(packet: Dictionary) -> void:
     """
     var peer_id = multiplayer.get_remote_sender_id()
     print("[Server] Received packet from peer ", peer_id, ":", packet)
-    _handle_message(peer_id, packet)
+    
+    if not packet.has("t"):
+        printerr("No session token in packet:", packet)
+        return
+    
+    if not packet.has("a"):
+        printerr("No action in packet:", packet)
+        return
+
+    if packet.get("a") != Message.Action.login_req:
+        if not _is_session_token_valid(peer_id, packet.get("t")):
+            printerr("Invalid session token from peer", peer_id)
+            return
+
+    router.dispatch(peer_id, packet)
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -129,28 +160,14 @@ func _on_server_message(packet: Dictionary) -> void:
     """
     var peer_id = multiplayer.get_remote_sender_id()
     print("[Client] Received packet:", packet)
-    _handle_message(peer_id, packet)
+    router.dispatch(peer_id, packet)
 
 
-func _handle_message(peer_id, packet: Dictionary) -> void:
-    if not packet.has("a"):
-        printerr("No action in packet:", packet)
-        return
-
-    var action: Message.Action = packet.get("a")
-    var index := message_routes.find_custom(
-        func(item: MsgRoute): return item.action == action)
-        
-    if index == -1:
-        printerr("Unable to map action to GDScript:", packet)
-        return
-        
-    var route := message_routes[index]
-    var msg: Message = route.msg_script.new()
-    msg.origin_peer = peer_id
-    var serialialized_msg: Dictionary = packet.get("m", {})
-    msg.deserialize(serialialized_msg)
-    route.sig.emit(msg)
+func _is_session_token_valid(peer_id: int, token: String) -> bool:
+    if not clients.has(peer_id):
+        return false
+    
+    return clients.get(peer_id) == token
 
 
 func _on_connected_to_server() -> void:
@@ -163,15 +180,3 @@ func _on_connection_failed() -> void:
 
 func _on_server_disconnected() -> void:
     print("[Client] Multiplayer signal: Disconnected from server.")
-
-
-class MsgRoute:
-    var action: Message.Action
-    var msg_script: GDScript
-    var sig: Signal
-    
-    func _init(_action: Message.Action, _msg_script: GDScript, _signal: Signal):
-        action = _action
-        msg_script = _msg_script
-        sig = _signal
-        

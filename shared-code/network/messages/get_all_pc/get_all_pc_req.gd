@@ -1,11 +1,11 @@
-class_name LoginReq extends Message
+class_name GetAllPcReq extends Message
 
 var username: String = ""
 var password: String = ""
 
 
 func get_type() -> Action:
-    return Action.login_req
+    return Action.get_pc_req
 
 
 func serialize() -> Dictionary:

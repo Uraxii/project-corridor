@@ -2,7 +2,7 @@ class_name LoginController extends Controller
 
 
 func _ready() -> void:
-    Signals.login_resp.connect(_on_login_resp)
+    signals.login_resp.connect(_on_login_resp)
 
 
 func get_type() -> String:
@@ -18,4 +18,8 @@ func login(login_request: LoginReq) -> void:
 
 
 func _on_login_resp(resp: LoginResp):
-    Signals.login.emit(resp)
+    print("login response:", resp.serialize())
+    if resp.success:
+        Network.set_client_session_token(resp.session_token)
+        
+    #signals.login.emit(resp)

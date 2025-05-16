@@ -1,11 +1,10 @@
-class_name CreateNewCharacterResponse extends Message
+class_name CreatePcResp extends Message
 
-var error: String
+var error: String = ""
 
 
-# Used to route messages
-func get_type() -> String:
-    return "CreateNewCharacterResponse"
+func get_type() -> Action:
+    return Action.create_pc_resp
 
 
 func serialize() -> Dictionary:

@@ -1,25 +1,16 @@
 class_name View extends Control
 
+var signals := Global.signal_bus
 
-func get_type() -> String:
-    push_error("get_type must be implemented.")
-    return "base"
+func initalize() -> void:
+    visibility_changed.connect(_on_visibility_change)    
     
 
 func despawn():
-    Signals.despawn_view.emit(self)
+    signals.despawn_view.emit(self)
     queue_free.call_deferred()
 
 
-func _on_show_view(view_type: String) -> void:
-    if view_type != get_type():
-        return
-        
-    show()
-
-    
-func _on_hide_view(view_type: String) -> void:
-    if view_type != get_type():
-        return
-        
-    hide()
+func _on_visibility_change() -> void:
+    var is_visible: bool = is_visible_in_tree()
+    print(self, " visible:", is_visible)

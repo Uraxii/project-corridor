@@ -1,15 +1,14 @@
 class_name LoginView extends View
 
-@onready var login_controller: LoginController = Controllers.find("login")
+@onready var controller: LoginController = Global.controllers.find(LoginController)
+
 
 func _ready() -> void:
-    Signals.login_resp.connect(_on_login)
+    multiplayer.connection_failed.connect(_on_connection_failed)
+    signals.login_resp.connect(_on_login)
+    
     var submit_button: Button = %SubmitButton
     submit_button.pressed.connect(_on_submit_pressed)
-
-
-func get_type() -> String:
-    return "login"
 
     
 func _on_submit_pressed() -> void:
@@ -20,9 +19,15 @@ func _on_submit_pressed() -> void:
     request.username = user_field.text
     request.password = pass_field.text
     
-    login_controller.login(request)
+    controller.login(request)
+
+
+func _on_connection_failed() -> void:
+    despawn()
 
 
 func _on_login(respone: LoginResp) -> void:
     if respone.success:
         despawn()
+    else:
+        print("no")

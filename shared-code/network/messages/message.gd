@@ -5,8 +5,12 @@ enum Action
     base = 0,
     login_req,
     login_resp,
-    spawn_player_req,
-    spawn_player_resp,
+    get_pc_req,
+    get_pc_resp,
+    create_pc_req,
+    create_pc_resp,
+    spawn_pc_req,
+    spawn_pc_resp,
 }
 
 var origin_peer: int = -1

@@ -10,15 +10,14 @@ func get_type() -> Action:
 
 func serialize() -> Dictionary:
     return {
-        "success": success,
-        "session_token": session_token,
-        "error_message": "",
+        "s": success,
+        "t": session_token,
     }
 
 
 func deserialize(dict: Dictionary) -> void:
-    success = dict.get("success", false)
-    session_token = dict.get("session_token", "")
+    success = dict.get("s", false)
+    session_token = dict.get("t", "")
 
 
 func validate() -> bool:

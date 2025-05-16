@@ -1,11 +1,10 @@
-class_name CreateNewCharacterRequest extends Message
+class_name CreatePcReq extends Message
 
 var display_name: String
 
 
-# Used to route messages
-func get_type() -> String:
-    return "CreateNewCharacter"
+func get_type() -> Action:
+    return Action.create_pc_req
 
 
 func serialize() -> Dictionary:

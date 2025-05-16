@@ -17,9 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-UsersDb="*res://users/users_database.gd"
-Controllers="*res://controllers/controller_manager.gd"
-Signals="*res://shared-code/signal_bus.gd"
+Global="*res://autoload/global_manager.gd"
 Network="*res://shared-code/network/network_api.gd"
 
 [editor]

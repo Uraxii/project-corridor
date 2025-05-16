@@ -1,8 +1,10 @@
-class_name LoginController extends Controller
+class_name UserService extends Controller
+
+var signal_bus := Global.signal_bus
 
 
 func _ready() -> void:
-    Signals.login_req.connect(_on_login_req)
+    signal_bus.login_req.connect(_on_login_req)
     
 
 func get_routes() -> Array[Dictionary]:
@@ -10,11 +12,13 @@ func get_routes() -> Array[Dictionary]:
 
 
 func _on_login_req(req: LoginReq) -> void:
+    print("new login_req")
     var resp := LoginResp.new()
 
     if req.username != "" and req.password != "":
         resp.session_token = "insecure"
         resp.success = true
+        Network.register_client(req.origin_peer, resp.session_token)
     else:
         resp.session_token = ""
         resp.success = false

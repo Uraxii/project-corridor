@@ -1,11 +1,19 @@
 class_name ControllerManager extends Node
 
-var active: Array[Controller] = [LoginController.new()]
+var active: Array[Controller] = [
+    LoginController.new(),
+    CharacterSelectController.new(),
+]
 
 
-func find(type: String) -> Controller:
+func _ready() -> void:
+    for controller in active:
+        add_child(controller)
+
+
+func find(type: GDScript) -> Controller:
     var index: int = active.find_custom(
-        func(control): return control.get_type() == type)
+        func(control): return control.get_script() == type)
     
     if index == -1:
         push_error("Could not find %s controller!" % type)
