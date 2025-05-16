@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://ht0rssl8am3o"]
-
-[ext_resource type="Script" uid="uid://6wq7m3l0qfyt" path="res://data/entities/components/stats/stats.gd" id="1_i18hv"]
-
-[node name="Stats" type="Node"]
-script = ExtResource("1_i18hv")
-base_jump_force = 15.0

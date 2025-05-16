@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bdsenapllptps"]
-
-[ext_resource type="Script" uid="uid://ywb8nuh0n3e6" path="res://Scripts/States/Player/player_move_state.gd" id="1_0tlko"]
-
-[node name="PlayerMoveState" type="Node" node_paths=PackedStringArray("state_machine")]
-script = ExtResource("1_0tlko")
-id = "move"
-state_machine = NodePath("")

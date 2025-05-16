@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="DropTable" load_steps=3 format=3 uid="uid://bbwj18ygit3rg"]
+
+[ext_resource type="Script" uid="uid://dv33prnwebowh" path="res://shared/resources/drops/drop.gd" id="1_ygd03"]
+[ext_resource type="Script" uid="uid://cs87hn1ssp127" path="res://shared/resources/drops/tables/drop_table.gd" id="2_imdpf"]
+
+[resource]
+script = ExtResource("2_imdpf")
+drop_count_weights = Dictionary[int, int]({
+1: 0
+})
+item_weights = Array[ExtResource("1_ygd03")]([null])
+metadata/_custom_type_script = "uid://cs87hn1ssp127"

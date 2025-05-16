@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://8brs8d84ngt8"]
+
+[ext_resource type="Script" uid="uid://bhhcltj12sqpp" path="res://shared/entities/npcs/strafer/strafer.gd" id="1_86phf"]
+[ext_resource type="Script" uid="uid://banbhjws8f1uu" path="res://shared/entities/states/state_machine.gd" id="6_aqc14"]
+[ext_resource type="Script" uid="uid://x6571s1b7vv1" path="res://shared/entities/npcs/strafer/states/strafer_move.gd" id="7_c54u4"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_78tnb"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_mymiv"]
+
+[node name="Strafer" type="Node3D" node_paths=PackedStringArray("body")]
+script = ExtResource("1_86phf")
+config_file = "strafer"
+body = NodePath("Body")
+team_id = 10
+
+[node name="StatesMachines" type="Node" parent="."]
+
+[node name="LowerBody" type="Node" parent="StatesMachines" node_paths=PackedStringArray("default_state")]
+script = ExtResource("6_aqc14")
+default_state = NodePath("patrol")
+
+[node name="patrol" type="Node" parent="StatesMachines/LowerBody"]
+script = ExtResource("7_c54u4")
+
+[node name="Body" type="CharacterBody3D" parent="."]
+collision_layer = 8
+
+[node name="Visual" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.476007, 0, 0, 0, 1.25716, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("PrismMesh_78tnb")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+shape = SubResource("CylinderShape3D_mymiv")

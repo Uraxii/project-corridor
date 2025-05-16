@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2ypk1dyco8dx"]
+
+[ext_resource type="Script" uid="uid://cw8vu672yofcd" path="res://shared-code/controllers/controller_base.gd" id="1_6gcyv"]
+
+[node name="Test" type="Node"]
+script = ExtResource("1_6gcyv")
