@@ -7,20 +7,18 @@ func get_type() -> String:
 
 func get_routes() -> Array[Dictionary]:
     return [{"type": "SpawnPlayerRequest", "handler": "_on_spawn_player"}]
+    
 
-
-func spawn_player(request: SpawnPlayerRequest) -> void:
-    var response_signal := Network.send("SpawnPlayer", request)
-    response_signal.connect(_on_spawn_player_response)
+func spawn_player(request: SpawnPcReq) -> void:
+    Network.send(Message.Action.spawn_pc_req, request)
 
 
 func _on_spawn_player_response(data: Dictionary) -> void:
-    var response = SpawnPlayerResponse.new()
+    var response = SpawnPcResp.new()
     response.deserialize(data)
     
     if response.error:
         printerr("Could not spawn player:", response.error)
         return
+        
     
-    Signals.load_world.emit(
-        response.display_name, response.coordinates, response.zone)

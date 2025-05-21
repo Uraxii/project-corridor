@@ -9,17 +9,14 @@ func get_routes() -> Array[Dictionary]:
     return [{"type": "SpawnPlayer", "handler": "_on_spawn_player"}]
 
 
-func _on_spawn_player(peer_id: int, data: Dictionary) -> Dictionary:
-    var request := SpawnPlayerRequest.new()
-    request.deserialize(data)
-    
-    print("Spawn Character Req:", request)
+func _on_spawn_player(req: SpawnPcReq) -> Dictionary:
+    print("Spawn Character Req:", req)
     
     # TODO: AuthZ + AuthN.
     
-    var response = SpawnPlayerResponse.new()
+    var response = SpawnPcResp.new()
     
-    if request.display_name == "":
+    if req.display_name == "":
         response.error = "Character does not exist."
         return response.serialize()
         

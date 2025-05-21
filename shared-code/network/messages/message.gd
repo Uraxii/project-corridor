@@ -16,7 +16,7 @@ enum Action
 var origin_peer: int = -1
 # The destination peer may not always be set. Not every Messages requires it.
 var dest_peer: int = -1
-
+var error: String = ""
 
 # Used to route messages
 func get_type() -> Action:

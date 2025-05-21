@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhoafn5w25s2t"]
+
+[ext_resource type="Script" uid="uid://1w730msxevdj" path="res://shared-code/player/local_player.gd" id="1_ihydo"]
+
+[node name="PlayerObj" type="Node"]
+script = ExtResource("1_ihydo")
+
+[node name="Input" type="Node" parent="."]

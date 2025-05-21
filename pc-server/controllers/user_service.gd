@@ -1,10 +1,8 @@
 class_name UserService extends Controller
 
-var signal_bus := Global.signal_bus
-
 
 func _ready() -> void:
-    signal_bus.login_req.connect(_on_login_req)
+    signals.login_req.connect(_on_login_req)
     
 
 func get_routes() -> Array[Dictionary]:
@@ -12,7 +10,7 @@ func get_routes() -> Array[Dictionary]:
 
 
 func _on_login_req(req: LoginReq) -> void:
-    print("new login_req")
+    print("new login request:", req)
     var resp := LoginResp.new()
 
     if req.username != "" and req.password != "":

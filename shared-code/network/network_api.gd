@@ -48,6 +48,8 @@ func _ready() -> void:
     signals.connect_to_server.connect(
         func(address, port): start_client(address, port))
     
+    multiplayer.peer_connected.connect(_on_peer_connected)
+    multiplayer.peer_disconnected.connect(_on_peer_disconnected)
     multiplayer.connected_to_server.connect(_on_connected_to_server)
     multiplayer.connection_failed.connect(_on_connection_failed)
     multiplayer.server_disconnected.connect(_on_server_disconnected)
@@ -120,10 +122,13 @@ func client_send(action: Message.Action, msg: Message) -> void:
         return
 
     var packet := {
-        "a": action,
+        "a": msg.get_type(),
         "t": _session_token,
         "m": msg.serialize(),
     }
+    
+    if msg.error:
+        packet["e"] = msg.error
 
     print("[Client] Sending packet:", packet)
     _on_client_message.rpc_id(1, packet)
@@ -168,6 +173,14 @@ func _is_session_token_valid(peer_id: int, token: String) -> bool:
         return false
     
     return clients.get(peer_id) == token
+
+
+func _on_peer_connected(peer_id: int) -> void:
+    print("Connected to peer:", peer_id)
+    
+
+func _on_peer_disconnected(peer_id: int) -> void:
+    print("Peer disconnected:", peer_id)
 
 
 func _on_connected_to_server() -> void:

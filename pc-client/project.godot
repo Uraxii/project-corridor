@@ -19,7 +19,67 @@ config/icon="res://icon.svg"
 
 Global="*res://autoload/global_manager.gd"
 Network="*res://shared-code/network/network_api.gd"
+EntityContainer="*res://shared-code/EntityContainer.tscn"
 
 [editor]
 
 run/main_run_args="--auto_connect"
+
+[input]
+
+bar_1_skill_1={
+"deadzone": 0.2,
+"events": []
+}
+bar_1_skill_2={
+"deadzone": 0.2,
+"events": []
+}
+target_self={
+"deadzone": 0.2,
+"events": []
+}
+target_next={
+"deadzone": 0.2,
+"events": []
+}
+jump={
+"deadzone": 0.2,
+"events": []
+}
+select_location={
+"deadzone": 0.2,
+"events": []
+}
+camera_zoom_out={
+"deadzone": 0.2,
+"events": []
+}
+camera_zoom_in={
+"deadzone": 0.2,
+"events": []
+}
+camera_look_enabled={
+"deadzone": 0.2,
+"events": []
+}
+camera_rotation_enabled={
+"deadzone": 0.2,
+"events": []
+}
+move_left={
+"deadzone": 0.2,
+"events": []
+}
+move_right={
+"deadzone": 0.2,
+"events": []
+}
+move_forward={
+"deadzone": 0.2,
+"events": []
+}
+move_back={
+"deadzone": 0.2,
+"events": []
+}

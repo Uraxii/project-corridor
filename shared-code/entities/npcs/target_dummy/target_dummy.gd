@@ -1,0 +1,1 @@
+class_name target_dummy extends Entity

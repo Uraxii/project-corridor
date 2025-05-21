@@ -3,6 +3,8 @@ class_name ControllerManager extends Node
 var active: Array[Controller] = [
     LoginController.new(),
     CharacterSelectController.new(),
+    EntityController.new(),
+    WorldController.new(),
 ]
 
 
