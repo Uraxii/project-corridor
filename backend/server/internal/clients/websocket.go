@@ -47,7 +47,8 @@ func (c *WebSocketClient) Id() uint64 {
 }
 
 func (c *WebSocketClient) ProcessMessage(senderId uint64, message packets.Msg) {
-	// Placeholder for message processing logic
+	c.logger.Printf("Received message: %T from client - echoing back", message)
+	c.SocketSend(message)
 }
 
 func (c *WebSocketClient) Initialize(id uint64) {
@@ -68,7 +69,7 @@ func (c *WebSocketClient) SocketSendAs(message packets.Msg, senderId uint64) {
 }
 
 func (c *WebSocketClient) PassToPeer(message packets.Msg, peerId uint64) {
-	if peer, exists := c.hub.Clients[peerId]; exists {
+	if peer, exists := c.hub.Clients.Get(peerId); exists {
 		peer.ProcessMessage(c.id, message)
 	}
 }
