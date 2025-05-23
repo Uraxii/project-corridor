@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="project-corridor"
-run/main_scene="uid://ceqtio75xasvf"
+run/main_scene="uid://cblo8m3itchq8"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Globals="*res://global_manager.gd"
+WS="*res://web_socket_client.gd"
 
 [editor_plugins]
 
