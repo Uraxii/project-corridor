@@ -48,12 +48,22 @@ func (c *WebSocketClient) Id() uint64 {
 
 func (c *WebSocketClient) ProcessMessage(senderId uint64, message packets.Msg) {
 	c.logger.Printf("Received message: %T from client - echoing back", message)
-	c.SocketSend(message)
+	// c.SocketSend(message)
+
+	if senderId == c.id {
+		// This message was send by the local client. Forward to everyone.
+		c.Broadcast(message)
+		return
+	}
+
+	c.SocketSendAs(message, senderId)
 }
 
 func (c *WebSocketClient) Initialize(id uint64) {
 	c.id = id
 	c.logger.SetPrefix(fmt.Sprintf("Client %d: ", c.id))
+	c.SocketSend(packets.NewId(c.id))
+	c.logger.Printf("Assigned client new ID")
 }
 
 func (c *WebSocketClient) SocketSend(message packets.Msg) {

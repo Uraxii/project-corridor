@@ -2,6 +2,7 @@ class_name GlobalManager extends Node
 
 @onready var signal_bus := SignalBus.new()
 @onready var log        := Log.new(signal_bus)
+@onready var packets    := PacketManager.new(signal_bus)
 @onready var input      := PlayerInput.new()
 @onready var views      := ViewManager.new()
 

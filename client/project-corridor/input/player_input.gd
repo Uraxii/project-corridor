@@ -4,10 +4,6 @@ var target_self:                bool = false
 var target_next:                bool = false
 var target_cancel:              bool = false
 
-var chat_send:                  bool = false
-
-var cancel:                     bool = false
-
 var jump:                       bool    = false
 var move:                       Vector2 = Vector2.ZERO
 var mouse_move:                 bool    = false
@@ -24,6 +20,8 @@ var mouse_motion_delta       := Vector2.ZERO
 var current_mouse_position   := Vector2.ZERO
 var previous_mouse_position  := Vector2.ZERO
 
+var signals: SignalBus
+
 var actions: Dictionary = {
     "bar_1_skill_1": func() -> bool:
             return Input.is_action_just_pressed("bar_1_skill_1"),
@@ -33,20 +31,38 @@ var actions: Dictionary = {
 }
 
 
+func is_move_event(event: InputEvent) -> bool:
+    var forward := event.is_action("move_forward")
+    var left := event.is_action("move_left")
+    var back := event.is_action("move_back")
+    var right := event.is_action("move_right")
+    return forward or left or back or right
+
+
 func _ready() -> void:
     Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+    signals = Globals.signal_bus
 
 
-func _process(_delta: float) -> void:
-    return
+func _input(event: InputEvent) -> void:
+    if Input.is_action_just_pressed("ui_accept"):
+        signals.in_accept.emit()
+    if Input.is_action_just_pressed("ui_cancel"):
+        signals.in_cancel.emit()
+    if is_move_event(event):
+        _move_input()
+
+
+func _playing_input_handler(event: InputEvent):
+    # TODO: Crete these inputs in the project.
+    
+    if event is InputEventMouseMotion:
+        mouse_motion_delta = Vector2(event.relative.x, event.relative.y)    
+
     target_self = Input.is_action_just_pressed("target_self")
     target_next = Input.is_action_just_pressed("target_next")
     target_cancel = Input.is_action_just_pressed("ui_cancel")
     
-    chat_send = Input.is_action_just_pressed("chat_send")
-    cancel = Input.is_action_just_pressed("ui_cancel")        
-    
-    move = _move_input()
     jump = Input.is_action_just_pressed("jump")
 
     select_location = Input.is_action_just_pressed("select_location")
@@ -60,22 +76,16 @@ func _process(_delta: float) -> void:
             camera_rotation = mouse_motion_delta
     else:
             camera_rotation = Vector2.ZERO
+    
 
-    mouse_motion_delta = Vector2.ZERO
-
-
-func _input(event: InputEvent) -> void:
-    if event is InputEventMouseMotion:
-            mouse_motion_delta = Vector2(event.relative.x, event.relative.y)
-
-
-func _move_input() -> Vector2:
-    var move_input : Vector2  = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+func _move_input():
+    var dir: Vector2  = Input.get_vector(
+        "move_left", "move_right", "move_forward", "move_back")
 
     mouse_move = camera_rotation_enabled && camera_look_enabled
 
-    if mouse_move && move_input.y == 0:
-            move_input.y = -1
+    if mouse_move && dir.y == 0:
+            dir.y = -1
 
-    move_input = move_input.normalized()
-    return move_input
+    dir = dir.normalized()
+    signals.in_move.emit(dir)

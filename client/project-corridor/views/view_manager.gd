@@ -8,6 +8,7 @@ var _scene_map: Dictionary[GDScript, PackedScene] = {
     LoginView: preload("res://views/login/login_view.tscn"),
     MainView: preload("res://views/main/main_view.tscn"),
     ConsoleView: preload("res://views/console/console_view.tscn"),
+    ViewPause: preload("res://views/pause/view_pause.tscn"),
 }
 
 # TODO: Make these views not class-level singletons.
@@ -15,6 +16,7 @@ var char_select: CharacterSelectView
 var login: LoginView
 var main: MainView
 var console: ConsoleView
+var pause: ViewPause
 
 @onready var signals := Globals.signal_bus
 
@@ -42,6 +44,7 @@ func spawn(type: GDScript) -> View:
 func _ready():
     signals.connection_closed.connect(_on_connection_closed)
     signals.connected_to_server.connect(_on_connected_to_server)
+    signals.login_success.connect(_on_login_success)
     
     spawn(ConsoleView)
     
@@ -57,23 +60,13 @@ func _on_connected_to_server() -> void:
 func _on_connection_closed() -> void:
     if login:
         login.despawn()
-        
-    if main:
-        main.despawn()
-        
+    
     main = spawn(MainView)
      
        
-func _on_login(resp: NetUtils.MSG.Packet) -> void:
-    if not resp.success:
-        return
-    
-    if login:
-        login.despawn()
-    
-    if char_select:
-        char_select.despawn()
+func _on_login_success(id: int) -> void:
+    if pause:
+        pause.despawn()
         
+    pause = spawn(ViewPause)
     char_select = spawn(CharacterSelectView)
-        
-    
