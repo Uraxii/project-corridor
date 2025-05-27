@@ -21,6 +21,74 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ChatMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Sender        uint64                 `protobuf:"varint,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	Recipient     uint64                 `protobuf:"varint,2,opt,name=recipient,proto3" json:"recipient,omitempty"`
+	Channel       uint64                 `protobuf:"varint,3,opt,name=channel,proto3" json:"channel,omitempty"`
+	Content       string                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatMessage) Reset() {
+	*x = ChatMessage{}
+	mi := &file_packets_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatMessage) ProtoMessage() {}
+
+func (x *ChatMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_packets_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatMessage.ProtoReflect.Descriptor instead.
+func (*ChatMessage) Descriptor() ([]byte, []int) {
+	return file_packets_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ChatMessage) GetSender() uint64 {
+	if x != nil {
+		return x.Sender
+	}
+	return 0
+}
+
+func (x *ChatMessage) GetRecipient() uint64 {
+	if x != nil {
+		return x.Recipient
+	}
+	return 0
+}
+
+func (x *ChatMessage) GetChannel() uint64 {
+	if x != nil {
+		return x.Channel
+	}
+	return 0
+}
+
+func (x *ChatMessage) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
 type CredentialMessage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	User          string                 `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
@@ -31,7 +99,7 @@ type CredentialMessage struct {
 
 func (x *CredentialMessage) Reset() {
 	*x = CredentialMessage{}
-	mi := &file_packets_proto_msgTypes[0]
+	mi := &file_packets_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +111,7 @@ func (x *CredentialMessage) String() string {
 func (*CredentialMessage) ProtoMessage() {}
 
 func (x *CredentialMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_packets_proto_msgTypes[0]
+	mi := &file_packets_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +124,7 @@ func (x *CredentialMessage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CredentialMessage.ProtoReflect.Descriptor instead.
 func (*CredentialMessage) Descriptor() ([]byte, []int) {
-	return file_packets_proto_rawDescGZIP(), []int{0}
+	return file_packets_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CredentialMessage) GetUser() string {
@@ -82,7 +150,7 @@ type IdMessage struct {
 
 func (x *IdMessage) Reset() {
 	*x = IdMessage{}
-	mi := &file_packets_proto_msgTypes[1]
+	mi := &file_packets_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -94,7 +162,7 @@ func (x *IdMessage) String() string {
 func (*IdMessage) ProtoMessage() {}
 
 func (x *IdMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_packets_proto_msgTypes[1]
+	mi := &file_packets_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -107,7 +175,7 @@ func (x *IdMessage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IdMessage.ProtoReflect.Descriptor instead.
 func (*IdMessage) Descriptor() ([]byte, []int) {
-	return file_packets_proto_rawDescGZIP(), []int{1}
+	return file_packets_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *IdMessage) GetId() uint64 {
@@ -122,6 +190,7 @@ type Packet struct {
 	SenderId uint64                 `protobuf:"varint,1,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
 	// Types that are valid to be assigned to Msg:
 	//
+	//	*Packet_Chat
 	//	*Packet_Credential
 	//	*Packet_Id
 	Msg           isPacket_Msg `protobuf_oneof:"msg"`
@@ -131,7 +200,7 @@ type Packet struct {
 
 func (x *Packet) Reset() {
 	*x = Packet{}
-	mi := &file_packets_proto_msgTypes[2]
+	mi := &file_packets_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -143,7 +212,7 @@ func (x *Packet) String() string {
 func (*Packet) ProtoMessage() {}
 
 func (x *Packet) ProtoReflect() protoreflect.Message {
-	mi := &file_packets_proto_msgTypes[2]
+	mi := &file_packets_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -156,7 +225,7 @@ func (x *Packet) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Packet.ProtoReflect.Descriptor instead.
 func (*Packet) Descriptor() ([]byte, []int) {
-	return file_packets_proto_rawDescGZIP(), []int{2}
+	return file_packets_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Packet) GetSenderId() uint64 {
@@ -169,6 +238,15 @@ func (x *Packet) GetSenderId() uint64 {
 func (x *Packet) GetMsg() isPacket_Msg {
 	if x != nil {
 		return x.Msg
+	}
+	return nil
+}
+
+func (x *Packet) GetChat() *ChatMessage {
+	if x != nil {
+		if x, ok := x.Msg.(*Packet_Chat); ok {
+			return x.Chat
+		}
 	}
 	return nil
 }
@@ -195,13 +273,19 @@ type isPacket_Msg interface {
 	isPacket_Msg()
 }
 
+type Packet_Chat struct {
+	Chat *ChatMessage `protobuf:"bytes,2,opt,name=chat,proto3,oneof"`
+}
+
 type Packet_Credential struct {
-	Credential *CredentialMessage `protobuf:"bytes,2,opt,name=credential,proto3,oneof"`
+	Credential *CredentialMessage `protobuf:"bytes,3,opt,name=credential,proto3,oneof"`
 }
 
 type Packet_Id struct {
-	Id *IdMessage `protobuf:"bytes,3,opt,name=id,proto3,oneof"`
+	Id *IdMessage `protobuf:"bytes,4,opt,name=id,proto3,oneof"`
 }
+
+func (*Packet_Chat) isPacket_Msg() {}
 
 func (*Packet_Credential) isPacket_Msg() {}
 
@@ -211,18 +295,24 @@ var File_packets_proto protoreflect.FileDescriptor
 
 const file_packets_proto_rawDesc = "" +
 	"\n" +
-	"\rpackets.proto\x12\apackets\"?\n" +
+	"\rpackets.proto\x12\apackets\"w\n" +
+	"\vChatMessage\x12\x16\n" +
+	"\x06sender\x18\x01 \x01(\x04R\x06sender\x12\x1c\n" +
+	"\trecipient\x18\x02 \x01(\x04R\trecipient\x12\x18\n" +
+	"\achannel\x18\x03 \x01(\x04R\achannel\x12\x18\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\"?\n" +
 	"\x11CredentialMessage\x12\x12\n" +
 	"\x04user\x18\x01 \x01(\tR\x04user\x12\x16\n" +
 	"\x06secret\x18\x02 \x01(\tR\x06secret\"\x1b\n" +
 	"\tIdMessage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x90\x01\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"\xbc\x01\n" +
 	"\x06Packet\x12\x1b\n" +
-	"\tsender_id\x18\x01 \x01(\x04R\bsenderId\x12<\n" +
+	"\tsender_id\x18\x01 \x01(\x04R\bsenderId\x12*\n" +
+	"\x04chat\x18\x02 \x01(\v2\x14.packets.ChatMessageH\x00R\x04chat\x12<\n" +
 	"\n" +
-	"credential\x18\x02 \x01(\v2\x1a.packets.CredentialMessageH\x00R\n" +
+	"credential\x18\x03 \x01(\v2\x1a.packets.CredentialMessageH\x00R\n" +
 	"credential\x12$\n" +
-	"\x02id\x18\x03 \x01(\v2\x12.packets.IdMessageH\x00R\x02idB\x05\n" +
+	"\x02id\x18\x04 \x01(\v2\x12.packets.IdMessageH\x00R\x02idB\x05\n" +
 	"\x03msgB\rZ\vpkg/packetsb\x06proto3"
 
 var (
@@ -237,20 +327,22 @@ func file_packets_proto_rawDescGZIP() []byte {
 	return file_packets_proto_rawDescData
 }
 
-var file_packets_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_packets_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_packets_proto_goTypes = []any{
-	(*CredentialMessage)(nil), // 0: packets.CredentialMessage
-	(*IdMessage)(nil),         // 1: packets.IdMessage
-	(*Packet)(nil),            // 2: packets.Packet
+	(*ChatMessage)(nil),       // 0: packets.ChatMessage
+	(*CredentialMessage)(nil), // 1: packets.CredentialMessage
+	(*IdMessage)(nil),         // 2: packets.IdMessage
+	(*Packet)(nil),            // 3: packets.Packet
 }
 var file_packets_proto_depIdxs = []int32{
-	0, // 0: packets.Packet.credential:type_name -> packets.CredentialMessage
-	1, // 1: packets.Packet.id:type_name -> packets.IdMessage
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 0: packets.Packet.chat:type_name -> packets.ChatMessage
+	1, // 1: packets.Packet.credential:type_name -> packets.CredentialMessage
+	2, // 2: packets.Packet.id:type_name -> packets.IdMessage
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_packets_proto_init() }
@@ -258,7 +350,8 @@ func file_packets_proto_init() {
 	if File_packets_proto != nil {
 		return
 	}
-	file_packets_proto_msgTypes[2].OneofWrappers = []any{
+	file_packets_proto_msgTypes[3].OneofWrappers = []any{
+		(*Packet_Chat)(nil),
 		(*Packet_Credential)(nil),
 		(*Packet_Id)(nil),
 	}
@@ -268,7 +361,7 @@ func file_packets_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_packets_proto_rawDesc), len(file_packets_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

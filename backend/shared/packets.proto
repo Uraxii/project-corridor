@@ -3,6 +3,13 @@ syntax = "proto3";
 package packets;
 option go_package = "pkg/packets";
 
+message ChatMessage {
+  uint64 sender = 1;
+  uint64 recipient = 2;
+  uint64 channel = 3;
+  string content = 4;
+}
+
 message CredentialMessage {
   string user = 1;
   string secret = 2;
@@ -13,7 +20,8 @@ message IdMessage { uint64 id = 1; }
 message Packet {
   uint64 sender_id = 1;
   oneof msg {
-    CredentialMessage credential = 2;
-    IdMessage id = 3;
+    ChatMessage chat = 2;
+    CredentialMessage credential = 3;
+    IdMessage id = 4;
   }
 }
