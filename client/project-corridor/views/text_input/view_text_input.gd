@@ -13,15 +13,12 @@ var curr_state := STATE_HIDDEN
 func _ready() -> void:
     signals.in_accept.connect(_on_accept)
     signals.in_cancel.connect(_on_cancel)
+    input_field.text_submitted.connect(_on_submit)
     hide()
 
 
 func _on_accept() -> void:
     match curr_state:
-        STATE_EDITING:
-            var msg := input_field.text
-            input_field.text = ""
-            signals.log_new_message.emit(msg)
         STATE_HIDDEN:
             show()
             curr_state = STATE_EDITING
@@ -34,3 +31,12 @@ func _on_cancel() -> void:
             curr_state = STATE_HIDDEN
             
             
+func _on_submit(content: String) -> void:
+    input_field.text = ""
+    
+    signals.chat.emit("You", content)
+    
+    var packet := PacketManager.new_packet()
+    var chat := packet.new_chat()
+    chat.set_content(content)
+    WS.send(packet)

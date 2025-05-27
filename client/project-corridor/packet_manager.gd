@@ -21,4 +21,5 @@ func dispatch(packet: PACKETS.Packet) -> void:
     if packet.has_id():
         signals.login_resp.emit(packet.get_id())
     if packet.has_chat():
-        signals.chat_received.emit(sender_id, packet.get_chat())
+        var sender_name := "Client %d" % sender_id
+        signals.chat.emit(sender_name, packet.get_chat().get_content())

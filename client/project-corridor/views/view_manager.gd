@@ -1,4 +1,4 @@
-class_name ViewManager extends Node
+class_name ViewManager extends Control
 
 const views_dir := "res://views"
 
@@ -41,11 +41,11 @@ func spawn(type: GDScript) -> View:
     return view_node
 
 
-func _ready():
+func _ready() :
     signals.connection_closed.connect(_on_connection_closed)
     signals.connected_to_server.connect(_on_connected_to_server)
     signals.login_success.connect(_on_login_success)
-    
+    _set_full_rect(self)
     spawn(ConsoleView)
     
 
@@ -70,3 +70,15 @@ func _on_login_success(id: int) -> void:
         
     pause = spawn(ViewPause)
     char_select = spawn(CharacterSelectView)
+    
+    
+func _set_full_rect(control: Control) -> void:
+    control.anchor_left = 0.0
+    control.anchor_top = 0.0
+    control.anchor_right = 1.0
+    control.anchor_bottom = 1.0
+
+    control.offset_left = 0.0
+    control.offset_top = 0.0
+    control.offset_right = 0.0
+    control.offset_bottom = 0.0

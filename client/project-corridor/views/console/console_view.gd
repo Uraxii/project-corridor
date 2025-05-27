@@ -4,21 +4,20 @@ var history: Array[String] = []
 
 @onready var window: RichTextLabel = %Window
 
+
 func _ready() -> void:
-    signals.chat_received.connect(_on_message_received)
+    signals.chat.connect(_on_chat)
     signals.log_new_message.connect(_on_log_message)
     signals.log_new_debug.connect(_on_log_debug)
     signals.log_new_warning.connect(_on_log_warning)
     signals.log_new_error.connect(_on_log_error)
     signals.log_new_success.connect(_on_log_success)
     signals.log_new_announcment.connect(_on_log_announcement)
-    
 
-func _on_message_received(
-    sender_id: int, chat: PacketManager.PACKETS.ChatMessage
-) -> void:
-    var text := "%d: %s" % [sender_id, chat.get_content()]
-    _message(text, Color.WHITE)
+
+func _on_chat(sender: String, content: String) -> void:
+    window.append_text("[color=#%s]%s[/color]: [i]%s[/i]\n" % [
+        Color.CORNFLOWER_BLUE.to_html(false), sender, content])
 
 
 func _on_log_message(message: String) -> void:
@@ -53,4 +52,5 @@ func _on_log_announcement(message: String) -> void:
 func _message(message: String, color: Color) -> void:
     await get_tree().process_frame
     history.append(message)
-    window.append_text("[color=#%s]%s[/color]\n" % [color.to_html(false), message])
+    window.append_text(
+        "[color=#%s]%s[/color]\n" % [color.to_html(false), message])
