@@ -1,6 +1,8 @@
 class_name View extends Control
 
 @onready var signals := Globals.signal_bus
+@onready var input := Globals.input
+
 
 func initalize() -> void:
     visibility_changed.connect(_on_visibility_change)    
