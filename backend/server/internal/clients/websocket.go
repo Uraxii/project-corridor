@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"server/internal/server"
+	"server/internal/server/states"
 	"server/pkg/packets"
 
 	"github.com/gorilla/websocket"
@@ -17,6 +18,7 @@ type WebSocketClient struct {
 	conn     *websocket.Conn
 	hub      *server.Hub
 	sendChan chan *packets.Packet
+	state server.ClientStateHandler
 	logger   *log.Logger
 }
 
@@ -46,6 +48,28 @@ func (c *WebSocketClient) Id() uint64 {
 	return c.id
 }
 
+func (c *WebSocketClient) SetState(state server.ClientStateHandler) {
+	prevStateName := "None"
+	if c.state != nil {
+		prevStateName = c.state.Name()
+		c.state.OnExit()
+	}
+
+	newStateName := "None"
+	if state != nil {
+		newStateName = state.Name()
+	}
+
+	c.logger.Printf("Switching client %d from state %s to  %s", c.id, prevStateName, newStateName)
+
+	c.state = state
+
+	if c.state != nil {
+		c.state.SetClient(c)
+		c.state.OnEnter()
+	}
+}
+
 func (c *WebSocketClient) ProcessMessage(senderId uint64, message packets.Msg) {
 	c.logger.Printf("Received message: %T from client - echoing back", message)
 	// c.SocketSend(message)
@@ -62,8 +86,7 @@ func (c *WebSocketClient) ProcessMessage(senderId uint64, message packets.Msg) {
 func (c *WebSocketClient) Initialize(id uint64) {
 	c.id = id
 	c.logger.SetPrefix(fmt.Sprintf("Client %d: ", c.id))
-	c.SocketSend(packets.NewId(c.id))
-	c.logger.Printf("Assigned client new ID")
+	c.SetState(&states.Connected{})
 }
 
 func (c *WebSocketClient) SocketSend(message packets.Msg) {

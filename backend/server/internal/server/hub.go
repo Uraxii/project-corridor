@@ -7,6 +7,17 @@ import (
 	"server/internal/server/objects"
 )
 
+type ClientStateHandler interface {
+	Name() string
+
+	// Set Client to own the state.
+	SetClient(client ClientInterfacer)
+
+	OnEnter()
+	HandleMessage(senderId uint64, message packets.Msg)
+	OnExit()
+}
+
 type ClientInterfacer interface {
 	Id() uint64
 	ProcessMessage(senderId uint64, message packets.Msg)

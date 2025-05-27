@@ -1,4 +1,4 @@
-class_name ViewTextInput extends View
+class_name ChatInput extends View
 
 enum {
     STATE_EDITING,
@@ -7,13 +7,13 @@ enum {
 
 var curr_state := STATE_HIDDEN
 
-@onready var input_field: LineEdit = %LineEdit
+@onready var line: LineEdit = %LineEdit
 
 
 func _ready() -> void:
     signals.in_accept.connect(_on_accept)
     signals.in_cancel.connect(_on_cancel)
-    input_field.text_submitted.connect(_on_submit)
+    line.text_submitted.connect(_on_submit)
     hide()
 
 
@@ -32,7 +32,7 @@ func _on_cancel() -> void:
             
             
 func _on_submit(content: String) -> void:
-    input_field.text = ""
+    line.text = ""
     
     signals.chat.emit("You", content)
     
