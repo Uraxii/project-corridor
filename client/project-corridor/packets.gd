@@ -686,6 +686,105 @@ class PBPacker:
 ############### USER DATA BEGIN ################
 
 
+class ChatMessage:
+    func _init():
+        var service
+        
+        __sender = PBField.new("sender", PB_DATA_TYPE.UINT64, PB_RULE.OPTIONAL, 1, true, DEFAULT_VALUES_3[PB_DATA_TYPE.UINT64])
+        service = PBServiceField.new()
+        service.field = __sender
+        data[__sender.tag] = service
+        
+        __recipient = PBField.new("recipient", PB_DATA_TYPE.UINT64, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.UINT64])
+        service = PBServiceField.new()
+        service.field = __recipient
+        data[__recipient.tag] = service
+        
+        __channel = PBField.new("channel", PB_DATA_TYPE.UINT64, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.UINT64])
+        service = PBServiceField.new()
+        service.field = __channel
+        data[__channel.tag] = service
+        
+        __content = PBField.new("content", PB_DATA_TYPE.STRING, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.STRING])
+        service = PBServiceField.new()
+        service.field = __content
+        data[__content.tag] = service
+        
+    var data = {}
+    
+    var __sender: PBField
+    func has_sender() -> bool:
+        if __sender.value != null:
+            return true
+        return false
+    func get_sender() -> int:
+        return __sender.value
+    func clear_sender() -> void:
+        data[1].state = PB_SERVICE_STATE.UNFILLED
+        __sender.value = DEFAULT_VALUES_3[PB_DATA_TYPE.UINT64]
+    func set_sender(value : int) -> void:
+        __sender.value = value
+    
+    var __recipient: PBField
+    func has_recipient() -> bool:
+        if __recipient.value != null:
+            return true
+        return false
+    func get_recipient() -> int:
+        return __recipient.value
+    func clear_recipient() -> void:
+        data[2].state = PB_SERVICE_STATE.UNFILLED
+        __recipient.value = DEFAULT_VALUES_3[PB_DATA_TYPE.UINT64]
+    func set_recipient(value : int) -> void:
+        __recipient.value = value
+    
+    var __channel: PBField
+    func has_channel() -> bool:
+        if __channel.value != null:
+            return true
+        return false
+    func get_channel() -> int:
+        return __channel.value
+    func clear_channel() -> void:
+        data[3].state = PB_SERVICE_STATE.UNFILLED
+        __channel.value = DEFAULT_VALUES_3[PB_DATA_TYPE.UINT64]
+    func set_channel(value : int) -> void:
+        __channel.value = value
+    
+    var __content: PBField
+    func has_content() -> bool:
+        if __content.value != null:
+            return true
+        return false
+    func get_content() -> String:
+        return __content.value
+    func clear_content() -> void:
+        data[4].state = PB_SERVICE_STATE.UNFILLED
+        __content.value = DEFAULT_VALUES_3[PB_DATA_TYPE.STRING]
+    func set_content(value : String) -> void:
+        __content.value = value
+    
+    func _to_string() -> String:
+        return PBPacker.message_to_string(data)
+        
+    func to_bytes() -> PackedByteArray:
+        return PBPacker.pack_message(data)
+        
+    func from_bytes(bytes : PackedByteArray, offset : int = 0, limit : int = -1) -> int:
+        var cur_limit = bytes.size()
+        if limit != -1:
+            cur_limit = limit
+        var result = PBPacker.unpack_message(data, bytes, offset, cur_limit)
+        if result == cur_limit:
+            if PBPacker.check_required(data):
+                if limit == -1:
+                    return PB_ERR.NO_ERRORS
+            else:
+                return PB_ERR.REQUIRED_FIELDS
+        elif limit == -1 && result > 0:
+            return PB_ERR.PARSE_INCOMPLETE
+        return result
+    
 class CredentialMessage:
     func _init():
         var service
@@ -803,13 +902,19 @@ class Packet:
         service.field = __sender_id
         data[__sender_id.tag] = service
         
-        __credential = PBField.new("credential", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+        __chat = PBField.new("chat", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 2, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+        service = PBServiceField.new()
+        service.field = __chat
+        service.func_ref = Callable(self, "new_chat")
+        data[__chat.tag] = service
+        
+        __credential = PBField.new("credential", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
         service = PBServiceField.new()
         service.field = __credential
         service.func_ref = Callable(self, "new_credential")
         data[__credential.tag] = service
         
-        __id = PBField.new("id", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 3, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
+        __id = PBField.new("id", PB_DATA_TYPE.MESSAGE, PB_RULE.OPTIONAL, 4, true, DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE])
         service = PBServiceField.new()
         service.field = __id
         service.func_ref = Callable(self, "new_id")
@@ -830,6 +935,25 @@ class Packet:
     func set_sender_id(value : int) -> void:
         __sender_id.value = value
     
+    var __chat: PBField
+    func has_chat() -> bool:
+        if __chat.value != null:
+            return true
+        return false
+    func get_chat() -> ChatMessage:
+        return __chat.value
+    func clear_chat() -> void:
+        data[2].state = PB_SERVICE_STATE.UNFILLED
+        __chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+    func new_chat() -> ChatMessage:
+        data[2].state = PB_SERVICE_STATE.FILLED
+        __credential.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+        data[3].state = PB_SERVICE_STATE.UNFILLED
+        __id.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+        data[4].state = PB_SERVICE_STATE.UNFILLED
+        __chat.value = ChatMessage.new()
+        return __chat.value
+    
     var __credential: PBField
     func has_credential() -> bool:
         if __credential.value != null:
@@ -838,12 +962,14 @@ class Packet:
     func get_credential() -> CredentialMessage:
         return __credential.value
     func clear_credential() -> void:
-        data[2].state = PB_SERVICE_STATE.UNFILLED
+        data[3].state = PB_SERVICE_STATE.UNFILLED
         __credential.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
     func new_credential() -> CredentialMessage:
-        data[2].state = PB_SERVICE_STATE.FILLED
+        __chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+        data[2].state = PB_SERVICE_STATE.UNFILLED
+        data[3].state = PB_SERVICE_STATE.FILLED
         __id.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
-        data[3].state = PB_SERVICE_STATE.UNFILLED
+        data[4].state = PB_SERVICE_STATE.UNFILLED
         __credential.value = CredentialMessage.new()
         return __credential.value
     
@@ -855,12 +981,14 @@ class Packet:
     func get_id() -> IdMessage:
         return __id.value
     func clear_id() -> void:
-        data[3].state = PB_SERVICE_STATE.UNFILLED
+        data[4].state = PB_SERVICE_STATE.UNFILLED
         __id.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
     func new_id() -> IdMessage:
-        __credential.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+        __chat.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
         data[2].state = PB_SERVICE_STATE.UNFILLED
-        data[3].state = PB_SERVICE_STATE.FILLED
+        __credential.value = DEFAULT_VALUES_3[PB_DATA_TYPE.MESSAGE]
+        data[3].state = PB_SERVICE_STATE.UNFILLED
+        data[4].state = PB_SERVICE_STATE.FILLED
         __id.value = IdMessage.new()
         return __id.value
     

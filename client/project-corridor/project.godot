@@ -23,3 +23,10 @@ WS="*res://web_socket_client.gd"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/protobuf/plugin.cfg")
+
+[input]
+
+chat_send={
+"deadzone": 0.2,
+"events": []
+}
