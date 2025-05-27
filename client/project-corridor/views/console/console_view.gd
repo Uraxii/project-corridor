@@ -1,8 +1,23 @@
 class_name ConsoleView extends View
 
+enum {
+    STATE_INIT,
+    STATE_HIDDEN,
+    STATE_SHOWN,
+    STATE_EDITING,
+}
+
+var curr_state  := STATE_INIT
+var next_state  := STATE_INIT
+
 var history: Array[String] = []
 
 @onready var window: RichTextLabel = %Window
+
+func _process(delta: float) -> void:
+    # TODO: Implement state logic.
+    pass
+    
 
 func _ready() -> void:
     signals.log_new_message.connect(_on_log_message)
