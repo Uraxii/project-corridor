@@ -3,7 +3,7 @@ class_name LoginView extends View
 
 func _ready() -> void:
     multiplayer.connection_failed.connect(_on_connection_failed)
-    signals.login_resp.connect(_on_login)
+    # signals.login_resp.connect(_on_login)
     
     var submit_button: Button = %SubmitButton
     submit_button.pressed.connect(_on_submit_pressed)
@@ -23,17 +23,15 @@ func _on_submit_pressed() -> void:
     creds.set_secret(pass_field.text)
     
     WS.send(packet)
+    _on_login_success()
 
 
 func _on_connection_failed() -> void:
     despawn()
 
 
-func _on_login(msg: PacketManager.PACKETS.IdMessage) -> void:
+func _on_login_success() -> void:
     # TODO: create login_resp packet
     if true:
-        signals.login_success.emit(msg.get_id())
+        signals.login_success.emit()
         despawn()
-        
-    else:
-        print("no")

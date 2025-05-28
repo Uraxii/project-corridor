@@ -4,8 +4,9 @@ class_name SignalBus extends Node
 signal connected_to_server
 signal connection_closed
 signal got_packet(packet: PacketManager.PACKETS.Packet)
+signal got_client_id(msg: PacketManager.PACKETS.IdMessage)
 signal chat(sender_id: int, msg: PacketManager.PACKETS.Packet)
-signal login_resp(msg: PacketManager.PACKETS.IdMessage)
+signal login(msg: PacketManager.PACKETS.IdMessage)
 #endregion
 
 #region System
