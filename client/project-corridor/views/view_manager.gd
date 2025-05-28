@@ -11,13 +11,6 @@ var _scene_map: Dictionary[GDScript, PackedScene] = {
     ViewPause: preload("res://views/pause/view_pause.tscn"),
 }
 
-# TODO: Make these views not class-level singletons.
-var char_select: CharacterSelectView
-var login: LoginView
-var main: MainView
-var console: ConsoleView
-var pause: ViewPause
-
 @onready var signals := Globals.signal_bus
 
 
@@ -42,36 +35,9 @@ func spawn(type: GDScript) -> View:
 
 
 func _ready() :
-    signals.connection_closed.connect(_on_connection_closed)
-    signals.connected_to_server.connect(_on_connected_to_server)
-    signals.login_success.connect(_on_login_success)
     _set_full_rect(self)
-    spawn(ConsoleView)
-    
 
-func _on_connected_to_server() -> void:
-    if main:
-        main.despawn()
-        
-    if not login:
-        login = spawn(LoginView)
-        
 
-func _on_connection_closed() -> void:
-    if login:
-        login.despawn()
-    
-    main = spawn(MainView)
-     
-       
-func _on_login_success(id: int) -> void:
-    if pause:
-        pause.despawn()
-        
-    pause = spawn(ViewPause)
-    char_select = spawn(CharacterSelectView)
-    
-    
 func _set_full_rect(control: Control) -> void:
     control.anchor_left = 0.0
     control.anchor_top = 0.0
