@@ -1,4 +1,4 @@
-# Use official Go image as base
+# Dockerfile.server - Go game server only
 FROM golang:1.24.3-alpine AS builder
 
 # Install protobuf compiler and git
@@ -22,7 +22,7 @@ COPY backend/shared/ ./shared/
 # Copy server source code
 COPY backend/server/ ./
 
-# Generate protobuf files - fix the output path
+# Generate protobuf files
 RUN mkdir -p ./pkg/packets
 RUN protoc \
     --go_out=. \
@@ -36,8 +36,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/main.g
 # Use minimal alpine image for runtime
 FROM alpine:latest
 
-# Install ca-certificates for HTTPS requests (if needed)
-RUN apk --no-cache add ca-certificates
+# Install ca-certificates for HTTPS requests
+RUN apk --no-cache add ca-certificates netcat-openbsd
 
 # Create non-root user
 RUN addgroup -g 1001 appgroup && adduser -D -u 1001 -G appgroup appuser

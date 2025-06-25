@@ -1,0 +1,30 @@
+# Dockerfile.dashboard - Flask dashboard only
+FROM python:3.11-alpine
+
+# Install system dependencies
+RUN apk --no-cache add ca-certificates wget
+
+# Set working directory
+WORKDIR /app
+
+# Copy Flask requirements and install dependencies
+COPY backend/dashboard/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Create non-root user
+RUN addgroup -g 1001 appgroup && adduser -D -u 1001 -G appgroup appuser
+
+# Copy Flask application files
+COPY backend/dashboard/ ./
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port 5001
+EXPOSE 5001
+
+# Run the Flask application
+CMD ["python", "app.py"]

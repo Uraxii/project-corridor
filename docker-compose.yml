@@ -1,0 +1,36 @@
+services:
+  # Game Server
+  project-corridor-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 5000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Admin Dashboard
+  project-corridor-admin-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    ports:
+      - "5001:5001"
+    depends_on:
+      - project-corridor-server
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=false
+      - GAME_SERVER_URL=ws://project-corridor-admin:5001/ws
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5001/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
