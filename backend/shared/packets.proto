@@ -15,6 +15,16 @@ message CredentialMessage {
   string secret = 2;
 }
 
+message EntityDataMessage {
+  int id = 1;
+  string display_name = 2;
+  float health = 3;
+  float energy = 4;
+  float x_pos = 5;
+  float y_pos = 6;
+  float z_pos = 7;
+}
+
 message IdMessage { uint64 id = 1; }
 
 message Packet {
