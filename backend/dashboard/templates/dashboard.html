@@ -207,7 +207,7 @@
         <div class="header">
             <h1>🎮 Game Server Test Dashboard</h1>
             <div class="connection-controls">
-                <input type="text" id="serverUrl" placeholder="Server URL" value="ws://localhost:5000/ws">
+                <input type="text" id="serverUrl" placeholder="Server URL" value="ws://project-corridor-server:5000/ws">
                 <button class="btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
                 <span id="status" class="status disconnected">Disconnected</span>
             </div>
@@ -226,7 +226,8 @@
             <div class="panel">
                 <div class="panel-header">
                     📝 Message Log
-                    <button class="btn" onclick="clearMessages()" style="float: right; padding: 5px 10px; font-size: 12px;">Clear</button>
+                    <button class="btn" onclick="refreshMessages()" style="float: right; padding: 5px 10px; font-size: 12px;">Refresh</button>
+                    <button class="btn" onclick="clearMessages()" style="float: right; padding: 5px 10px; font-size: 12px; margin-right: 5px;">Clear</button>
                 </div>
                 <div class="panel-content">
                     <div id="messageLog" class="message-log"></div>
@@ -527,9 +528,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             generateMessageForms();
             refreshMessages();
-            
-            // Auto-refresh every 2 seconds
-            setInterval(refreshMessages, 2000);
         });
     </script>
 </body>

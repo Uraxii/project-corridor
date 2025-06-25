@@ -8,6 +8,10 @@ RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschem
 # Set working directory
 WORKDIR /app
 
+# Cache bust for fresh protobuf copying
+ARG CACHE_BUST
+RUN echo "Cache bust: $CACHE_BUST"
+
 # Copy shared protobuf files
 COPY backend/shared/ ./shared/
 
@@ -35,6 +39,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Create non-root user
 RUN addgroup -g 1001 appgroup && adduser -D -u 1001 -G appgroup appuser
+
+# Cache bust for fresh file copies
+ARG CACHE_BUST
+RUN echo "Cache bust: $CACHE_BUST"
 
 # Copy Flask application files
 COPY backend/dashboard/ ./
