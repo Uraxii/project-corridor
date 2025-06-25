@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMO Server WebSocket Tester</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .connection-panel {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.connected { background-color: #d4edda; color: #155724; }
+        .status.disconnected { background-color: #f8d7da; color: #721c24; }
+        .status.connecting { background-color: #fff3cd; color: #856404; }
+        
+        input, button, textarea {
+            padding: 8px 12px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .message-panel {
+            margin: 20px 0;
+        }
+        .message-log {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f8f9fa;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .message-input {
+            width: calc(100% - 120px);
+        }
+        .preset-tests {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .preset-tests button {
+            padding: 12px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 MMO Server WebSocket Tester</h1>
+        
+        <div class="connection-panel">
+            <h3>Connection</h3>
+            <input type="text" id="serverUrl" value="ws://localhost:5000/ws" placeholder="WebSocket URL">
+            <button id="connectBtn" onclick="toggleConnection()">Connect</button>
+            <div id="status" class="status disconnected">Disconnected</div>
+        </div>
+
+        <div class="message-panel">
+            <h3>Messages</h3>
+            <div id="messageLog" class="message-log"></div>
+            <div>
+                <input type="text" id="messageInput" class="message-input" placeholder="Type message here..." disabled>
+                <button onclick="sendMessage()" disabled id="sendBtn">Send</button>
+                <button onclick="clearLog()">Clear</button>
+            </div>
+        </div>
+
+        <div class="preset-tests">
+            <h3 style="grid-column: 1 / -1;">Preset Tests</h3>
+            <button onclick="testCredentials()" disabled class="test-btn">Test Credentials</button>
+            <button onclick="testChat()" disabled class="test-btn">Test Chat</button>
+            <button onclick="testId()" disabled class="test-btn">Test ID Message</button>
+            <button onclick="testMultiple()" disabled class="test-btn">Multiple Messages</button>
+            <button onclick="testBinary()" disabled class="test-btn">Binary Data</button>
+            <button onclick="testConnectionDrop()" disabled class="test-btn">Test Reconnection</button>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <h3>Expected Behavior</h3>
+            <ul>
+                <li><strong>On Connect:</strong> Server should send your client ID</li>
+                <li><strong>Messages:</strong> Should be echoed back or broadcast to other clients</li>
+                <li><strong>Binary Data:</strong> Should be handled as protobuf packets</li>
+                <li><strong>Logs:</strong> Check browser console for detailed WebSocket events</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let socket = null;
+        let isConnected = false;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('messageLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'color: red;' : 
+                            type === 'send' ? 'color: blue;' : 
+                            type === 'receive' ? 'color: green;' : '';
+            
+            logDiv.innerHTML += `<div style="${className}">[${timestamp}] ${type.toUpperCase()}: ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStatus(status, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${status}`;
+            statusDiv.textContent = message;
+        }
+
+        function updateUI() {
+            const connectBtn = document.getElementById('connectBtn');
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const testBtns = document.querySelectorAll('.test-btn');
+
+            connectBtn.textContent = isConnected ? 'Disconnect' : 'Connect';
+            messageInput.disabled = !isConnected;
+            sendBtn.disabled = !isConnected;
+            testBtns.forEach(btn => btn.disabled = !isConnected);
+        }
+
+        function toggleConnection() {
+            if (isConnected) {
+                disconnect();
+            } else {
+                connect();
+            }
+        }
+
+        function connect() {
+            const url = document.getElementById('serverUrl').value;
+            updateStatus('connecting', 'Connecting...');
+            
+            try {
+                socket = new WebSocket(url);
+                
+                socket.onopen = function(event) {
+                    isConnected = true;
+                    updateStatus('connected', 'Connected');
+                    updateUI();
+                    log(`Connected to ${url}`, 'info');
+                };
+
+                socket.onmessage = function(event) {
+                    if (event.data instanceof Blob) {
+                        // Handle binary data
+                        event.data.arrayBuffer().then(buffer => {
+                            const uint8Array = new Uint8Array(buffer);
+                            log(`Binary message received (${buffer.byteLength} bytes): ${Array.from(uint8Array).map(b => b.toString(16).padStart(2, '0')).join(' ')}`, 'receive');
+                        });
+                    } else {
+                        // Handle text data
+                        log(`Text message: ${event.data}`, 'receive');
+                    }
+                };
+
+                socket.onclose = function(event) {
+                    isConnected = false;
+                    updateStatus('disconnected', 'Disconnected');
+                    updateUI();
+                    log(`Connection closed (code: ${event.code}, reason: ${event.reason})`, 'info');
+                };
+
+                socket.onerror = function(error) {
+                    log(`WebSocket error: ${error}`, 'error');
+                    console.error('WebSocket error:', error);
+                };
+
+            } catch (error) {
+                updateStatus('disconnected', 'Connection failed');
+                log(`Connection failed: ${error.message}`, 'error');
+            }
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.close();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (message && socket && isConnected) {
+                socket.send(message);
+                log(`Sent: ${message}`, 'send');
+                input.value = '';
+            }
+        }
+
+        function sendBinaryMessage(data) {
+            if (socket && isConnected) {
+                socket.send(data);
+                const uint8Array = new Uint8Array(data);
+                log(`Sent binary (${data.byteLength} bytes): ${Array.from(uint8Array).map(b => b.toString(16).padStart(2, '0')).join(' ')}`, 'send');
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('messageLog').innerHTML = '';
+        }
+
+        // Preset test functions
+        function testCredentials() {
+            const message = JSON.stringify({
+                type: "credential",
+                user: "testuser",
+                secret: "testpass"
+            });
+            socket.send(message);
+            log(`Sent credentials test: ${message}`, 'send');
+        }
+
+        function testChat() {
+            const message = JSON.stringify({
+                type: "chat",
+                content: "Hello from test client!",
+                channel: 1
+            });
+            socket.send(message);
+            log(`Sent chat test: ${message}`, 'send');
+        }
+
+        function testId() {
+            const message = JSON.stringify({
+                type: "id",
+                id: 12345
+            });
+            socket.send(message);
+            log(`Sent ID test: ${message}`, 'send');
+        }
+
+        function testMultiple() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const message = `Multiple message ${i + 1}`;
+                    socket.send(message);
+                    log(`Sent: ${message}`, 'send');
+                }, i * 200);
+            }
+        }
+
+        function testBinary() {
+            // Create a simple binary message (mock protobuf)
+            const buffer = new ArrayBuffer(8);
+            const view = new DataView(buffer);
+            view.setUint32(0, 42, true); // sender_id
+            view.setUint32(4, 1, true);  // message type
+            sendBinaryMessage(buffer);
+        }
+
+        function testConnectionDrop() {
+            log('Testing connection drop and reconnect...', 'info');
+            disconnect();
+            setTimeout(() => {
+                connect();
+            }, 2000);
+        }
+
+        // Allow Enter key to send messages
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize UI
+        updateUI();
+    </script>
+</body>
+</html>

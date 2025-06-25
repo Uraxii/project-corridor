@@ -60,7 +60,7 @@ func (c *WebSocketClient) SetState(state server.ClientStateHandler) {
 		newStateName = state.Name()
 	}
 
-	c.logger.Printf("Switching client %d from state %s to  %s", c.id, prevStateName, newStateName)
+	c.logger.Printf("[D] Switching client %d from state %s to %s", c.id, prevStateName, newStateName)
 
 	c.state = state
 
@@ -71,8 +71,12 @@ func (c *WebSocketClient) SetState(state server.ClientStateHandler) {
 }
 
 func (c *WebSocketClient) ProcessMessage(senderId uint64, message packets.Msg) {
-	c.logger.Printf("Received message: %T from client - echoing back", message)
-	// c.SocketSend(message)
+	c.logger.Printf("[D] Received message: %T from client - echoing back", message)
+	
+	// MISSING: This line should be added around line 69
+	if c.state != nil {
+		c.state.HandleMessage(senderId, message)
+	}
 
 	if senderId == c.id {
 		// This message was send by the local client. Forward to everyone.
@@ -97,7 +101,7 @@ func (c *WebSocketClient) SocketSendAs(message packets.Msg, senderId uint64) {
 	select {
 	case c.sendChan <- &packets.Packet{SenderId: senderId, Msg: message}:
 	default:
-		c.logger.Printf("Send channel full, dropping message: %T", message)
+		c.logger.Printf("[W] Send channel full, dropping message: %T", message)
 	}
 }
 
@@ -112,68 +116,78 @@ func (c *WebSocketClient) Broadcast(message packets.Msg) {
 }
 
 func (c *WebSocketClient) ReadPump() {
-	defer func() {
-		c.logger.Println("Closing read pump")
-		c.Close("Read pump closed")
-	}()
+    defer func() {
+        c.logger.Println("[D] Closing read pump")
+        c.Close("Read pump closed")
+    }()
 
-	for {
-		_, data, err := c.conn.ReadMessage()
-		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				c.logger.Printf("Error: %v", err)
-			}
-			break
-		}
+    for {
+        messageType, data, err := c.conn.ReadMessage()
+        if err != nil {
+            if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+                c.logger.Printf("[E] %v", err)
+            }
+            break
+        }
 
-		packet := &packets.Packet{}
-		if err := proto.Unmarshal(data, packet); err != nil {
-			c.logger.Printf("Error unmarshalling data: %v", err)
-			continue
-		}
+        // Handle JSON messages for testing
+        if messageType == websocket.TextMessage {
+			// TODO: Disable this in production.
+            c.logger.Printf("[D] Received text message: %s", string(data))
+            // For testing, just echo back or create a simple response
+            testMsg := packets.NewId(c.id)
+            c.SocketSend(testMsg)
+        }
 
-		if packet.SenderId == 0 {
-			packet.SenderId = c.id
-		}
+        // Handle binary protobuf messages
+        packet := &packets.Packet{}
+        if err := proto.Unmarshal(data, packet); err != nil {
+            c.logger.Printf("[E] Failed to unmarshall data: %v", err)
+            continue
+        }
 
-		c.ProcessMessage(packet.SenderId, packet.Msg)
-	}
+        if packet.SenderId == 0 {
+            packet.SenderId = c.id
+        }
+
+        c.ProcessMessage(packet.SenderId, packet.Msg)
+    }
 }
 
 func (c *WebSocketClient) WritePump() {
 	defer func() {
-		c.logger.Println("Closing write pump")
+		c.logger.Println("[D] Closing write pump")
 		c.Close("Write pump closed")
 	}()
 
 	for packet := range c.sendChan {
 		writer, err := c.conn.NextWriter(websocket.BinaryMessage)
 		if err != nil {
-			c.logger.Printf("Error getting writer for %T packet, closing client: %v", packet.Msg, err)
+			c.logger.Printf("[E] Faile to get writer for %T packet, closing client: %v", packet.Msg, err)
 			continue
 		}
 
 		data, err := proto.Marshal(packet)
 		if err != nil {
-			c.logger.Printf("Error marshalling %T packet: %v", packet.Msg, err)
+			c.logger.Printf("[E] Failed to marshall %T packet: %v", packet.Msg, err)
 			continue
 		}
 
 		_, err = writer.Write(data)
 		if err != nil {
-			c.logger.Printf("Error writing %T packet: %v", packet.Msg, err)
+			c.logger.Printf("[E] Failed to write %T packet: %v", packet.Msg, err)
 			continue
 		}
 
 		if err := writer.Close(); err != nil {
-			c.logger.Printf("Error closing writer for %T packet: %v", packet.Msg, err)
+			c.logger.Printf("[E] Faile to close writer for %T packet: %v", packet.Msg, err)
 			continue
 		}
 	}
 }
 
 func (c *WebSocketClient) Close(reason string) {
-	c.logger.Printf("Closing client connection: %s", reason)
+	c.logger.Printf("[I] Closing client connection: %s", reason)
 
 	c.hub.UnregisterChan <- c
 	c.conn.Close()

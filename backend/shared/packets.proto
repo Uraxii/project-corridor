@@ -16,7 +16,7 @@ message CredentialMessage {
 }
 
 message EntityDataMessage {
-  int id = 1;
+  uint64 id = 1;
   string display_name = 2;
   float health = 3;
   float energy = 4;
@@ -33,5 +33,6 @@ message Packet {
     ChatMessage chat = 2;
     CredentialMessage credential = 3;
     IdMessage id = 4;
+    EntityDataMessage entityData = 5;
   }
 }

@@ -2,7 +2,7 @@ package packets
 
 type Msg = isPacket_Msg
 
-func NewCredientials(user string, secret string) Msg {
+func NewCredentials(user string, secret string) Msg {
 	return &Packet_Credential{
 		Credential: &CredentialMessage{
 			User: user,

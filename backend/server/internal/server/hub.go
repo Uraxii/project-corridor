@@ -56,7 +56,8 @@ func NewHub() *Hub {
 }
 
 func (h *Hub) Run() {
-	log.Println("Awaiting client registrations")
+	log.Println("[I] Server started")
+	log.Println("[I] Awaiting client connections")
 	for {
 		select {
 		case client := <- h.RegisterChan:
@@ -74,11 +75,11 @@ func (h *Hub) Run() {
 }
 
 func (h *Hub) Serve(getNewClient func(*Hub, http.ResponseWriter, *http.Request) (ClientInterfacer, error), writer http.ResponseWriter, request *http.Request) {
-	log.Println("New client connected from", request.RemoteAddr)
+	log.Println("[I] New client connected from", request.RemoteAddr)
 	client, err := getNewClient(h, writer, request)
 
 	if err != nil {
-		log.Printf("Error obtaining client for new connection: %v", err)
+		log.Printf("[E] Failed to obtain client for new connection: %v", err)
 		return
 	}
 
