@@ -15,17 +15,60 @@ message CredentialMessage {
   string secret = 2;
 }
 
+message IdMessage { uint64 id = 1; }
+
+// New stat system
+message StatMessage {
+  float current = 1;
+  float max = 2;
+  float extra = 3;
+}
+
+// New entity data structure
 message EntityDataMessage {
-  uint64 id = 1;
+  uint64 authority_id = 1;
+  uint64 entity_id = 2;   // Unique entity identifier
+  uint64 instance_id = 3; // Which instance/zone this entity is in
+  string display_name = 4;
+  string model = 5;
+  string state = 6;
+  float x_pos = 7;
+  float y_pos = 8;
+  float z_pos = 9;
+  repeated uint64 equipped_item_ids = 10;
+
+  // Stats map - key is stat name, value is stat data
+  map<string, StatMessage> stats = 11;
+}
+
+// Message to request spawning an entity
+message SpawnEntityMessage {
+  uint64 instance_id = 1; // Which instance/zone to spawn in
   string display_name = 2;
-  float health = 3;
-  float energy = 4;
+  string model = 3;
+  string state = 4;
   float x_pos = 5;
   float y_pos = 6;
   float z_pos = 7;
+  repeated uint64 equipped_item_ids = 8;
+  map<string, StatMessage> stats = 9;
 }
 
-message IdMessage { uint64 id = 1; }
+// Message to announce entity spawned
+message EntitySpawnedMessage { EntityDataMessage entity = 1; }
+
+// Message to update entity data
+message EntityUpdateMessage {
+  uint64 entity_id = 1;   // Which entity to update
+  uint64 instance_id = 2; // Which instance the entity is in
+  EntityDataMessage entity = 3;
+}
+
+// Message to despawn an entity
+message EntityDespawnMessage {
+  uint64 entity_id = 1;   // Which entity to despawn
+  uint64 instance_id = 2; // Which instance the entity is in
+}
 
 message Packet {
   uint64 sender_id = 1;
@@ -34,5 +77,9 @@ message Packet {
     CredentialMessage credential = 3;
     IdMessage id = 4;
     EntityDataMessage entityData = 5;
+    SpawnEntityMessage spawnEntity = 6;
+    EntitySpawnedMessage entitySpawned = 7;
+    EntityUpdateMessage entityUpdate = 8;
+    EntityDespawnMessage entityDespawn = 9;
   }
 }

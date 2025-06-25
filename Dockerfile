@@ -22,8 +22,13 @@ COPY backend/shared/ ./shared/
 # Copy server source code
 COPY backend/server/ ./
 
-# Generate protobuf files
-RUN protoc --go_out=./pkg/packets --go_opt=paths=source_relative ./shared/packets.proto
+# Generate protobuf files - fix the output path
+RUN mkdir -p ./pkg/packets
+RUN protoc \
+    --go_out=. \
+    --go_opt=paths=source_relative \
+    --proto_path=./shared \
+    ./shared/packets.proto
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/main.go

@@ -141,22 +141,133 @@ func (x *CredentialMessage) GetSecret() string {
 	return ""
 }
 
-type EntityDataMessage struct {
+type IdMessage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Health        float32                `protobuf:"fixed32,3,opt,name=health,proto3" json:"health,omitempty"`
-	Energy        float32                `protobuf:"fixed32,4,opt,name=energy,proto3" json:"energy,omitempty"`
-	XPos          float32                `protobuf:"fixed32,5,opt,name=x_pos,json=xPos,proto3" json:"x_pos,omitempty"`
-	YPos          float32                `protobuf:"fixed32,6,opt,name=y_pos,json=yPos,proto3" json:"y_pos,omitempty"`
-	ZPos          float32                `protobuf:"fixed32,7,opt,name=z_pos,json=zPos,proto3" json:"z_pos,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IdMessage) Reset() {
+	*x = IdMessage{}
+	mi := &file_packets_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IdMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IdMessage) ProtoMessage() {}
+
+func (x *IdMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_packets_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IdMessage.ProtoReflect.Descriptor instead.
+func (*IdMessage) Descriptor() ([]byte, []int) {
+	return file_packets_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *IdMessage) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+// New stat system
+type StatMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Current       float32                `protobuf:"fixed32,1,opt,name=current,proto3" json:"current,omitempty"`
+	Max           float32                `protobuf:"fixed32,2,opt,name=max,proto3" json:"max,omitempty"`
+	Extra         float32                `protobuf:"fixed32,3,opt,name=extra,proto3" json:"extra,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StatMessage) Reset() {
+	*x = StatMessage{}
+	mi := &file_packets_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StatMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StatMessage) ProtoMessage() {}
+
+func (x *StatMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_packets_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StatMessage.ProtoReflect.Descriptor instead.
+func (*StatMessage) Descriptor() ([]byte, []int) {
+	return file_packets_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *StatMessage) GetCurrent() float32 {
+	if x != nil {
+		return x.Current
+	}
+	return 0
+}
+
+func (x *StatMessage) GetMax() float32 {
+	if x != nil {
+		return x.Max
+	}
+	return 0
+}
+
+func (x *StatMessage) GetExtra() float32 {
+	if x != nil {
+		return x.Extra
+	}
+	return 0
+}
+
+// New entity data structure
+type EntityDataMessage struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	AuthorityId     uint64                 `protobuf:"varint,1,opt,name=authority_id,json=authorityId,proto3" json:"authority_id,omitempty"`
+	EntityId        uint64                 `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`       // Unique entity identifier
+	InstanceId      uint64                 `protobuf:"varint,3,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"` // Which instance/zone this entity is in
+	DisplayName     string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Model           string                 `protobuf:"bytes,5,opt,name=model,proto3" json:"model,omitempty"`
+	State           string                 `protobuf:"bytes,6,opt,name=state,proto3" json:"state,omitempty"`
+	XPos            float32                `protobuf:"fixed32,7,opt,name=x_pos,json=xPos,proto3" json:"x_pos,omitempty"`
+	YPos            float32                `protobuf:"fixed32,8,opt,name=y_pos,json=yPos,proto3" json:"y_pos,omitempty"`
+	ZPos            float32                `protobuf:"fixed32,9,opt,name=z_pos,json=zPos,proto3" json:"z_pos,omitempty"`
+	EquippedItemIds []uint64               `protobuf:"varint,10,rep,packed,name=equipped_item_ids,json=equippedItemIds,proto3" json:"equipped_item_ids,omitempty"`
+	// Stats map - key is stat name, value is stat data
+	Stats         map[string]*StatMessage `protobuf:"bytes,11,rep,name=stats,proto3" json:"stats,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *EntityDataMessage) Reset() {
 	*x = EntityDataMessage{}
-	mi := &file_packets_proto_msgTypes[2]
+	mi := &file_packets_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -168,7 +279,7 @@ func (x *EntityDataMessage) String() string {
 func (*EntityDataMessage) ProtoMessage() {}
 
 func (x *EntityDataMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_packets_proto_msgTypes[2]
+	mi := &file_packets_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -181,12 +292,26 @@ func (x *EntityDataMessage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EntityDataMessage.ProtoReflect.Descriptor instead.
 func (*EntityDataMessage) Descriptor() ([]byte, []int) {
-	return file_packets_proto_rawDescGZIP(), []int{2}
+	return file_packets_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *EntityDataMessage) GetId() uint64 {
+func (x *EntityDataMessage) GetAuthorityId() uint64 {
 	if x != nil {
-		return x.Id
+		return x.AuthorityId
+	}
+	return 0
+}
+
+func (x *EntityDataMessage) GetEntityId() uint64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
+func (x *EntityDataMessage) GetInstanceId() uint64 {
+	if x != nil {
+		return x.InstanceId
 	}
 	return 0
 }
@@ -198,18 +323,18 @@ func (x *EntityDataMessage) GetDisplayName() string {
 	return ""
 }
 
-func (x *EntityDataMessage) GetHealth() float32 {
+func (x *EntityDataMessage) GetModel() string {
 	if x != nil {
-		return x.Health
+		return x.Model
 	}
-	return 0
+	return ""
 }
 
-func (x *EntityDataMessage) GetEnergy() float32 {
+func (x *EntityDataMessage) GetState() string {
 	if x != nil {
-		return x.Energy
+		return x.State
 	}
-	return 0
+	return ""
 }
 
 func (x *EntityDataMessage) GetXPos() float32 {
@@ -233,28 +358,51 @@ func (x *EntityDataMessage) GetZPos() float32 {
 	return 0
 }
 
-type IdMessage struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+func (x *EntityDataMessage) GetEquippedItemIds() []uint64 {
+	if x != nil {
+		return x.EquippedItemIds
+	}
+	return nil
 }
 
-func (x *IdMessage) Reset() {
-	*x = IdMessage{}
-	mi := &file_packets_proto_msgTypes[3]
+func (x *EntityDataMessage) GetStats() map[string]*StatMessage {
+	if x != nil {
+		return x.Stats
+	}
+	return nil
+}
+
+// Message to request spawning an entity
+type SpawnEntityMessage struct {
+	state           protoimpl.MessageState  `protogen:"open.v1"`
+	InstanceId      uint64                  `protobuf:"varint,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"` // Which instance/zone to spawn in
+	DisplayName     string                  `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Model           string                  `protobuf:"bytes,3,opt,name=model,proto3" json:"model,omitempty"`
+	State           string                  `protobuf:"bytes,4,opt,name=state,proto3" json:"state,omitempty"`
+	XPos            float32                 `protobuf:"fixed32,5,opt,name=x_pos,json=xPos,proto3" json:"x_pos,omitempty"`
+	YPos            float32                 `protobuf:"fixed32,6,opt,name=y_pos,json=yPos,proto3" json:"y_pos,omitempty"`
+	ZPos            float32                 `protobuf:"fixed32,7,opt,name=z_pos,json=zPos,proto3" json:"z_pos,omitempty"`
+	EquippedItemIds []uint64                `protobuf:"varint,8,rep,packed,name=equipped_item_ids,json=equippedItemIds,proto3" json:"equipped_item_ids,omitempty"`
+	Stats           map[string]*StatMessage `protobuf:"bytes,9,rep,name=stats,proto3" json:"stats,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *SpawnEntityMessage) Reset() {
+	*x = SpawnEntityMessage{}
+	mi := &file_packets_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *IdMessage) String() string {
+func (x *SpawnEntityMessage) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*IdMessage) ProtoMessage() {}
+func (*SpawnEntityMessage) ProtoMessage() {}
 
-func (x *IdMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_packets_proto_msgTypes[3]
+func (x *SpawnEntityMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_packets_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -265,14 +413,229 @@ func (x *IdMessage) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use IdMessage.ProtoReflect.Descriptor instead.
-func (*IdMessage) Descriptor() ([]byte, []int) {
-	return file_packets_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use SpawnEntityMessage.ProtoReflect.Descriptor instead.
+func (*SpawnEntityMessage) Descriptor() ([]byte, []int) {
+	return file_packets_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *IdMessage) GetId() uint64 {
+func (x *SpawnEntityMessage) GetInstanceId() uint64 {
 	if x != nil {
-		return x.Id
+		return x.InstanceId
+	}
+	return 0
+}
+
+func (x *SpawnEntityMessage) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *SpawnEntityMessage) GetModel() string {
+	if x != nil {
+		return x.Model
+	}
+	return ""
+}
+
+func (x *SpawnEntityMessage) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *SpawnEntityMessage) GetXPos() float32 {
+	if x != nil {
+		return x.XPos
+	}
+	return 0
+}
+
+func (x *SpawnEntityMessage) GetYPos() float32 {
+	if x != nil {
+		return x.YPos
+	}
+	return 0
+}
+
+func (x *SpawnEntityMessage) GetZPos() float32 {
+	if x != nil {
+		return x.ZPos
+	}
+	return 0
+}
+
+func (x *SpawnEntityMessage) GetEquippedItemIds() []uint64 {
+	if x != nil {
+		return x.EquippedItemIds
+	}
+	return nil
+}
+
+func (x *SpawnEntityMessage) GetStats() map[string]*StatMessage {
+	if x != nil {
+		return x.Stats
+	}
+	return nil
+}
+
+// Message to announce entity spawned
+type EntitySpawnedMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entity        *EntityDataMessage     `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EntitySpawnedMessage) Reset() {
+	*x = EntitySpawnedMessage{}
+	mi := &file_packets_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EntitySpawnedMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EntitySpawnedMessage) ProtoMessage() {}
+
+func (x *EntitySpawnedMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_packets_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EntitySpawnedMessage.ProtoReflect.Descriptor instead.
+func (*EntitySpawnedMessage) Descriptor() ([]byte, []int) {
+	return file_packets_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *EntitySpawnedMessage) GetEntity() *EntityDataMessage {
+	if x != nil {
+		return x.Entity
+	}
+	return nil
+}
+
+// Message to update entity data
+type EntityUpdateMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EntityId      uint64                 `protobuf:"varint,1,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`       // Which entity to update
+	InstanceId    uint64                 `protobuf:"varint,2,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"` // Which instance the entity is in
+	Entity        *EntityDataMessage     `protobuf:"bytes,3,opt,name=entity,proto3" json:"entity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EntityUpdateMessage) Reset() {
+	*x = EntityUpdateMessage{}
+	mi := &file_packets_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EntityUpdateMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EntityUpdateMessage) ProtoMessage() {}
+
+func (x *EntityUpdateMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_packets_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EntityUpdateMessage.ProtoReflect.Descriptor instead.
+func (*EntityUpdateMessage) Descriptor() ([]byte, []int) {
+	return file_packets_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *EntityUpdateMessage) GetEntityId() uint64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
+func (x *EntityUpdateMessage) GetInstanceId() uint64 {
+	if x != nil {
+		return x.InstanceId
+	}
+	return 0
+}
+
+func (x *EntityUpdateMessage) GetEntity() *EntityDataMessage {
+	if x != nil {
+		return x.Entity
+	}
+	return nil
+}
+
+// Message to despawn an entity
+type EntityDespawnMessage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EntityId      uint64                 `protobuf:"varint,1,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`       // Which entity to despawn
+	InstanceId    uint64                 `protobuf:"varint,2,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"` // Which instance the entity is in
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EntityDespawnMessage) Reset() {
+	*x = EntityDespawnMessage{}
+	mi := &file_packets_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EntityDespawnMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EntityDespawnMessage) ProtoMessage() {}
+
+func (x *EntityDespawnMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_packets_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EntityDespawnMessage.ProtoReflect.Descriptor instead.
+func (*EntityDespawnMessage) Descriptor() ([]byte, []int) {
+	return file_packets_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *EntityDespawnMessage) GetEntityId() uint64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
+func (x *EntityDespawnMessage) GetInstanceId() uint64 {
+	if x != nil {
+		return x.InstanceId
 	}
 	return 0
 }
@@ -286,6 +649,10 @@ type Packet struct {
 	//	*Packet_Credential
 	//	*Packet_Id
 	//	*Packet_EntityData
+	//	*Packet_SpawnEntity
+	//	*Packet_EntitySpawned
+	//	*Packet_EntityUpdate
+	//	*Packet_EntityDespawn
 	Msg           isPacket_Msg `protobuf_oneof:"msg"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -293,7 +660,7 @@ type Packet struct {
 
 func (x *Packet) Reset() {
 	*x = Packet{}
-	mi := &file_packets_proto_msgTypes[4]
+	mi := &file_packets_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -305,7 +672,7 @@ func (x *Packet) String() string {
 func (*Packet) ProtoMessage() {}
 
 func (x *Packet) ProtoReflect() protoreflect.Message {
-	mi := &file_packets_proto_msgTypes[4]
+	mi := &file_packets_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -318,7 +685,7 @@ func (x *Packet) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Packet.ProtoReflect.Descriptor instead.
 func (*Packet) Descriptor() ([]byte, []int) {
-	return file_packets_proto_rawDescGZIP(), []int{4}
+	return file_packets_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Packet) GetSenderId() uint64 {
@@ -371,6 +738,42 @@ func (x *Packet) GetEntityData() *EntityDataMessage {
 	return nil
 }
 
+func (x *Packet) GetSpawnEntity() *SpawnEntityMessage {
+	if x != nil {
+		if x, ok := x.Msg.(*Packet_SpawnEntity); ok {
+			return x.SpawnEntity
+		}
+	}
+	return nil
+}
+
+func (x *Packet) GetEntitySpawned() *EntitySpawnedMessage {
+	if x != nil {
+		if x, ok := x.Msg.(*Packet_EntitySpawned); ok {
+			return x.EntitySpawned
+		}
+	}
+	return nil
+}
+
+func (x *Packet) GetEntityUpdate() *EntityUpdateMessage {
+	if x != nil {
+		if x, ok := x.Msg.(*Packet_EntityUpdate); ok {
+			return x.EntityUpdate
+		}
+	}
+	return nil
+}
+
+func (x *Packet) GetEntityDespawn() *EntityDespawnMessage {
+	if x != nil {
+		if x, ok := x.Msg.(*Packet_EntityDespawn); ok {
+			return x.EntityDespawn
+		}
+	}
+	return nil
+}
+
 type isPacket_Msg interface {
 	isPacket_Msg()
 }
@@ -391,6 +794,22 @@ type Packet_EntityData struct {
 	EntityData *EntityDataMessage `protobuf:"bytes,5,opt,name=entityData,proto3,oneof"`
 }
 
+type Packet_SpawnEntity struct {
+	SpawnEntity *SpawnEntityMessage `protobuf:"bytes,6,opt,name=spawnEntity,proto3,oneof"`
+}
+
+type Packet_EntitySpawned struct {
+	EntitySpawned *EntitySpawnedMessage `protobuf:"bytes,7,opt,name=entitySpawned,proto3,oneof"`
+}
+
+type Packet_EntityUpdate struct {
+	EntityUpdate *EntityUpdateMessage `protobuf:"bytes,8,opt,name=entityUpdate,proto3,oneof"`
+}
+
+type Packet_EntityDespawn struct {
+	EntityDespawn *EntityDespawnMessage `protobuf:"bytes,9,opt,name=entityDespawn,proto3,oneof"`
+}
+
 func (*Packet_Chat) isPacket_Msg() {}
 
 func (*Packet_Credential) isPacket_Msg() {}
@@ -398,6 +817,14 @@ func (*Packet_Credential) isPacket_Msg() {}
 func (*Packet_Id) isPacket_Msg() {}
 
 func (*Packet_EntityData) isPacket_Msg() {}
+
+func (*Packet_SpawnEntity) isPacket_Msg() {}
+
+func (*Packet_EntitySpawned) isPacket_Msg() {}
+
+func (*Packet_EntityUpdate) isPacket_Msg() {}
+
+func (*Packet_EntityDespawn) isPacket_Msg() {}
 
 var File_packets_proto protoreflect.FileDescriptor
 
@@ -411,17 +838,57 @@ const file_packets_proto_rawDesc = "" +
 	"\acontent\x18\x04 \x01(\tR\acontent\"?\n" +
 	"\x11CredentialMessage\x12\x12\n" +
 	"\x04user\x18\x01 \x01(\tR\x04user\x12\x16\n" +
-	"\x06secret\x18\x02 \x01(\tR\x06secret\"\xb5\x01\n" +
-	"\x11EntityDataMessage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12!\n" +
-	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x16\n" +
-	"\x06health\x18\x03 \x01(\x02R\x06health\x12\x16\n" +
-	"\x06energy\x18\x04 \x01(\x02R\x06energy\x12\x13\n" +
+	"\x06secret\x18\x02 \x01(\tR\x06secret\"\x1b\n" +
+	"\tIdMessage\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"O\n" +
+	"\vStatMessage\x12\x18\n" +
+	"\acurrent\x18\x01 \x01(\x02R\acurrent\x12\x10\n" +
+	"\x03max\x18\x02 \x01(\x02R\x03max\x12\x14\n" +
+	"\x05extra\x18\x03 \x01(\x02R\x05extra\"\xbb\x03\n" +
+	"\x11EntityDataMessage\x12!\n" +
+	"\fauthority_id\x18\x01 \x01(\x04R\vauthorityId\x12\x1b\n" +
+	"\tentity_id\x18\x02 \x01(\x04R\bentityId\x12\x1f\n" +
+	"\vinstance_id\x18\x03 \x01(\x04R\n" +
+	"instanceId\x12!\n" +
+	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12\x14\n" +
+	"\x05model\x18\x05 \x01(\tR\x05model\x12\x14\n" +
+	"\x05state\x18\x06 \x01(\tR\x05state\x12\x13\n" +
+	"\x05x_pos\x18\a \x01(\x02R\x04xPos\x12\x13\n" +
+	"\x05y_pos\x18\b \x01(\x02R\x04yPos\x12\x13\n" +
+	"\x05z_pos\x18\t \x01(\x02R\x04zPos\x12*\n" +
+	"\x11equipped_item_ids\x18\n" +
+	" \x03(\x04R\x0fequippedItemIds\x12;\n" +
+	"\x05stats\x18\v \x03(\v2%.packets.EntityDataMessage.StatsEntryR\x05stats\x1aN\n" +
+	"\n" +
+	"StatsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12*\n" +
+	"\x05value\x18\x02 \x01(\v2\x14.packets.StatMessageR\x05value:\x028\x01\"\xfd\x02\n" +
+	"\x12SpawnEntityMessage\x12\x1f\n" +
+	"\vinstance_id\x18\x01 \x01(\x04R\n" +
+	"instanceId\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x14\n" +
+	"\x05model\x18\x03 \x01(\tR\x05model\x12\x14\n" +
+	"\x05state\x18\x04 \x01(\tR\x05state\x12\x13\n" +
 	"\x05x_pos\x18\x05 \x01(\x02R\x04xPos\x12\x13\n" +
 	"\x05y_pos\x18\x06 \x01(\x02R\x04yPos\x12\x13\n" +
-	"\x05z_pos\x18\a \x01(\x02R\x04zPos\"\x1b\n" +
-	"\tIdMessage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\xfa\x01\n" +
+	"\x05z_pos\x18\a \x01(\x02R\x04zPos\x12*\n" +
+	"\x11equipped_item_ids\x18\b \x03(\x04R\x0fequippedItemIds\x12<\n" +
+	"\x05stats\x18\t \x03(\v2&.packets.SpawnEntityMessage.StatsEntryR\x05stats\x1aN\n" +
+	"\n" +
+	"StatsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12*\n" +
+	"\x05value\x18\x02 \x01(\v2\x14.packets.StatMessageR\x05value:\x028\x01\"J\n" +
+	"\x14EntitySpawnedMessage\x122\n" +
+	"\x06entity\x18\x01 \x01(\v2\x1a.packets.EntityDataMessageR\x06entity\"\x87\x01\n" +
+	"\x13EntityUpdateMessage\x12\x1b\n" +
+	"\tentity_id\x18\x01 \x01(\x04R\bentityId\x12\x1f\n" +
+	"\vinstance_id\x18\x02 \x01(\x04R\n" +
+	"instanceId\x122\n" +
+	"\x06entity\x18\x03 \x01(\v2\x1a.packets.EntityDataMessageR\x06entity\"T\n" +
+	"\x14EntityDespawnMessage\x12\x1b\n" +
+	"\tentity_id\x18\x01 \x01(\x04R\bentityId\x12\x1f\n" +
+	"\vinstance_id\x18\x02 \x01(\x04R\n" +
+	"instanceId\"\x8d\x04\n" +
 	"\x06Packet\x12\x1b\n" +
 	"\tsender_id\x18\x01 \x01(\x04R\bsenderId\x12*\n" +
 	"\x04chat\x18\x02 \x01(\v2\x14.packets.ChatMessageH\x00R\x04chat\x12<\n" +
@@ -431,7 +898,11 @@ const file_packets_proto_rawDesc = "" +
 	"\x02id\x18\x04 \x01(\v2\x12.packets.IdMessageH\x00R\x02id\x12<\n" +
 	"\n" +
 	"entityData\x18\x05 \x01(\v2\x1a.packets.EntityDataMessageH\x00R\n" +
-	"entityDataB\x05\n" +
+	"entityData\x12?\n" +
+	"\vspawnEntity\x18\x06 \x01(\v2\x1b.packets.SpawnEntityMessageH\x00R\vspawnEntity\x12E\n" +
+	"\rentitySpawned\x18\a \x01(\v2\x1d.packets.EntitySpawnedMessageH\x00R\rentitySpawned\x12B\n" +
+	"\fentityUpdate\x18\b \x01(\v2\x1c.packets.EntityUpdateMessageH\x00R\fentityUpdate\x12E\n" +
+	"\rentityDespawn\x18\t \x01(\v2\x1d.packets.EntityDespawnMessageH\x00R\rentityDespawnB\x05\n" +
 	"\x03msgB\rZ\vpkg/packetsb\x06proto3"
 
 var (
@@ -446,24 +917,41 @@ func file_packets_proto_rawDescGZIP() []byte {
 	return file_packets_proto_rawDescData
 }
 
-var file_packets_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_packets_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_packets_proto_goTypes = []any{
-	(*ChatMessage)(nil),       // 0: packets.ChatMessage
-	(*CredentialMessage)(nil), // 1: packets.CredentialMessage
-	(*EntityDataMessage)(nil), // 2: packets.EntityDataMessage
-	(*IdMessage)(nil),         // 3: packets.IdMessage
-	(*Packet)(nil),            // 4: packets.Packet
+	(*ChatMessage)(nil),          // 0: packets.ChatMessage
+	(*CredentialMessage)(nil),    // 1: packets.CredentialMessage
+	(*IdMessage)(nil),            // 2: packets.IdMessage
+	(*StatMessage)(nil),          // 3: packets.StatMessage
+	(*EntityDataMessage)(nil),    // 4: packets.EntityDataMessage
+	(*SpawnEntityMessage)(nil),   // 5: packets.SpawnEntityMessage
+	(*EntitySpawnedMessage)(nil), // 6: packets.EntitySpawnedMessage
+	(*EntityUpdateMessage)(nil),  // 7: packets.EntityUpdateMessage
+	(*EntityDespawnMessage)(nil), // 8: packets.EntityDespawnMessage
+	(*Packet)(nil),               // 9: packets.Packet
+	nil,                          // 10: packets.EntityDataMessage.StatsEntry
+	nil,                          // 11: packets.SpawnEntityMessage.StatsEntry
 }
 var file_packets_proto_depIdxs = []int32{
-	0, // 0: packets.Packet.chat:type_name -> packets.ChatMessage
-	1, // 1: packets.Packet.credential:type_name -> packets.CredentialMessage
-	3, // 2: packets.Packet.id:type_name -> packets.IdMessage
-	2, // 3: packets.Packet.entityData:type_name -> packets.EntityDataMessage
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	10, // 0: packets.EntityDataMessage.stats:type_name -> packets.EntityDataMessage.StatsEntry
+	11, // 1: packets.SpawnEntityMessage.stats:type_name -> packets.SpawnEntityMessage.StatsEntry
+	4,  // 2: packets.EntitySpawnedMessage.entity:type_name -> packets.EntityDataMessage
+	4,  // 3: packets.EntityUpdateMessage.entity:type_name -> packets.EntityDataMessage
+	0,  // 4: packets.Packet.chat:type_name -> packets.ChatMessage
+	1,  // 5: packets.Packet.credential:type_name -> packets.CredentialMessage
+	2,  // 6: packets.Packet.id:type_name -> packets.IdMessage
+	4,  // 7: packets.Packet.entityData:type_name -> packets.EntityDataMessage
+	5,  // 8: packets.Packet.spawnEntity:type_name -> packets.SpawnEntityMessage
+	6,  // 9: packets.Packet.entitySpawned:type_name -> packets.EntitySpawnedMessage
+	7,  // 10: packets.Packet.entityUpdate:type_name -> packets.EntityUpdateMessage
+	8,  // 11: packets.Packet.entityDespawn:type_name -> packets.EntityDespawnMessage
+	3,  // 12: packets.EntityDataMessage.StatsEntry.value:type_name -> packets.StatMessage
+	3,  // 13: packets.SpawnEntityMessage.StatsEntry.value:type_name -> packets.StatMessage
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_packets_proto_init() }
@@ -471,11 +959,15 @@ func file_packets_proto_init() {
 	if File_packets_proto != nil {
 		return
 	}
-	file_packets_proto_msgTypes[4].OneofWrappers = []any{
+	file_packets_proto_msgTypes[9].OneofWrappers = []any{
 		(*Packet_Chat)(nil),
 		(*Packet_Credential)(nil),
 		(*Packet_Id)(nil),
 		(*Packet_EntityData)(nil),
+		(*Packet_SpawnEntity)(nil),
+		(*Packet_EntitySpawned)(nil),
+		(*Packet_EntityUpdate)(nil),
+		(*Packet_EntityDespawn)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -483,7 +975,7 @@ func file_packets_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_packets_proto_rawDesc), len(file_packets_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
