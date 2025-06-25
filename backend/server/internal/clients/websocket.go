@@ -30,6 +30,7 @@ func NewWebSocketClient(hub *server.Hub, writer http.ResponseWriter, request *ht
 	}
 
 	conn, err := upgrader.Upgrade(writer, request, nil)
+
 	if err != nil {
 		return nil, err
 	}
@@ -132,15 +133,22 @@ func (c *WebSocketClient) ReadPump() {
 
         // Handle JSON messages for testing
         if messageType == websocket.TextMessage {
-			// TODO: Disable this in production.
+            // TODO: Disable this in production.
             c.logger.Printf("[D] Received text message: %s", string(data))
-            // For testing, just echo back or create a simple response
-            testMsg := packets.NewId(c.id)
-            c.SocketSend(testMsg)
+
+            // Echo the text message back in text format
+            err := c.conn.WriteMessage(websocket.TextMessage, data)
+
+            if err != nil {
+                c.logger.Printf("[E] Failed to echo text message: %v", err)
+            }
+
+            continue
         }
 
         // Handle binary protobuf messages
         packet := &packets.Packet{}
+
         if err := proto.Unmarshal(data, packet); err != nil {
             c.logger.Printf("[E] Failed to unmarshall data: %v", err)
             continue
