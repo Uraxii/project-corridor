@@ -1,4 +1,26 @@
-# Dockerfile.dashboard - Flask dashboard only
+# Dockerfile.dashboard - Flask dashboard with protobuf schema generation
+FROM golang:1.24.3-alpine AS schema-builder
+
+# Install protobuf compiler and schema generator
+RUN apk add --no-cache protobuf protobuf-dev git
+RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschema@latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy shared protobuf files
+COPY backend/shared/ ./shared/
+
+# Generate JSON schemas
+RUN mkdir -p ./schemas
+RUN protoc \
+    --jsonschema_out=./schemas \
+    --jsonschema_opt=enforce_oneof \
+    --jsonschema_opt=file_extension=json \
+    --proto_path=./shared \
+    ./shared/packets.proto
+
+# Python runtime stage
 FROM python:3.11-alpine
 
 # Install system dependencies
@@ -16,6 +38,12 @@ RUN addgroup -g 1001 appgroup && adduser -D -u 1001 -G appgroup appuser
 
 # Copy Flask application files
 COPY backend/dashboard/ ./
+
+# Create templates directory and copy template file
+RUN mkdir -p ./templates
+
+# Copy generated schemas from builder stage
+COPY --from=schema-builder /app/schemas ./schemas/
 
 # Change ownership to non-root user
 RUN chown -R appuser:appgroup /app

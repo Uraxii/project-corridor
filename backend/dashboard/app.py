@@ -5,36 +5,33 @@ import websockets
 import threading
 import time
 import os
-from collections import defaultdict
+from datetime import datetime
+import google.protobuf.json_format as json_format
+from google.protobuf.message import Message
+import sys
 import logging
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
-# Global state for entities
-entities = {}  # entityId -> entity data
-entities_by_instance = defaultdict(dict)  # instanceId -> {entityId -> entity}
-current_instance_id = 1
+# Global state
+connection_status = {"connected": False, "url": None}
+message_log = []
+websocket_connection = None
+connection_lock = threading.Lock()
 
 class GameServerClient:
-    def __init__(self, server_url=None):
-        if server_url is None:
-            # Try environment variable first, then default
-            server_url = os.getenv('GAME_SERVER_URL', 'ws://localhost:5000/ws')
-        self.server_url = server_url
+    def __init__(self):
         self.websocket = None
         self.connected = False
         self.loop = None
         self.thread = None
         
-    async def connect(self):
+    async def connect(self, server_url):
         try:
-            self.websocket = await websockets.connect(self.server_url)
+            self.websocket = await websockets.connect(server_url)
             self.connected = True
-            app.logger.info(f"Connected to game server at {self.server_url}")
-            
-            # Send hello message
-            await self.send_text_message("Hello from Flask dashboard!")
+            app.logger.info(f"Connected to game server at {server_url}")
             
             # Listen for messages
             async for message in self.websocket:
@@ -43,6 +40,13 @@ class GameServerClient:
         except Exception as e:
             app.logger.error(f"WebSocket connection failed: {e}")
             self.connected = False
+            with connection_lock:
+                connection_status["connected"] = False
+            
+    async def send_binary_message(self, protobuf_data):
+        if self.websocket and self.connected:
+            await self.websocket.send(protobuf_data)
+            log_message("SENT", "Binary protobuf message", len(protobuf_data))
             
     async def send_text_message(self, content):
         if self.websocket and self.connected:
@@ -52,14 +56,15 @@ class GameServerClient:
                 "timestamp": int(time.time() * 1000)
             }
             await self.websocket.send(json.dumps(message))
-            app.logger.info(f"Sent message: {content}")
+            log_message("SENT", f"Text: {content}")
             
     async def handle_message(self, message):
         try:
             if isinstance(message, bytes):
-                app.logger.info("Received binary protobuf message (parsing not implemented)")
+                log_message("RECEIVED", f"Binary message ({len(message)} bytes)")
+                # TODO: Parse protobuf here if needed for display
             else:
-                app.logger.info(f"Received text message: {message}")
+                log_message("RECEIVED", f"Text: {message}")
         except Exception as e:
             app.logger.error(f"Error handling message: {e}")
             
@@ -67,12 +72,14 @@ class GameServerClient:
         if self.websocket:
             asyncio.create_task(self.websocket.close())
         self.connected = False
+        with connection_lock:
+            connection_status["connected"] = False
         
-    def start_client_thread(self):
+    def start_client_thread(self, server_url):
         def run_client():
             self.loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
-            self.loop.run_until_complete(self.connect())
+            self.loop.run_until_complete(self.connect(server_url))
             
         self.thread = threading.Thread(target=run_client, daemon=True)
         self.thread.start()
@@ -80,197 +87,162 @@ class GameServerClient:
 # Global client instance
 game_client = GameServerClient()
 
+def log_message(direction, content, size=None):
+    timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+    entry = {
+        "timestamp": timestamp,
+        "direction": direction,
+        "content": content,
+        "size": size
+    }
+    message_log.append(entry)
+    
+    # Keep only last 100 messages
+    if len(message_log) > 100:
+        message_log.pop(0)
+
+def load_schemas():
+    """Load all JSON schemas from the schemas directory"""
+    schemas = {}
+    schema_dir = os.path.join(os.path.dirname(__file__), 'schemas')
+    
+    if not os.path.exists(schema_dir):
+        app.logger.warning(f"Schema directory not found: {schema_dir}")
+        return schemas
+    
+    for filename in os.listdir(schema_dir):
+        if filename.endswith('.json'):
+            schema_name = filename[:-5]  # Remove .json extension
+            try:
+                with open(os.path.join(schema_dir, filename), 'r') as f:
+                    schemas[schema_name] = json.load(f)
+                app.logger.info(f"Loaded schema: {schema_name}")
+            except Exception as e:
+                app.logger.error(f"Error loading schema {filename}: {e}")
+    
+    return schemas
+
+def parse_form_data(data, schema):
+    """Convert form data to protobuf-compatible structure"""
+    result = {}
+    
+    # Handle basic fields
+    for key, value in data.items():
+        if key.startswith('_'):  # Skip internal form fields
+            continue
+            
+        # Handle nested fields (like stats.health.current)
+        if '.' in key:
+            parts = key.split('.')
+            current = result
+            for part in parts[:-1]:
+                if part not in current:
+                    current[part] = {}
+                current = current[part]
+            
+            # Convert numeric strings to numbers
+            try:
+                if '.' in value or 'e' in value.lower():
+                    current[parts[-1]] = float(value)
+                else:
+                    current[parts[-1]] = int(value)
+            except ValueError:
+                current[parts[-1]] = value
+        else:
+            # Handle simple fields
+            if value == '':
+                continue
+                
+            try:
+                # Try to convert to appropriate type
+                if '.' in value or 'e' in value.lower():
+                    result[key] = float(value)
+                elif value.isdigit():
+                    result[key] = int(value)
+                else:
+                    result[key] = value
+            except ValueError:
+                result[key] = value
+    
+    return result
+
 @app.route('/')
 def dashboard():
-    return render_template('dashboard.html')
+    schemas = load_schemas()
+    with connection_lock:
+        status = connection_status.copy()
+    return render_template('dashboard.html', schemas=schemas, connection_status=status)
 
 @app.route('/api/connect', methods=['POST'])
 def connect_to_server():
     data = request.get_json()
     server_url = data.get('server_url', 'ws://localhost:5000/ws')
     
+    global game_client
     if game_client.connected:
         game_client.disconnect()
-        time.sleep(0.5)  # Give time to disconnect
+        time.sleep(0.5)
     
-    game_client.server_url = server_url
-    game_client.start_client_thread()
+    game_client = GameServerClient()
+    game_client.start_client_thread(server_url)
     
+    with connection_lock:
+        connection_status["connected"] = True
+        connection_status["url"] = server_url
+    
+    log_message("SYSTEM", f"Connecting to {server_url}")
     return jsonify({"status": "connecting", "server_url": server_url})
 
 @app.route('/api/disconnect', methods=['POST'])
 def disconnect_from_server():
     game_client.disconnect()
+    log_message("SYSTEM", "Disconnected from server")
     return jsonify({"status": "disconnected"})
 
 @app.route('/api/status')
 def get_connection_status():
-    return jsonify({"connected": game_client.connected})
+    with connection_lock:
+        return jsonify(connection_status)
 
-@app.route('/api/entities')
-def get_entities():
-    instance_id = request.args.get('instance_id', current_instance_id, type=int)
-    instance_entities = entities_by_instance.get(instance_id, {})
-    return jsonify(list(instance_entities.values()))
-
-@app.route('/api/instances')
-def get_instances():
-    return jsonify({
-        "current": current_instance_id,
-        "all": list(entities_by_instance.keys())
-    })
-
-@app.route('/api/spawn/player', methods=['POST'])
-def spawn_player():
-    data = request.get_json()
-    entity = create_mock_entity(
-        name=data.get('name', 'TestPlayer'),
-        model='player_character.glb',
-        state='idle',
-        x=data.get('x', 0),
-        y=data.get('y', 0),
-        z=data.get('z', 0),
-        stats={
-            'health': {'current': 100, 'max': 100, 'extra': 0},
-            'energy': {'current': 100, 'max': 100, 'extra': 0},
-            'vigor': {'current': 10, 'max': 10, 'extra': 0},
-            'strength': {'current': 10, 'max': 10, 'extra': 0},
-            'agility': {'current': 10, 'max': 10, 'extra': 0},
-            'intelligence': {'current': 10, 'max': 10, 'extra': 0}
-        }
-    )
-    spawn_entity_local(entity)
-    return jsonify(entity)
-
-@app.route('/api/spawn/warrior', methods=['POST'])
-def spawn_warrior():
-    data = request.get_json()
-    entity = create_mock_entity(
-        name=data.get('name', 'GuardCaptain'),
-        model='warrior_npc.glb',
-        state='patrol',
-        x=data.get('x', 5),
-        y=data.get('y', 0),
-        z=data.get('z', 5),
-        stats={
-            'health': {'current': 150, 'max': 150, 'extra': 0},
-            'energy': {'current': 80, 'max': 80, 'extra': 0},
-            'vigor': {'current': 15, 'max': 15, 'extra': 0},
-            'strength': {'current': 20, 'max': 20, 'extra': 5},
-            'agility': {'current': 12, 'max': 12, 'extra': 0},
-            'intelligence': {'current': 8, 'max': 8, 'extra': 0}
-        },
-        equipped_items=[1001, 2003]
-    )
-    spawn_entity_local(entity)
-    return jsonify(entity)
-
-@app.route('/api/spawn/mage', methods=['POST'])
-def spawn_mage():
-    data = request.get_json()
-    entity = create_mock_entity(
-        name=data.get('name', 'CourtWizard'),
-        model='mage_npc.glb',
-        state='casting',
-        x=data.get('x', -5),
-        y=data.get('y', 0),
-        z=data.get('z', -5),
-        stats={
-            'health': {'current': 80, 'max': 80, 'extra': 0},
-            'energy': {'current': 150, 'max': 150, 'extra': 20},
-            'vigor': {'current': 8, 'max': 8, 'extra': 0},
-            'strength': {'current': 6, 'max': 6, 'extra': 0},
-            'agility': {'current': 14, 'max': 14, 'extra': 0},
-            'intelligence': {'current': 25, 'max': 25, 'extra': 10}
-        },
-        equipped_items=[3001, 4002]
-    )
-    spawn_entity_local(entity)
-    return jsonify(entity)
-
-@app.route('/api/spawn/treasure', methods=['POST'])
-def spawn_treasure():
-    data = request.get_json()
-    entity = create_mock_entity(
-        name='Treasure Chest',
-        model='treasure_chest.glb',
-        state='closed',
-        x=data.get('x', 10),
-        y=data.get('y', 0),
-        z=data.get('z', 10),
-        stats={
-            'durability': {'current': 100, 'max': 100, 'extra': 0}
-        }
-    )
-    spawn_entity_local(entity)
-    return jsonify(entity)
-
-@app.route('/api/entity/<int:entity_id>/despawn', methods=['DELETE'])
-def despawn_entity(entity_id):
-    instance_id = request.args.get('instance_id', current_instance_id, type=int)
-    
-    if entity_id in entities:
-        del entities[entity_id]
-    
-    if instance_id in entities_by_instance and entity_id in entities_by_instance[instance_id]:
-        del entities_by_instance[instance_id][entity_id]
-        if not entities_by_instance[instance_id]:
-            del entities_by_instance[instance_id]
-    
-    return jsonify({"status": "despawned", "entity_id": entity_id})
-
-@app.route('/api/entity/<int:entity_id>/update', methods=['PUT'])
-def update_entity(entity_id):
-    instance_id = request.args.get('instance_id', current_instance_id, type=int)
-    
-    if entity_id in entities and entities[entity_id]['instanceId'] == instance_id:
-        entity = entities[entity_id]
-        # Simulate updating entity stats (reduce health)
-        if 'health' in entity['stats']:
-            entity['stats']['health']['current'] = max(0, entity['stats']['health']['current'] - 10)
+@app.route('/api/send_message', methods=['POST'])
+def send_message():
+    try:
+        data = request.get_json()
+        message_type = data.get('message_type')
+        message_data = data.get('message_data', {})
         
-        return jsonify(entity)
-    
-    return jsonify({"error": "Entity not found"}), 404
+        if not game_client.connected:
+            return jsonify({"error": "Not connected to server"}), 400
+        
+        # For now, send as text message for debugging
+        # TODO: Convert to protobuf binary when protobuf Python bindings are available
+        text_message = f"{message_type}: {json.dumps(message_data)}"
+        
+        # Send in a thread-safe way
+        def send_async():
+            if game_client.loop and game_client.loop.is_running():
+                asyncio.run_coroutine_threadsafe(
+                    game_client.send_text_message(text_message),
+                    game_client.loop
+                )
+        
+        threading.Thread(target=send_async, daemon=True).start()
+        
+        return jsonify({"status": "sent", "message_type": message_type})
+        
+    except Exception as e:
+        app.logger.error(f"Error sending message: {e}")
+        return jsonify({"error": str(e)}), 500
 
-@app.route('/api/instance/<int:instance_id>/switch', methods=['POST'])
-def switch_instance(instance_id):
-    global current_instance_id
-    current_instance_id = instance_id
-    return jsonify({"current_instance": current_instance_id})
+@app.route('/api/messages')
+def get_messages():
+    return jsonify(message_log)
 
-@app.route('/api/instance/<int:instance_id>/clear', methods=['DELETE'])
-def clear_instance(instance_id):
-    if instance_id in entities_by_instance:
-        for entity_id in list(entities_by_instance[instance_id].keys()):
-            if entity_id in entities:
-                del entities[entity_id]
-        del entities_by_instance[instance_id]
-    
-    return jsonify({"status": "cleared", "instance_id": instance_id})
-
-def create_mock_entity(name, model, state, x, y, z, stats, equipped_items=None):
-    import random
-    entity_id = random.randint(1, 100000)
-    
-    if equipped_items is None:
-        equipped_items = []
-    
-    return {
-        'authorityId': 0,
-        'entityId': entity_id,
-        'instanceId': current_instance_id,
-        'displayName': name,
-        'model': model,
-        'state': state,
-        'position': {'x': x, 'y': y, 'z': z},
-        'equippedItemIds': equipped_items,
-        'stats': stats
-    }
-
-def spawn_entity_local(entity):
-    entities[entity['entityId']] = entity
-    entities_by_instance[entity['instanceId']][entity['entityId']] = entity
+@app.route('/api/clear_messages', methods=['POST'])
+def clear_messages():
+    global message_log
+    message_log = []
+    return jsonify({"status": "cleared"})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

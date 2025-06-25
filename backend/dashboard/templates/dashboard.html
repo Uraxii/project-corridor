@@ -3,210 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Server Entity Test Client - Flask</title>
+    <title>Game Server Test Dashboard</title>
     <style>
-        /* Main layout and typography */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f0f0f0;
         }
-
-        .container {
+        
+        .header {
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-
-        /* Status indicators */
+        
         .status {
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-
-        .connected { 
-            background-color: #d4edda; 
-            color: #155724; 
-        }
-
-        .disconnected { 
-            background-color: #f8d7da; 
-            color: #721c24; 
-        }
-
-        .error { 
-            background-color: #f8d7da; 
-            color: #721c24; 
-        }
-
-        /* Control layouts */
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .control-group {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #dee2e6;
-        }
-
-        .control-group h3 {
-            margin: 0 0 10px 0;
-            color: #495057;
-        }
-
-        /* Form elements */
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
+            display: inline-block;
             padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 2px;
-        }
-
-        button:hover { 
-            background-color: #0056b3; 
-        }
-
-        button:disabled { 
-            background-color: #6c757d; 
-            cursor: not-allowed; 
-        }
-
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        /* Message and entity displays */
-        .messages {
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ced4da;
-            padding: 10px;
-            background-color: #f8f9fa;
-            font-family: monospace;
-            font-size: 12px;
-        }
-
-        .entity-list {
-            height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ced4da;
-            padding: 10px;
-            background-color: #f8f9fa;
-        }
-
-        .entity-item {
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            padding: 10px;
-            margin: 5px 0;
-        }
-
-        .entity-header {
+            border-radius: 20px;
             font-weight: bold;
-            color: #495057;
-            margin-bottom: 5px;
+            font-size: 14px;
         }
-
-        .entity-details {
-            font-size: 12px;
-            color: #6c757d;
-        }
-
-        /* Stat bars */
-        .stat-bar {
-            background: #e9ecef;
-            border-radius: 10px;
-            height: 8px;
-            margin: 2px 0;
-            overflow: hidden;
-        }
-
-        .stat-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .health { 
-            background-color: #dc3545; 
-        }
-
-        .energy { 
-            background-color: #007bff; 
-        }
-
-        .other-stat { 
-            background-color: #28a745; 
-        }
-
-        /* Instance selector */
-        .instance-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-        }
-
-        /* Grid layouts */
-        .grid-two-columns {
+        
+        .status.connected { background: #d4edda; color: #155724; }
+        .status.disconnected { background: #f8d7da; color: #721c24; }
+        
+        .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
+            height: calc(100vh - 200px);
         }
-
-        /* Utility classes */
-        .text-muted {
-            color: #6c757d;
-            font-style: italic;
+        
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
-
-        .text-center {
-            text-align: center;
+        
+        .panel-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
         }
-
-        .mb-0 {
+        
+        .panel-content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover { background: #0056b3; }
+        .btn:disabled { background: #6c757d; cursor: not-allowed; }
+        .btn.danger { background: #dc3545; }
+        .btn.danger:hover { background: #c82333; }
+        
+        .message-log {
+            height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .message-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .message-timestamp {
+            color: #666;
+            margin-right: 10px;
+        }
+        
+        .message-direction {
+            font-weight: bold;
+            margin-right: 10px;
+            width: 60px;
+            display: inline-block;
+        }
+        
+        .message-direction.sent { color: #28a745; }
+        .message-direction.received { color: #007bff; }
+        .message-direction.system { color: #ffc107; }
+        
+        .connection-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .connection-controls input {
+            flex: 1;
             margin-bottom: 0;
         }
-
-        .mt-10 {
-            margin-top: 10px;
+        
+        .message-form {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
         }
-
-        /* Responsive design */
+        
+        .message-form h4 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        
+        .stats-group {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+        }
+        
+        .stats-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .controls {
+            .grid {
                 grid-template-columns: 1fr;
+                height: auto;
             }
             
-            .grid-two-columns {
-                grid-template-columns: 1fr;
-            }
-            
-            .instance-selector {
+            .connection-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
@@ -214,122 +203,84 @@
     </style>
 </head>
 <body>
-    <h1>🎮 Game Server Entity Test Client - Flask Dashboard</h1>
-    
-    <!-- Connection Section -->
     <div class="container">
-        <h2>🔗 Connection</h2>
-        <div id="status" class="status disconnected">Disconnected</div>
-        <input type="text" id="serverUrl" placeholder="Server URL" value="ws://localhost:5000/ws">
-        <button id="connectBtn" onclick="toggleConnection()">Connect</button>
-        <button id="clearBtn" onclick="clearMessages()">Clear Messages</button>
-    </div>
-
-    <!-- Entity Management Section -->
-    <div class="container">
-        <h2>🏭 Entity Management</h2>
-        <div class="instance-selector">
-            <label>Instance ID:</label>
-            <input type="number" id="instanceId" value="1" min="1" max="100">
-            <button onclick="switchInstance()">Switch Instance</button>
-            <span id="currentInstance">Current: 1</span>
+        <div class="header">
+            <h1>🎮 Game Server Test Dashboard</h1>
+            <div class="connection-controls">
+                <input type="text" id="serverUrl" placeholder="Server URL" value="ws://localhost:5000/ws">
+                <button class="btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
+                <span id="status" class="status disconnected">Disconnected</span>
+            </div>
         </div>
         
-        <div class="controls">
-            <!-- Spawn Player Controls -->
-            <div class="control-group">
-                <h3>🧑 Spawn Player</h3>
-                <input type="text" id="playerName" placeholder="Player Name" value="TestPlayer">
-                <input type="number" id="playerX" placeholder="X Position" value="0" step="0.1">
-                <input type="number" id="playerY" placeholder="Y Position" value="0" step="0.1">
-                <input type="number" id="playerZ" placeholder="Z Position" value="0" step="0.1">
-                <button onclick="spawnPlayer()">Spawn Player</button>
-            </div>
-            
-            <!-- Spawn Warrior Controls -->
-            <div class="control-group">
-                <h3>⚔️ Spawn Warrior</h3>
-                <input type="text" id="warriorName" placeholder="Warrior Name" value="GuardCaptain">
-                <input type="number" id="warriorX" placeholder="X Position" value="5" step="0.1">
-                <input type="number" id="warriorY" placeholder="Y Position" value="0" step="0.1">
-                <input type="number" id="warriorZ" placeholder="Z Position" value="5" step="0.1">
-                <button onclick="spawnWarrior()">Spawn Warrior</button>
-            </div>
-            
-            <!-- Spawn Mage Controls -->
-            <div class="control-group">
-                <h3>🧙 Spawn Mage</h3>
-                <input type="text" id="mageName" placeholder="Mage Name" value="CourtWizard">
-                <input type="number" id="mageX" placeholder="X Position" value="-5" step="0.1">
-                <input type="number" id="mageY" placeholder="Y Position" value="0" step="0.1">
-                <input type="number" id="mageZ" placeholder="Z Position" value="-5" step="0.1">
-                <button onclick="spawnMage()">Spawn Mage</button>
-            </div>
-            
-            <!-- Spawn Treasure Controls -->
-            <div class="control-group">
-                <h3>📦 Spawn Treasure</h3>
-                <input type="number" id="treasureX" placeholder="X Position" value="10" step="0.1">
-                <input type="number" id="treasureY" placeholder="Y Position" value="0" step="0.1">
-                <input type="number" id="treasureZ" placeholder="Z Position" value="10" step="0.1">
-                <button onclick="spawnTreasure()">Spawn Treasure Chest</button>
-            </div>
-            
-            <!-- Entity Actions -->
-            <div class="control-group">
-                <h3>🎯 Entity Actions</h3>
-                <input type="number" id="targetEntityId" placeholder="Entity ID" min="1">
-                <input type="number" id="targetInstanceId" placeholder="Instance ID" min="1" value="1">
-                <button onclick="despawnEntity()">Despawn Entity</button>
-                <button onclick="requestEntityUpdate()">Update Entity</button>
-            </div>
-            
-            <!-- Instance Management -->
-            <div class="control-group">
-                <h3>📊 Instance Management</h3>
-                <button onclick="listAllInstances()">List All Instances</button>
-                <button onclick="listCurrentInstance()">List Current Instance</button>
-                <button onclick="clearCurrentInstance()">Clear Current Instance</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Display Section -->
-    <div class="container">
-        <div class="grid-two-columns">
-            <!-- Entity List -->
-            <div>
-                <h2>📋 Entities (Instance <span id="entityInstanceDisplay">1</span>)</h2>
-                <div id="entityList" class="entity-list">
-                    <p class="text-muted">No entities spawned yet</p>
+        <div class="grid">
+            <!-- Message Sender Panel -->
+            <div class="panel">
+                <div class="panel-header">📤 Send Messages</div>
+                <div class="panel-content" id="messagePanel">
+                    <p>Loading message schemas...</p>
                 </div>
             </div>
             
-            <!-- Message Log -->
-            <div>
-                <h2>📝 Messages</h2>
-                <div id="messages" class="messages"></div>
+            <!-- Message Log Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    📝 Message Log
+                    <button class="btn" onclick="clearMessages()" style="float: right; padding: 5px 10px; font-size: 12px;">Clear</button>
+                </div>
+                <div class="panel-content">
+                    <div id="messageLog" class="message-log"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Global state
-        let currentInstanceId = 1;
         let connectionStatus = false;
-
-        // Utility functions
-        function log(message, type = 'info') {
-            const messages = document.getElementById('messages');
-            const timestamp = new Date().toLocaleTimeString();
-            const color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#495057';
-            messages.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
-            messages.scrollTop = messages.scrollHeight;
+        let schemas = {{ schemas | tojson }};
+        
+        // Connection Management
+        async function toggleConnection() {
+            if (connectionStatus) {
+                await disconnect();
+            } else {
+                await connect();
+            }
         }
-
+        
+        async function connect() {
+            const url = document.getElementById('serverUrl').value;
+            try {
+                const response = await fetch('/api/connect', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({server_url: url})
+                });
+                
+                if (response.ok) {
+                    updateConnectionUI(true);
+                    addLogMessage('SYSTEM', `Connected to ${url}`);
+                }
+            } catch (error) {
+                addLogMessage('SYSTEM', `Connection error: ${error}`);
+            }
+        }
+        
+        async function disconnect() {
+            try {
+                await fetch('/api/disconnect', {method: 'POST'});
+                updateConnectionUI(false);
+                addLogMessage('SYSTEM', 'Disconnected from server');
+            } catch (error) {
+                addLogMessage('SYSTEM', `Disconnect error: ${error}`);
+            }
+        }
+        
         function updateConnectionUI(connected) {
             const status = document.getElementById('status');
             const connectBtn = document.getElementById('connectBtn');
+            
+            connectionStatus = connected;
             
             if (connected) {
                 status.textContent = 'Connected';
@@ -340,318 +291,245 @@
                 status.className = 'status disconnected';
                 connectBtn.textContent = 'Connect';
             }
-            connectionStatus = connected;
         }
-
-        // Connection management
-        async function toggleConnection() {
-            if (connectionStatus) {
-                await disconnect();
-            } else {
-                await connect();
+        
+        // Message Log Management
+        function addLogMessage(direction, content, size) {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'message-entry';
+            
+            const directionClass = direction.toLowerCase();
+            entry.innerHTML = `
+                <span class="message-timestamp">${timestamp}</span>
+                <span class="message-direction ${directionClass}">${direction}</span>
+                <span class="message-content">${content}</span>
+                ${size ? `<span style="color: #666;"> (${size} bytes)</span>` : ''}
+            `;
+            
+            const log = document.getElementById('messageLog');
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        async function clearMessages() {
+            try {
+                await fetch('/api/clear_messages', {method: 'POST'});
+                document.getElementById('messageLog').innerHTML = '';
+            } catch (error) {
+                console.error('Error clearing messages:', error);
             }
         }
-
-        async function connect() {
-            const url = document.getElementById('serverUrl').value;
-            log(`Connecting to ${url}...`);
-            
+        
+        // Message Sending
+        async function sendMessage(messageType, formData) {
             try {
-                const response = await fetch('/api/connect', {
+                const response = await fetch('/api/send_message', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({server_url: url})
+                    body: JSON.stringify({
+                        message_type: messageType,
+                        message_data: formData
+                    })
                 });
                 
                 if (response.ok) {
-                    updateConnectionUI(true);
-                    log('Connected to server!', 'success');
-                    checkConnectionStatus();
+                    addLogMessage('SENT', `${messageType}: ${JSON.stringify(formData)}`);
                 } else {
-                    log('Failed to connect to server', 'error');
+                    const error = await response.json();
+                    addLogMessage('SYSTEM', `Send error: ${error.error}`);
                 }
             } catch (error) {
-                log(`Connection error: ${error}`, 'error');
+                addLogMessage('SYSTEM', `Send error: ${error}`);
             }
         }
-
-        async function disconnect() {
-            try {
-                await fetch('/api/disconnect', {method: 'POST'});
-                updateConnectionUI(false);
-                log('Disconnected from server');
-            } catch (error) {
-                log(`Disconnect error: ${error}`, 'error');
-            }
-        }
-
-        async function checkConnectionStatus() {
-            try {
-                const response = await fetch('/api/status');
-                const data = await response.json();
-                updateConnectionUI(data.connected);
-            } catch (error) {
-                console.error('Error checking connection status:', error);
-            }
-        }
-
-        // Instance management
-        async function switchInstance() {
-            const newInstanceId = parseInt(document.getElementById('instanceId').value);
+        
+        // Form Generation
+        function generateMessageForms() {
+            const panel = document.getElementById('messagePanel');
             
-            try {
-                const response = await fetch(`/api/instance/${newInstanceId}/switch`, {method: 'POST'});
-                if (response.ok) {
-                    currentInstanceId = newInstanceId;
-                    document.getElementById('currentInstance').textContent = `Current: ${newInstanceId}`;
-                    document.getElementById('entityInstanceDisplay').textContent = newInstanceId;
-                    log(`Switched to instance ${newInstanceId}`);
-                    await updateEntityDisplay();
-                }
-            } catch (error) {
-                log(`Error switching instance: ${error}`, 'error');
-            }
-        }
-
-        // Entity spawning functions
-        async function spawnPlayer() {
-            const data = {
-                name: document.getElementById('playerName').value || 'TestPlayer',
-                x: parseFloat(document.getElementById('playerX').value) || 0,
-                y: parseFloat(document.getElementById('playerY').value) || 0,
-                z: parseFloat(document.getElementById('playerZ').value) || 0
-            };
-            
-            await spawnEntity('/api/spawn/player', data, 'player');
-        }
-
-        async function spawnWarrior() {
-            const data = {
-                name: document.getElementById('warriorName').value || 'GuardCaptain',
-                x: parseFloat(document.getElementById('warriorX').value) || 5,
-                y: parseFloat(document.getElementById('warriorY').value) || 0,
-                z: parseFloat(document.getElementById('warriorZ').value) || 5
-            };
-            
-            await spawnEntity('/api/spawn/warrior', data, 'warrior');
-        }
-
-        async function spawnMage() {
-            const data = {
-                name: document.getElementById('mageName').value || 'CourtWizard',
-                x: parseFloat(document.getElementById('mageX').value) || -5,
-                y: parseFloat(document.getElementById('mageY').value) || 0,
-                z: parseFloat(document.getElementById('mageZ').value) || -5
-            };
-            
-            await spawnEntity('/api/spawn/mage', data, 'mage');
-        }
-
-        async function spawnTreasure() {
-            const data = {
-                x: parseFloat(document.getElementById('treasureX').value) || 10,
-                y: parseFloat(document.getElementById('treasureY').value) || 0,
-                z: parseFloat(document.getElementById('treasureZ').value) || 10
-            };
-            
-            await spawnEntity('/api/spawn/treasure', data, 'treasure chest');
-        }
-
-        async function spawnEntity(endpoint, data, entityType) {
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-                
-                if (response.ok) {
-                    const entity = await response.json();
-                    log(`Spawned ${entityType}: ${entity.displayName} at (${entity.position.x}, ${entity.position.y}, ${entity.position.z}) in instance ${currentInstanceId}`, 'success');
-                    await updateEntityDisplay();
-                } else {
-                    log(`Failed to spawn ${entityType}`, 'error');
-                }
-            } catch (error) {
-                log(`Error spawning ${entityType}: ${error}`, 'error');
-            }
-        }
-
-        // Entity management functions
-        async function despawnEntity() {
-            const entityId = parseInt(document.getElementById('targetEntityId').value);
-            const instanceId = parseInt(document.getElementById('targetInstanceId').value) || currentInstanceId;
-            
-            if (!entityId) {
-                log('Please enter an entity ID', 'error');
+            if (!schemas || Object.keys(schemas).length === 0) {
+                panel.innerHTML = '<p>No message schemas found. Make sure protobuf schemas are generated.</p>';
                 return;
             }
             
-            try {
-                const response = await fetch(`/api/entity/${entityId}/despawn?instance_id=${instanceId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (response.ok) {
-                    log(`Despawned entity ${entityId} from instance ${instanceId}`, 'success');
-                    await updateEntityDisplay();
-                } else {
-                    log(`Failed to despawn entity ${entityId}`, 'error');
-                }
-            } catch (error) {
-                log(`Error despawning entity: ${error}`, 'error');
-            }
-        }
-
-        async function requestEntityUpdate() {
-            const entityId = parseInt(document.getElementById('targetEntityId').value);
-            const instanceId = parseInt(document.getElementById('targetInstanceId').value) || currentInstanceId;
+            let html = '';
             
-            if (!entityId) {
-                log('Please enter an entity ID', 'error');
-                return;
+            // Generate forms for key message types
+            const messageTypes = ['SpawnEntityMessage', 'EntityUpdateMessage', 'EntityDespawnMessage', 'ChatMessage'];
+            
+            for (const messageType of messageTypes) {
+                if (schemas[messageType]) {
+                    html += generateFormForMessage(messageType, schemas[messageType]);
+                }
             }
             
-            try {
-                const response = await fetch(`/api/entity/${entityId}/update?instance_id=${instanceId}`, {
-                    method: 'PUT'
-                });
-                
-                if (response.ok) {
-                    log(`Updated entity ${entityId} in instance ${instanceId}`, 'success');
-                    await updateEntityDisplay();
-                } else {
-                    log(`Entity ${entityId} not found in instance ${instanceId}`, 'error');
-                }
-            } catch (error) {
-                log(`Error updating entity: ${error}`, 'error');
-            }
+            panel.innerHTML = html;
         }
-
-        async function listAllInstances() {
-            try {
-                const response = await fetch('/api/instances');
-                const data = await response.json();
-                
-                log('=== All Instances ===');
-                if (data.all.length === 0) {
-                    log('No instances with entities found');
-                    return;
-                }
-                
-                for (const instanceId of data.all) {
-                    const marker = instanceId === data.current ? ' <-- CURRENT' : '';
-                    log(`Instance ${instanceId}${marker}`);
-                }
-            } catch (error) {
-                log(`Error listing instances: ${error}`, 'error');
-            }
-        }
-
-        async function listCurrentInstance() {
-            try {
-                const response = await fetch(`/api/entities?instance_id=${currentInstanceId}`);
-                const entities = await response.json();
-                
-                log(`=== Current Instance: ${currentInstanceId} ===`);
-                if (entities.length === 0) {
-                    log('No entities in current instance');
-                    return;
-                }
-                
-                for (const entity of entities) {
-                    log(`- ${entity.displayName} (ID: ${entity.entityId}) at (${entity.position.x}, ${entity.position.y}, ${entity.position.z})`);
-                }
-            } catch (error) {
-                log(`Error listing current instance: ${error}`, 'error');
-            }
-        }
-
-        async function clearCurrentInstance() {
-            try {
-                const response = await fetch(`/api/instance/${currentInstanceId}/clear`, {method: 'DELETE'});
-                if (response.ok) {
-                    log(`Cleared all entities from instance ${currentInstanceId}`, 'success');
-                    await updateEntityDisplay();
-                } else {
-                    log(`Failed to clear instance ${currentInstanceId}`, 'error');
-                }
-            } catch (error) {
-                log(`Error clearing instance: ${error}`, 'error');
-            }
-        }
-
-        // Display functions
-        async function updateEntityDisplay() {
-            try {
-                const response = await fetch(`/api/entities?instance_id=${currentInstanceId}`);
-                const entities = await response.json();
-                
-                const entityList = document.getElementById('entityList');
-                
-                if (entities.length === 0) {
-                    entityList.innerHTML = '<p class="text-muted">No entities in this instance</p>';
-                    return;
-                }
-                
-                let html = '';
-                for (const entity of entities) {
-                    html += createEntityHTML(entity);
-                }
-                
-                entityList.innerHTML = html;
-            } catch (error) {
-                console.error('Error updating entity display:', error);
-            }
-        }
-
-        function createEntityHTML(entity) {
-            let statsHTML = '';
-            for (const [statName, stat] of Object.entries(entity.stats)) {
-                const percentage = stat.max > 0 ? (stat.current / stat.max) * 100 : 0;
-                const statClass = statName === 'health' ? 'health' : statName === 'energy' ? 'energy' : 'other-stat';
-                
-                statsHTML += `
-                    <div>
-                        <small>${statName.charAt(0).toUpperCase() + statName.slice(1)}: ${stat.current}/${stat.max} ${stat.extra > 0 ? `(+${stat.extra})` : ''}</small>
-                        <div class="stat-bar">
-                            <div class="stat-fill ${statClass}" style="width: ${percentage}%"></div>
-                        </div>
-                    </div>
-                `;
+        
+        function generateFormForMessage(messageType, schema) {
+            const formId = `form_${messageType}`;
+            let html = `
+                <div class="message-form">
+                    <h4>${messageType}</h4>
+                    <form id="${formId}" onsubmit="handleFormSubmit(event, '${messageType}')">
+            `;
+            
+            // Generate fields based on schema properties
+            if (schema.properties) {
+                html += generateFields(schema.properties, '');
             }
             
-            const equippedHTML = entity.equippedItemIds.length > 0 ? 
-                `<div><small>🎒 Equipped: ${entity.equippedItemIds.join(', ')}</small></div>` : '';
-            
-            return `
-                <div class="entity-item">
-                    <div class="entity-header">
-                        ${entity.displayName} (ID: ${entity.entityId})
-                    </div>
-                    <div class="entity-details">
-                        <div><small>📍 Position: (${entity.position.x}, ${entity.position.y}, ${entity.position.z})</small></div>
-                        <div><small>🎭 State: ${entity.state}</small></div>
-                        <div><small>🎨 Model: ${entity.model}</small></div>
-                        <div><small>⚡ Authority: ${entity.authorityId}</small></div>
-                        ${equippedHTML}
-                        ${statsHTML}
-                    </div>
+            html += `
+                        <button type="submit" class="btn">Send ${messageType}</button>
+                    </form>
                 </div>
             `;
-        }
-
-        function clearMessages() {
-            document.getElementById('messages').innerHTML = '';
-        }
-
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            updateEntityDisplay();
-            updateConnectionUI(false);
             
-            // Check connection status periodically
-            setInterval(checkConnectionStatus, 5000);
+            return html;
+        }
+        
+        function generateFields(properties, prefix) {
+            let html = '';
+            
+            for (const [fieldName, fieldSchema] of Object.entries(properties)) {
+                const fieldId = prefix ? `${prefix}.${fieldName}` : fieldName;
+                const displayName = fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                if (fieldSchema.type === 'object' && fieldSchema.properties) {
+                    // Nested object (like stats)
+                    html += `
+                        <div class="stats-group">
+                            <div class="stats-title">${displayName}</div>
+                            ${generateFields(fieldSchema.properties, fieldId)}
+                        </div>
+                    `;
+                } else if (fieldSchema.type === 'array') {
+                    // Array field
+                    html += `
+                        <div class="form-group">
+                            <label for="${fieldId}">${displayName} (comma-separated)</label>
+                            <input type="text" id="${fieldId}" name="${fieldId}" placeholder="e.g., 1001,2003">
+                        </div>
+                    `;
+                } else {
+                    // Simple field
+                    const inputType = getInputType(fieldSchema.type);
+                    const placeholder = getPlaceholder(fieldName, fieldSchema.type);
+                    
+                    html += `
+                        <div class="form-group">
+                            <label for="${fieldId}">${displayName}</label>
+                            <input type="${inputType}" id="${fieldId}" name="${fieldId}" placeholder="${placeholder}">
+                        </div>
+                    `;
+                }
+            }
+            
+            return html;
+        }
+        
+        function getInputType(schemaType) {
+            switch (schemaType) {
+                case 'integer': return 'number';
+                case 'number': return 'number';
+                case 'boolean': return 'checkbox';
+                default: return 'text';
+            }
+        }
+        
+        function getPlaceholder(fieldName, schemaType) {
+            if (fieldName.includes('name')) return 'Enter name...';
+            if (fieldName.includes('pos') || fieldName.includes('position')) return '0.0';
+            if (fieldName.includes('id')) return '1';
+            if (schemaType === 'number' || schemaType === 'integer') return '0';
+            return 'Enter value...';
+        }
+        
+        function handleFormSubmit(event, messageType) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {};
+            
+            for (const [key, value] of formData.entries()) {
+                if (value.trim() === '') continue;
+                
+                // Handle nested fields (stats.health.current)
+                if (key.includes('.')) {
+                    const parts = key.split('.');
+                    let current = data;
+                    
+                    for (let i = 0; i < parts.length - 1; i++) {
+                        if (!current[parts[i]]) current[parts[i]] = {};
+                        current = current[parts[i]];
+                    }
+                    
+                    // Convert to appropriate type
+                    const finalValue = convertValue(value);
+                    current[parts[parts.length - 1]] = finalValue;
+                } else if (key.includes(',')) {
+                    // Handle arrays
+                    data[key] = value.split(',').map(v => convertValue(v.trim()));
+                } else {
+                    data[key] = convertValue(value);
+                }
+            }
+            
+            sendMessage(messageType, data);
+        }
+        
+        function convertValue(value) {
+            if (value === 'true') return true;
+            if (value === 'false') return false;
+            if (!isNaN(value) && value.trim() !== '') {
+                return value.includes('.') ? parseFloat(value) : parseInt(value);
+            }
+            return value;
+        }
+        
+        // Auto-refresh message log
+        async function refreshMessages() {
+            try {
+                const response = await fetch('/api/messages');
+                const messages = await response.json();
+                
+                const log = document.getElementById('messageLog');
+                const currentHeight = log.scrollHeight;
+                const currentScroll = log.scrollTop;
+                const shouldAutoScroll = currentScroll >= currentHeight - log.clientHeight - 50;
+                
+                log.innerHTML = '';
+                messages.forEach(msg => {
+                    const entry = document.createElement('div');
+                    entry.className = 'message-entry';
+                    
+                    const directionClass = msg.direction.toLowerCase();
+                    entry.innerHTML = `
+                        <span class="message-timestamp">${msg.timestamp}</span>
+                        <span class="message-direction ${directionClass}">${msg.direction}</span>
+                        <span class="message-content">${msg.content}</span>
+                        ${msg.size ? `<span style="color: #666;"> (${msg.size} bytes)</span>` : ''}
+                    `;
+                    
+                    log.appendChild(entry);
+                });
+                
+                if (shouldAutoScroll) {
+                    log.scrollTop = log.scrollHeight;
+                }
+            } catch (error) {
+                console.error('Error refreshing messages:', error);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateMessageForms();
+            refreshMessages();
+            
+            // Auto-refresh every 2 seconds
+            setInterval(refreshMessages, 2000);
         });
     </script>
 </body>
