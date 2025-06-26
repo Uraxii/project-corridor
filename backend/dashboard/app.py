@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 import json
 import asyncio
 import websockets
@@ -13,6 +13,10 @@ import logging
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
+
+# Import and register all route blueprints
+from routes import register_blueprints
+register_blueprints(app)
 
 # Global state
 connection_status = {"connected": False, "url": None}
@@ -166,17 +170,11 @@ def parse_form_data(data, schema):
     
     return result
 
-@app.route('/')
-def dashboard():
-    schemas = load_schemas()
-    with connection_lock:
-        status = connection_status.copy()
-    return render_template('dashboard.html', schemas=schemas, connection_status=status)
-
+# Global API endpoints (shared across all routes)
 @app.route('/api/connect', methods=['POST'])
 def connect_to_server():
     data = request.get_json()
-    server_url = data.get('server_url', 'ws://localhost:5000/ws')
+    server_url = data.get('server_url', 'ws://localhost:8080/ws')
     
     global game_client
     if game_client.connected:
