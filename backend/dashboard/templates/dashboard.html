@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Server Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .dashboard-nav {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .dashboard-nav h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .nav-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-card:not(.disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-color: #007bff;
+        }
+
+        .nav-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .nav-card h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .nav-card p {
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .nav-card .btn {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .nav-card .btn.disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .connection-status {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Game Server Dashboard</h1>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="connection-status">
+            <span id="status" class="status {{ 'connected' if connection_status.connected else 'disconnected' }}">
+                {{ 'Connected' if connection_status.connected else 'Disconnected' }}
+            </span>
+            {% if connection_status.connected %}
+                <p>Connected to: {{ connection_status.url }}</p>
+            {% else %}
+                <p>Use one of the dashboards below to connect to the server</p>
+            {% endif %}
+        </div>
+
+        <!-- Navigation to other dashboards -->
+        <div class="dashboard-nav">
+            <h2>Available Dashboards</h2>
+            <div class="nav-cards">
+                <div class="nav-card">
+                    <h3>🧪 Message Tester</h3>
+                    <p>Test protobuf messages with schema-generated forms. Original dashboard functionality.</p>
+                    <a href="/message_tester/" class="btn">Open Message Tester</a>
+                </div>
+
+                <div class="nav-card">
+                    <h3>🎯 Entity Management</h3>
+                    <p>Create, update, and manage game entities with position, stats, and equipment.</p>
+                    <a href="/entity/" class="btn">Open Entity Dashboard</a>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
