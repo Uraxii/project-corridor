@@ -1,40 +1,32 @@
 services:
-  # Game Server
-  server:
+  api:
     build:
       context: .
-      dockerfile: Dockerfile.server
-      args:
-        # Cache bust to ensure fresh builds when proto files change
-        CACHE_BUST: ${CACHE_BUST:-default}
+      dockerfile: ./server/Dockerfile
+    container_name: pc-api
     ports:
-      - "5000:5000"
-    healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 5000 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-
-  # Admin Dashboard with auto-generated schemas
-  admin-dashboard:
-    build:
-      context: .
-      dockerfile: Dockerfile.dashboard
-      args:
-        # Cache bust to ensure fresh schema generation
-        CACHE_BUST: ${CACHE_BUST:-default}
-    ports:
-      - "5001:5001"
-    depends_on:
-      - server
+      - "8080:8080"
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=true
-      - GAME_SERVER_URL=ws://project-corridor-server:5000/ws
+      - HOST=0.0.0.0
+      - PORT=8080
+      - DEBUG=true
+      - SECRET_KEY=your-secret-key-change-this-in-production
+      - DATABASE_URL=sqlite:///./data/project_corridor.db
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=nimda
+    volumes:
+      # Mount database directory for persistence
+      - ./data:/app/data
+      # Mount source code for development (optional)
+      - ./app:/app/app:ro
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5001/ || exit 1"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 40s
+
+volumes:
+  # Persist database data
+  corridor_data:
+    driver: local

@@ -1,0 +1,6 @@
+FROM godotengine/godot:4.4.1
+
+COPY ./client /app
+WORKDIR /app
+
+ENTRYPOINT ["godot", "--headless", "--server", "--path", ".", "--main-pack", "game.pck"]
