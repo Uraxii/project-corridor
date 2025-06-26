@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bd0ydf3xgbfoh"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_e1hjk"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pyxqd"]
+
+[node name="Devmap" type="Node3D"]
+metadata/do_not_ship = true
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(50, 0, 0, 0, 0.5, 0, 0, 0, 50, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Area3D"]
+mesh = SubResource("BoxMesh_e1hjk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_pyxqd")

@@ -31,61 +31,28 @@ message ChatMessage {
 
 // Individual stat with current/max/bonus values
 message StatMessage {
-  float current = 1;
-  float max = 2;
-  float extra = 3; // Bonus/temporary modifiers
+  string type = 1; // Name of the statistics (i.e. health, energy, vigor)
+  float current = 2;
+  float max = 3;
+  float extra = 4; // Bonus/temporary modifiers
 }
 
 // Complete entity data structure
 message EntityDataMessage {
   uint64 authority_id = 1; // Who has authority over this entity
-  uint64 entity_id = 2;    // Unique entity identifier
-  uint64 instance_id = 3;  // Which instance/zone this entity is in
-  string display_name = 4;
-  string model = 5; // 3D model/sprite identifier
-  string state = 6; // Current animation/behavior state
+  uint64 spawn_id = 2;     // Unique identifier of this entity instance
+  uint64 shard_id = 3;     // Which shard this entity is in
+  uint64 scene = 4;        // Which entity scene to load client-side
+  string display_name = 5; // Name of the entity
+  string state = 6;        // Current animation/behavior state
 
   // Position
   float x_pos = 7;
   float y_pos = 8;
   float z_pos = 9;
 
-  // Equipment and stats
   repeated uint64 equipped_item_ids = 10;
-  map<string, StatMessage> stats = 11; // health, mana, strength, etc.
-}
-
-// Request to spawn a new entity
-message SpawnEntityMessage {
-  uint64 instance_id = 1; // Which instance/zone to spawn in
-  string display_name = 2;
-  string model = 3;
-  string state = 4;
-
-  // Initial position
-  float x_pos = 5;
-  float y_pos = 6;
-  float z_pos = 7;
-
-  // Initial equipment and stats
-  repeated uint64 equipped_item_ids = 8;
-  map<string, StatMessage> stats = 9;
-}
-
-// Notification that an entity was spawned
-message EntitySpawnedMessage { EntityDataMessage entity = 1; }
-
-// Request to update existing entity data
-message EntityUpdateMessage {
-  uint64 entity_id = 1;         // Which entity to update
-  uint64 instance_id = 2;       // Which instance the entity is in
-  EntityDataMessage entity = 3; // Updated entity data
-}
-
-// Request to remove an entity
-message EntityDespawnMessage {
-  uint64 entity_id = 1;   // Which entity to despawn
-  uint64 instance_id = 2; // Which instance the entity is in
+  repeated StatMessage stats = 11; // health, mana, strength, etc.
 }
 
 // ============================================================================
@@ -105,12 +72,6 @@ message Packet {
     ChatMessage chat = 4;
 
     // Entity management
-    SpawnEntityMessage spawn_entity = 5;
-    EntitySpawnedMessage entity_spawned = 6;
-    EntityUpdateMessage entity_update = 7;
-    EntityDespawnMessage entity_despawn = 8;
-
-    // Direct entity data (for debugging/admin)
     EntityDataMessage entity_data = 9;
   }
 }

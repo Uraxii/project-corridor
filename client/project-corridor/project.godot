@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Globals="*res://global_manager.gd"
-WS="*res://web_socket_client.gd"
+Globals="*res://scripts/global_manager.gd"
+WS="*res://scripts/web_socket_client.gd"
 
 [editor_plugins]
 

@@ -1,6 +1,6 @@
 services:
   # Game Server
-  project-corridor-server:
+  server:
     build:
       context: .
       dockerfile: Dockerfile.server
@@ -17,7 +17,7 @@ services:
       start_period: 10s
 
   # Admin Dashboard with auto-generated schemas
-  project-corridor-admin-dashboard:
+  admin-dashboard:
     build:
       context: .
       dockerfile: Dockerfile.dashboard
@@ -27,7 +27,7 @@ services:
     ports:
       - "5001:5001"
     depends_on:
-      - project-corridor-server
+      - server
     environment:
       - FLASK_ENV=development
       - FLASK_DEBUG=true
