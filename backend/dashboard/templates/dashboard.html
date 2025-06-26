@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Game Server Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
@@ -75,10 +76,19 @@
             text-align: center;
         }
     </style>
+=======
+<<<<<<<< HEAD:backend/dashboard/templates/message_tester.html
+    <title>Message Tester</title>
+========
+    <title>Game Server Test Dashboard</title>
+>>>>>>>> parent of 12c9a84 (admin dashboard updates):backend/dashboard/templates/dashboard.html
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+>>>>>>> parent of 12c9a84 (admin dashboard updates)
 </head>
 <body>
     <div class="container">
         <div class="header">
+<<<<<<< HEAD
             <h1>🎮 Game Server Dashboard</h1>
         </div>
 
@@ -109,9 +119,77 @@
                     <p>Create, update, and manage game entities with position, stats, and equipment.</p>
                     <a href="/entity/" class="btn">Open Entity Dashboard</a>
                 </div>
+=======
+            <h1>🎮 Game Server Test Dashboard</h1>
+            <div class="connection-controls">
+                <input type="text" id="serverUrl" placeholder="Server URL" value="ws://project-corridor-server:5000/ws">
+                <button class="btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
+                <span id="status" class="status {{ 'connected' if connection_status.connected else 'disconnected' }}">
+                    {{ 'Connected' if connection_status.connected else 'Disconnected' }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <!-- Message Sender Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    📤 Send Messages
+                    <button class="btn small" onclick="resetAllForms()">Reset All</button>
+                </div>
+                <div class="panel-content" id="messagePanel">
+                    {% if schemas %}
+                        <div class="schema-info">
+                            📋 Loaded {{ schemas|length }} protobuf schema(s): 
+                            {% for schema_name in schemas.keys() %}{{ schema_name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        </div>
+                        <div class="no-schemas">Select a message type to begin testing...</div>
+                    {% else %}
+                        <div class="no-schemas">
+                            ⚠️ No protobuf schemas found. 
+                            <br><br>
+                            Make sure:
+                            <ul style="text-align: left; margin-top: 10px;">
+                                <li>• Protobuf files are in backend/shared/</li>
+                                <li>• Docker build completed successfully</li>
+                                <li>• Schema generation ran without errors</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Message Log Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    📝 Message Log
+                    <div>
+                        <button class="btn small" onclick="refreshMessages()">Refresh</button>
+                        <button class="btn small" onclick="clearMessages()">Clear</button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div id="messageLog" class="message-log"></div>
+>>>>>>> parent of 12c9a84 (admin dashboard updates)
                 </div>
             </div>
         </div>
     </div>
+<<<<<<< HEAD
+=======
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script>
+        // Initialize schemas from Flask
+        const initialConnectionStatus = {{ 'true' if connection_status.connected else 'false' }};
+        const loadedSchemas = {{ schemas | tojson }};
+        
+        // Set initial connection status
+        connectionStatus = initialConnectionStatus;
+        
+        // Initialize with schemas
+        initializeSchemas(loadedSchemas);
+    </script>
+>>>>>>> parent of 12c9a84 (admin dashboard updates)
 </body>
 </html>
