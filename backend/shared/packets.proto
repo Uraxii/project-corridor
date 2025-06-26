@@ -3,12 +3,9 @@ syntax = "proto3";
 package packets;
 option go_package = "pkg/packets";
 
-message ChatMessage {
-  uint64 sender = 1;
-  uint64 recipient = 2;
-  uint64 channel = 3;
-  string content = 4;
-}
+// ============================================================================
+// AUTHENTICATION & IDENTIFICATION
+// ============================================================================
 
 message CredentialMessage {
   string user = 1;
@@ -17,69 +14,103 @@ message CredentialMessage {
 
 message IdMessage { uint64 id = 1; }
 
-// New stat system
+// ============================================================================
+// CHAT SYSTEM
+// ============================================================================
+
+message ChatMessage {
+  uint64 sender = 1;
+  uint64 recipient = 2; // 0 = broadcast to all
+  uint64 channel = 3;   // 0 = general channel
+  string content = 4;
+}
+
+// ============================================================================
+// ENTITY SYSTEM
+// ============================================================================
+
+// Individual stat with current/max/bonus values
 message StatMessage {
   float current = 1;
   float max = 2;
-  float extra = 3;
+  float extra = 3; // Bonus/temporary modifiers
 }
 
-// New entity data structure
+// Complete entity data structure
 message EntityDataMessage {
-  uint64 authority_id = 1;
-  uint64 entity_id = 2;   // Unique entity identifier
-  uint64 instance_id = 3; // Which instance/zone this entity is in
+  uint64 authority_id = 1; // Who has authority over this entity
+  uint64 entity_id = 2;    // Unique entity identifier
+  uint64 instance_id = 3;  // Which instance/zone this entity is in
   string display_name = 4;
-  string model = 5;
-  string state = 6;
+  string model = 5; // 3D model/sprite identifier
+  string state = 6; // Current animation/behavior state
+
+  // Position
   float x_pos = 7;
   float y_pos = 8;
   float z_pos = 9;
-  repeated uint64 equipped_item_ids = 10;
 
-  // Stats map - key is stat name, value is stat data
-  map<string, StatMessage> stats = 11;
+  // Equipment and stats
+  repeated uint64 equipped_item_ids = 10;
+  map<string, StatMessage> stats = 11; // health, mana, strength, etc.
 }
 
-// Message to request spawning an entity
+// Request to spawn a new entity
 message SpawnEntityMessage {
   uint64 instance_id = 1; // Which instance/zone to spawn in
   string display_name = 2;
   string model = 3;
   string state = 4;
+
+  // Initial position
   float x_pos = 5;
   float y_pos = 6;
   float z_pos = 7;
+
+  // Initial equipment and stats
   repeated uint64 equipped_item_ids = 8;
   map<string, StatMessage> stats = 9;
 }
 
-// Message to announce entity spawned
+// Notification that an entity was spawned
 message EntitySpawnedMessage { EntityDataMessage entity = 1; }
 
-// Message to update entity data
+// Request to update existing entity data
 message EntityUpdateMessage {
-  uint64 entity_id = 1;   // Which entity to update
-  uint64 instance_id = 2; // Which instance the entity is in
-  EntityDataMessage entity = 3;
+  uint64 entity_id = 1;         // Which entity to update
+  uint64 instance_id = 2;       // Which instance the entity is in
+  EntityDataMessage entity = 3; // Updated entity data
 }
 
-// Message to despawn an entity
+// Request to remove an entity
 message EntityDespawnMessage {
   uint64 entity_id = 1;   // Which entity to despawn
   uint64 instance_id = 2; // Which instance the entity is in
 }
 
+// ============================================================================
+// PACKET WRAPPER
+// ============================================================================
+
+// Main packet container - all messages are wrapped in this
 message Packet {
   uint64 sender_id = 1;
+
   oneof msg {
-    ChatMessage chat = 2;
-    CredentialMessage credential = 3;
-    IdMessage id = 4;
-    EntityDataMessage entityData = 5;
-    SpawnEntityMessage spawnEntity = 6;
-    EntitySpawnedMessage entitySpawned = 7;
-    EntityUpdateMessage entityUpdate = 8;
-    EntityDespawnMessage entityDespawn = 9;
+    // Authentication
+    CredentialMessage credential = 2;
+    IdMessage id = 3;
+
+    // Chat
+    ChatMessage chat = 4;
+
+    // Entity management
+    SpawnEntityMessage spawn_entity = 5;
+    EntitySpawnedMessage entity_spawned = 6;
+    EntityUpdateMessage entity_update = 7;
+    EntityDespawnMessage entity_despawn = 8;
+
+    // Direct entity data (for debugging/admin)
+    EntityDataMessage entity_data = 9;
   }
 }

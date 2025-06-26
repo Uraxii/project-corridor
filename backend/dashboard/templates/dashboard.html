@@ -4,203 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Server Test Dashboard</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .status {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        
-        .status.connected { background: #d4edda; color: #155724; }
-        .status.disconnected { background: #f8d7da; color: #721c24; }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            height: calc(100vh - 200px);
-        }
-        
-        .panel {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .panel-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            background: #f8f9fa;
-            border-radius: 8px 8px 0 0;
-            font-weight: 600;
-        }
-        
-        .panel-content {
-            padding: 20px;
-            flex: 1;
-            overflow-y: auto;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: #333;
-        }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
-        }
-        
-        .btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .btn:hover { background: #0056b3; }
-        .btn:disabled { background: #6c757d; cursor: not-allowed; }
-        .btn.danger { background: #dc3545; }
-        .btn.danger:hover { background: #c82333; }
-        
-        .message-log {
-            height: 300px;
-            overflow-y: auto;
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-        }
-        
-        .message-entry {
-            margin-bottom: 5px;
-            padding: 2px 0;
-        }
-        
-        .message-timestamp {
-            color: #666;
-            margin-right: 10px;
-        }
-        
-        .message-direction {
-            font-weight: bold;
-            margin-right: 10px;
-            width: 60px;
-            display: inline-block;
-        }
-        
-        .message-direction.sent { color: #28a745; }
-        .message-direction.received { color: #007bff; }
-        .message-direction.system { color: #ffc107; }
-        
-        .connection-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .connection-controls input {
-            flex: 1;
-            margin-bottom: 0;
-        }
-        
-        .message-form {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #f8f9fa;
-        }
-        
-        .message-form h4 {
-            margin-bottom: 15px;
-            color: #333;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
-        
-        .stats-group {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: white;
-        }
-        
-        .stats-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #495057;
-        }
-        
-        .stats-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 5px;
-        }
-        
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
-            
-            .connection-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
@@ -209,16 +13,38 @@
             <div class="connection-controls">
                 <input type="text" id="serverUrl" placeholder="Server URL" value="ws://project-corridor-server:5000/ws">
                 <button class="btn" id="connectBtn" onclick="toggleConnection()">Connect</button>
-                <span id="status" class="status disconnected">Disconnected</span>
+                <span id="status" class="status {{ 'connected' if connection_status.connected else 'disconnected' }}">
+                    {{ 'Connected' if connection_status.connected else 'Disconnected' }}
+                </span>
             </div>
         </div>
         
         <div class="grid">
             <!-- Message Sender Panel -->
             <div class="panel">
-                <div class="panel-header">📤 Send Messages</div>
+                <div class="panel-header">
+                    📤 Send Messages
+                    <button class="btn small" onclick="resetAllForms()">Reset All</button>
+                </div>
                 <div class="panel-content" id="messagePanel">
-                    <p>Loading message schemas...</p>
+                    {% if schemas %}
+                        <div class="schema-info">
+                            📋 Loaded {{ schemas|length }} protobuf schema(s): 
+                            {% for schema_name in schemas.keys() %}{{ schema_name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                        </div>
+                        <div class="no-schemas">Select a message type to begin testing...</div>
+                    {% else %}
+                        <div class="no-schemas">
+                            ⚠️ No protobuf schemas found. 
+                            <br><br>
+                            Make sure:
+                            <ul style="text-align: left; margin-top: 10px;">
+                                <li>• Protobuf files are in backend/shared/</li>
+                                <li>• Docker build completed successfully</li>
+                                <li>• Schema generation ran without errors</li>
+                            </ul>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             
@@ -226,8 +52,10 @@
             <div class="panel">
                 <div class="panel-header">
                     📝 Message Log
-                    <button class="btn" onclick="refreshMessages()" style="float: right; padding: 5px 10px; font-size: 12px;">Refresh</button>
-                    <button class="btn" onclick="clearMessages()" style="float: right; padding: 5px 10px; font-size: 12px; margin-right: 5px;">Clear</button>
+                    <div>
+                        <button class="btn small" onclick="refreshMessages()">Refresh</button>
+                        <button class="btn small" onclick="clearMessages()">Clear</button>
+                    </div>
                 </div>
                 <div class="panel-content">
                     <div id="messageLog" class="message-log"></div>
@@ -236,299 +64,17 @@
         </div>
     </div>
 
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
     <script>
-        let connectionStatus = false;
-        let schemas = {{ schemas | tojson }};
+        // Initialize schemas from Flask
+        const initialConnectionStatus = {{ 'true' if connection_status.connected else 'false' }};
+        const loadedSchemas = {{ schemas | tojson }};
         
-        // Connection Management
-        async function toggleConnection() {
-            if (connectionStatus) {
-                await disconnect();
-            } else {
-                await connect();
-            }
-        }
+        // Set initial connection status
+        connectionStatus = initialConnectionStatus;
         
-        async function connect() {
-            const url = document.getElementById('serverUrl').value;
-            try {
-                const response = await fetch('/api/connect', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({server_url: url})
-                });
-                
-                if (response.ok) {
-                    updateConnectionUI(true);
-                    addLogMessage('SYSTEM', `Connected to ${url}`);
-                }
-            } catch (error) {
-                addLogMessage('SYSTEM', `Connection error: ${error}`);
-            }
-        }
-        
-        async function disconnect() {
-            try {
-                await fetch('/api/disconnect', {method: 'POST'});
-                updateConnectionUI(false);
-                addLogMessage('SYSTEM', 'Disconnected from server');
-            } catch (error) {
-                addLogMessage('SYSTEM', `Disconnect error: ${error}`);
-            }
-        }
-        
-        function updateConnectionUI(connected) {
-            const status = document.getElementById('status');
-            const connectBtn = document.getElementById('connectBtn');
-            
-            connectionStatus = connected;
-            
-            if (connected) {
-                status.textContent = 'Connected';
-                status.className = 'status connected';
-                connectBtn.textContent = 'Disconnect';
-            } else {
-                status.textContent = 'Disconnected';
-                status.className = 'status disconnected';
-                connectBtn.textContent = 'Connect';
-            }
-        }
-        
-        // Message Log Management
-        function addLogMessage(direction, content, size) {
-            const timestamp = new Date().toLocaleTimeString();
-            const entry = document.createElement('div');
-            entry.className = 'message-entry';
-            
-            const directionClass = direction.toLowerCase();
-            entry.innerHTML = `
-                <span class="message-timestamp">${timestamp}</span>
-                <span class="message-direction ${directionClass}">${direction}</span>
-                <span class="message-content">${content}</span>
-                ${size ? `<span style="color: #666;"> (${size} bytes)</span>` : ''}
-            `;
-            
-            const log = document.getElementById('messageLog');
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
-        
-        async function clearMessages() {
-            try {
-                await fetch('/api/clear_messages', {method: 'POST'});
-                document.getElementById('messageLog').innerHTML = '';
-            } catch (error) {
-                console.error('Error clearing messages:', error);
-            }
-        }
-        
-        // Message Sending
-        async function sendMessage(messageType, formData) {
-            try {
-                const response = await fetch('/api/send_message', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        message_type: messageType,
-                        message_data: formData
-                    })
-                });
-                
-                if (response.ok) {
-                    addLogMessage('SENT', `${messageType}: ${JSON.stringify(formData)}`);
-                } else {
-                    const error = await response.json();
-                    addLogMessage('SYSTEM', `Send error: ${error.error}`);
-                }
-            } catch (error) {
-                addLogMessage('SYSTEM', `Send error: ${error}`);
-            }
-        }
-        
-        // Form Generation
-        function generateMessageForms() {
-            const panel = document.getElementById('messagePanel');
-            
-            if (!schemas || Object.keys(schemas).length === 0) {
-                panel.innerHTML = '<p>No message schemas found. Make sure protobuf schemas are generated.</p>';
-                return;
-            }
-            
-            let html = '';
-            
-            // Generate forms for key message types
-            const messageTypes = ['SpawnEntityMessage', 'EntityUpdateMessage', 'EntityDespawnMessage', 'ChatMessage'];
-            
-            for (const messageType of messageTypes) {
-                if (schemas[messageType]) {
-                    html += generateFormForMessage(messageType, schemas[messageType]);
-                }
-            }
-            
-            panel.innerHTML = html;
-        }
-        
-        function generateFormForMessage(messageType, schema) {
-            const formId = `form_${messageType}`;
-            let html = `
-                <div class="message-form">
-                    <h4>${messageType}</h4>
-                    <form id="${formId}" onsubmit="handleFormSubmit(event, '${messageType}')">
-            `;
-            
-            // Generate fields based on schema properties
-            if (schema.properties) {
-                html += generateFields(schema.properties, '');
-            }
-            
-            html += `
-                        <button type="submit" class="btn">Send ${messageType}</button>
-                    </form>
-                </div>
-            `;
-            
-            return html;
-        }
-        
-        function generateFields(properties, prefix) {
-            let html = '';
-            
-            for (const [fieldName, fieldSchema] of Object.entries(properties)) {
-                const fieldId = prefix ? `${prefix}.${fieldName}` : fieldName;
-                const displayName = fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                
-                if (fieldSchema.type === 'object' && fieldSchema.properties) {
-                    // Nested object (like stats)
-                    html += `
-                        <div class="stats-group">
-                            <div class="stats-title">${displayName}</div>
-                            ${generateFields(fieldSchema.properties, fieldId)}
-                        </div>
-                    `;
-                } else if (fieldSchema.type === 'array') {
-                    // Array field
-                    html += `
-                        <div class="form-group">
-                            <label for="${fieldId}">${displayName} (comma-separated)</label>
-                            <input type="text" id="${fieldId}" name="${fieldId}" placeholder="e.g., 1001,2003">
-                        </div>
-                    `;
-                } else {
-                    // Simple field
-                    const inputType = getInputType(fieldSchema.type);
-                    const placeholder = getPlaceholder(fieldName, fieldSchema.type);
-                    
-                    html += `
-                        <div class="form-group">
-                            <label for="${fieldId}">${displayName}</label>
-                            <input type="${inputType}" id="${fieldId}" name="${fieldId}" placeholder="${placeholder}">
-                        </div>
-                    `;
-                }
-            }
-            
-            return html;
-        }
-        
-        function getInputType(schemaType) {
-            switch (schemaType) {
-                case 'integer': return 'number';
-                case 'number': return 'number';
-                case 'boolean': return 'checkbox';
-                default: return 'text';
-            }
-        }
-        
-        function getPlaceholder(fieldName, schemaType) {
-            if (fieldName.includes('name')) return 'Enter name...';
-            if (fieldName.includes('pos') || fieldName.includes('position')) return '0.0';
-            if (fieldName.includes('id')) return '1';
-            if (schemaType === 'number' || schemaType === 'integer') return '0';
-            return 'Enter value...';
-        }
-        
-        function handleFormSubmit(event, messageType) {
-            event.preventDefault();
-            
-            const formData = new FormData(event.target);
-            const data = {};
-            
-            for (const [key, value] of formData.entries()) {
-                if (value.trim() === '') continue;
-                
-                // Handle nested fields (stats.health.current)
-                if (key.includes('.')) {
-                    const parts = key.split('.');
-                    let current = data;
-                    
-                    for (let i = 0; i < parts.length - 1; i++) {
-                        if (!current[parts[i]]) current[parts[i]] = {};
-                        current = current[parts[i]];
-                    }
-                    
-                    // Convert to appropriate type
-                    const finalValue = convertValue(value);
-                    current[parts[parts.length - 1]] = finalValue;
-                } else if (key.includes(',')) {
-                    // Handle arrays
-                    data[key] = value.split(',').map(v => convertValue(v.trim()));
-                } else {
-                    data[key] = convertValue(value);
-                }
-            }
-            
-            sendMessage(messageType, data);
-        }
-        
-        function convertValue(value) {
-            if (value === 'true') return true;
-            if (value === 'false') return false;
-            if (!isNaN(value) && value.trim() !== '') {
-                return value.includes('.') ? parseFloat(value) : parseInt(value);
-            }
-            return value;
-        }
-        
-        // Auto-refresh message log
-        async function refreshMessages() {
-            try {
-                const response = await fetch('/api/messages');
-                const messages = await response.json();
-                
-                const log = document.getElementById('messageLog');
-                const currentHeight = log.scrollHeight;
-                const currentScroll = log.scrollTop;
-                const shouldAutoScroll = currentScroll >= currentHeight - log.clientHeight - 50;
-                
-                log.innerHTML = '';
-                messages.forEach(msg => {
-                    const entry = document.createElement('div');
-                    entry.className = 'message-entry';
-                    
-                    const directionClass = msg.direction.toLowerCase();
-                    entry.innerHTML = `
-                        <span class="message-timestamp">${msg.timestamp}</span>
-                        <span class="message-direction ${directionClass}">${msg.direction}</span>
-                        <span class="message-content">${msg.content}</span>
-                        ${msg.size ? `<span style="color: #666;"> (${msg.size} bytes)</span>` : ''}
-                    `;
-                    
-                    log.appendChild(entry);
-                });
-                
-                if (shouldAutoScroll) {
-                    log.scrollTop = log.scrollHeight;
-                }
-            } catch (error) {
-                console.error('Error refreshing messages:', error);
-            }
-        }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            generateMessageForms();
-            refreshMessages();
-        });
+        // Initialize with schemas
+        initializeSchemas(loadedSchemas);
     </script>
 </body>
 </html>

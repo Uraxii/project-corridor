@@ -62,21 +62,3 @@ EXPOSE 5000
 
 # Run the application on port 5000
 CMD ["./main", "-port=5000"]
-RUN addgroup -g 1001 appgroup && adduser -D -u 1001 -G appgroup appuser
-
-WORKDIR /root/
-
-# Copy the binary from builder
-COPY --from=builder /app/main .
-
-# Change ownership to non-root user
-RUN chown appuser:appgroup ./main
-
-# Switch to non-root user
-USER appuser
-
-# Expose port 5000
-EXPOSE 5000
-
-# Run the application on port 5000
-CMD ["./main", "-port=5000"]

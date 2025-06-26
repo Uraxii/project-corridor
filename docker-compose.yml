@@ -4,6 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.server
+      args:
+        # Cache bust to ensure fresh builds when proto files change
+        CACHE_BUST: ${CACHE_BUST:-default}
     ports:
       - "5000:5000"
     healthcheck:
@@ -18,6 +21,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dashboard
+      args:
+        # Cache bust to ensure fresh schema generation
+        CACHE_BUST: ${CACHE_BUST:-default}
     ports:
       - "5001:5001"
     depends_on:

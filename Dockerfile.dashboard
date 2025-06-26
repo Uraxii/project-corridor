@@ -15,14 +15,26 @@ RUN echo "Cache bust: $CACHE_BUST"
 # Copy shared protobuf files
 COPY backend/shared/ ./shared/
 
-# Generate JSON schemas
+# Generate JSON schemas and filter out packet-prefixed ones
 RUN mkdir -p ./schemas
+
+# Generate all schemas first
 RUN protoc \
     --jsonschema_out=./schemas \
     --jsonschema_opt=enforce_oneof \
     --jsonschema_opt=file_extension=json \
+    --jsonschema_opt=disallow_additional_properties \
     --proto_path=./shared \
     ./shared/packets.proto
+
+# List all generated files for debugging
+RUN echo "All generated schemas:" && ls -la ./schemas/
+
+# Only remove the main Packet.json wrapper file - keep all message schemas
+RUN rm -f ./schemas/Packet.json
+
+# List remaining schemas for debugging
+RUN echo "Final schemas after cleanup:" && ls -la ./schemas/
 
 # Python runtime stage
 FROM python:3.11-alpine
@@ -48,7 +60,7 @@ RUN echo "Cache bust: $CACHE_BUST"
 COPY backend/dashboard/ ./
 
 # Create templates directory and copy template file
-RUN mkdir -p ./templates
+RUN mkdir -p ./templates ./static
 
 # Copy generated schemas from builder stage
 COPY --from=schema-builder /app/schemas ./schemas/
