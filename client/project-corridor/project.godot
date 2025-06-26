@@ -22,7 +22,7 @@ WS="*res://scripts/web_socket_client.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/protobuf/plugin.cfg")
+enabled=PackedStringArray("res://addons/colex/plugin.cfg", "res://addons/protobuf/plugin.cfg")
 
 [input]
 

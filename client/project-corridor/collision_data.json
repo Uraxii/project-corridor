@@ -1,0 +1,410 @@
+{
+	"dynamic_objects": [],
+	"nodes": [
+		{
+			"aabb": {
+				"center": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"end": {
+					"x": 0.5,
+					"y": 0.5,
+					"z": 0.5
+				},
+				"position": {
+					"x": -0.5,
+					"y": -0.5,
+					"z": -0.5
+				},
+				"size": {
+					"x": 1.0,
+					"y": 1.0,
+					"z": 1.0
+				}
+			},
+			"collision_layer": 1,
+			"collision_mask": 14,
+			"collision_shapes": [],
+			"is_static": true,
+			"mesh_path": "",
+			"name": "block-grass-hexagon2",
+			"transform": {
+				"position": {
+					"x": 21.619800567627,
+					"y": 28.451099395752,
+					"z": 33.7975006103516
+				},
+				"rotation": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"scale": {
+					"x": 1.0,
+					"y": 1.0,
+					"z": 1.0
+				}
+			},
+			"type": "Node3D"
+		},
+		{
+			"aabb": {
+				"center": {
+					"x": 0.0,
+					"y": 0.5,
+					"z": 0.0
+				},
+				"end": {
+					"x": 0.550000011920929,
+					"y": 1.0,
+					"z": 0.635085165500641
+				},
+				"position": {
+					"x": -0.550000011920929,
+					"y": 0.0,
+					"z": -0.635085165500641
+				},
+				"size": {
+					"x": 1.10000002384186,
+					"y": 1.0,
+					"z": 1.27017033100128
+				}
+			},
+			"collision_layer": 1,
+			"collision_mask": 14,
+			"collision_shapes": [
+				{
+					"type": "mesh"
+				}
+			],
+			"is_static": true,
+			"mesh_path": "res://assets/models/DO_NOT_SHIP_kenny_platformer-kit/block-grass-hexagon.glb::ArrayMesh_84i7q",
+			"name": "block-grass-hexagon",
+			"transform": {
+				"position": {
+					"x": 21.619800567627,
+					"y": 28.451099395752,
+					"z": 33.7975006103516
+				},
+				"rotation": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"scale": {
+					"x": 1.0,
+					"y": 1.0,
+					"z": 1.0
+				}
+			},
+			"type": "MeshInstance3D"
+		},
+		{
+			"aabb": {
+				"center": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"end": {
+					"x": 0.5,
+					"y": 0.5,
+					"z": 0.5
+				},
+				"position": {
+					"x": -0.5,
+					"y": -0.5,
+					"z": -0.5
+				},
+				"size": {
+					"x": 1.0,
+					"y": 1.0,
+					"z": 1.0
+				}
+			},
+			"collision_layer": 1,
+			"collision_mask": 14,
+			"collision_shapes": [],
+			"is_static": true,
+			"mesh_path": "",
+			"name": "block-grass-low2",
+			"transform": {
+				"position": {
+					"x": 21.6515998840332,
+					"y": 25.9764995574951,
+					"z": 34.9604988098145
+				},
+				"rotation": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"scale": {
+					"x": 5.0,
+					"y": 5.0,
+					"z": 5.0
+				}
+			},
+			"type": "Node3D"
+		},
+		{
+			"aabb": {
+				"center": {
+					"x": 0.0,
+					"y": 0.25,
+					"z": 0.0
+				},
+				"end": {
+					"x": 0.541062474250793,
+					"y": 0.5,
+					"z": 0.541062474250793
+				},
+				"position": {
+					"x": -0.541062474250793,
+					"y": 0.0,
+					"z": -0.541062474250793
+				},
+				"size": {
+					"x": 1.08212494850159,
+					"y": 0.5,
+					"z": 1.08212494850159
+				}
+			},
+			"collision_layer": 1,
+			"collision_mask": 14,
+			"collision_shapes": [
+				{
+					"type": "mesh"
+				}
+			],
+			"is_static": true,
+			"mesh_path": "res://assets/models/DO_NOT_SHIP_kenny_platformer-kit/block-grass-low.glb::ArrayMesh_hmnel",
+			"name": "block-grass-low",
+			"transform": {
+				"position": {
+					"x": 21.6515998840332,
+					"y": 25.9764995574951,
+					"z": 34.9604988098145
+				},
+				"rotation": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"scale": {
+					"x": 5.0,
+					"y": 5.0,
+					"z": 5.0
+				}
+			},
+			"type": "MeshInstance3D"
+		}
+	],
+	"scene_name": "Devmap",
+	"scene_path": "res://scenes/world/zones/devmap.tscn",
+	"static_objects": [
+		{
+			"aabb": {
+				"center": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"end": {
+					"x": 0.5,
+					"y": 0.5,
+					"z": 0.5
+				},
+				"position": {
+					"x": -0.5,
+					"y": -0.5,
+					"z": -0.5
+				},
+				"size": {
+					"x": 1.0,
+					"y": 1.0,
+					"z": 1.0
+				}
+			},
+			"collision_layer": 1,
+			"collision_mask": 14,
+			"collision_shapes": [],
+			"is_static": true,
+			"mesh_path": "",
+			"name": "block-grass-hexagon2",
+			"transform": {
+				"position": {
+					"x": 21.619800567627,
+					"y": 28.451099395752,
+					"z": 33.7975006103516
+				},
+				"rotation": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"scale": {
+					"x": 1.0,
+					"y": 1.0,
+					"z": 1.0
+				}
+			},
+			"type": "Node3D"
+		},
+		{
+			"aabb": {
+				"center": {
+					"x": 0.0,
+					"y": 0.5,
+					"z": 0.0
+				},
+				"end": {
+					"x": 0.550000011920929,
+					"y": 1.0,
+					"z": 0.635085165500641
+				},
+				"position": {
+					"x": -0.550000011920929,
+					"y": 0.0,
+					"z": -0.635085165500641
+				},
+				"size": {
+					"x": 1.10000002384186,
+					"y": 1.0,
+					"z": 1.27017033100128
+				}
+			},
+			"collision_layer": 1,
+			"collision_mask": 14,
+			"collision_shapes": [
+				{
+					"type": "mesh"
+				}
+			],
+			"is_static": true,
+			"mesh_path": "res://assets/models/DO_NOT_SHIP_kenny_platformer-kit/block-grass-hexagon.glb::ArrayMesh_84i7q",
+			"name": "block-grass-hexagon",
+			"transform": {
+				"position": {
+					"x": 21.619800567627,
+					"y": 28.451099395752,
+					"z": 33.7975006103516
+				},
+				"rotation": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"scale": {
+					"x": 1.0,
+					"y": 1.0,
+					"z": 1.0
+				}
+			},
+			"type": "MeshInstance3D"
+		},
+		{
+			"aabb": {
+				"center": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"end": {
+					"x": 0.5,
+					"y": 0.5,
+					"z": 0.5
+				},
+				"position": {
+					"x": -0.5,
+					"y": -0.5,
+					"z": -0.5
+				},
+				"size": {
+					"x": 1.0,
+					"y": 1.0,
+					"z": 1.0
+				}
+			},
+			"collision_layer": 1,
+			"collision_mask": 14,
+			"collision_shapes": [],
+			"is_static": true,
+			"mesh_path": "",
+			"name": "block-grass-low2",
+			"transform": {
+				"position": {
+					"x": 21.6515998840332,
+					"y": 25.9764995574951,
+					"z": 34.9604988098145
+				},
+				"rotation": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"scale": {
+					"x": 5.0,
+					"y": 5.0,
+					"z": 5.0
+				}
+			},
+			"type": "Node3D"
+		},
+		{
+			"aabb": {
+				"center": {
+					"x": 0.0,
+					"y": 0.25,
+					"z": 0.0
+				},
+				"end": {
+					"x": 0.541062474250793,
+					"y": 0.5,
+					"z": 0.541062474250793
+				},
+				"position": {
+					"x": -0.541062474250793,
+					"y": 0.0,
+					"z": -0.541062474250793
+				},
+				"size": {
+					"x": 1.08212494850159,
+					"y": 0.5,
+					"z": 1.08212494850159
+				}
+			},
+			"collision_layer": 1,
+			"collision_mask": 14,
+			"collision_shapes": [
+				{
+					"type": "mesh"
+				}
+			],
+			"is_static": true,
+			"mesh_path": "res://assets/models/DO_NOT_SHIP_kenny_platformer-kit/block-grass-low.glb::ArrayMesh_hmnel",
+			"name": "block-grass-low",
+			"transform": {
+				"position": {
+					"x": 21.6515998840332,
+					"y": 25.9764995574951,
+					"z": 34.9604988098145
+				},
+				"rotation": {
+					"x": 0.0,
+					"y": 0.0,
+					"z": 0.0
+				},
+				"scale": {
+					"x": 5.0,
+					"y": 5.0,
+					"z": 5.0
+				}
+			},
+			"type": "MeshInstance3D"
+		}
+	],
+	"timestamp": 1750967243.79957
+}
