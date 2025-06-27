@@ -1,0 +1,78 @@
+# Dockerfile.dashboard - Flask dashboard with protobuf schema generation
+FROM golang:1.24.3-alpine AS schema-builder
+
+# Install protobuf compiler and schema generator
+RUN apk add --no-cache protobuf protobuf-dev git
+RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschema@latest
+
+# Set working directory
+WORKDIR /app
+
+# Cache bust for fresh protobuf copying
+ARG CACHE_BUST
+RUN echo "Cache bust: $CACHE_BUST"
+
+# Copy shared protobuf files
+COPY backend/shared/ ./shared/
+
+# Generate JSON schemas and filter out packet-prefixed ones
+RUN mkdir -p ./schemas
+
+# Generate all schemas first
+RUN protoc \
+    --jsonschema_out=./schemas \
+    --jsonschema_opt=enforce_oneof \
+    --jsonschema_opt=file_extension=json \
+    --jsonschema_opt=disallow_additional_properties \
+    --proto_path=./shared \
+    ./shared/packets.proto
+
+# List all generated files for debugging
+RUN echo "All generated schemas:" && ls -la ./schemas/
+
+# Only remove the main Packet.json wrapper file - keep all message schemas
+RUN rm -f ./schemas/Packet.json
+
+# List remaining schemas for debugging
+RUN echo "Final schemas after cleanup:" && ls -la ./schemas/
+
+# Python runtime stage
+FROM python:3.11-alpine
+
+# Install system dependencies
+RUN apk --no-cache add ca-certificates wget
+
+# Set working directory
+WORKDIR /app
+
+# Copy Flask requirements and install dependencies
+COPY backend/dashboard/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Create non-root user
+RUN addgroup -g 1001 appgroup && adduser -D -u 1001 -G appgroup appuser
+
+# Cache bust for fresh file copies
+ARG CACHE_BUST
+RUN echo "Cache bust: $CACHE_BUST"
+
+# Copy Flask application files
+COPY backend/dashboard/ ./
+
+# Create templates directory and copy template file
+RUN mkdir -p ./templates ./static
+
+# Copy generated schemas from builder stage
+COPY --from=schema-builder /app/schemas ./schemas/
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port 5001
+EXPOSE 5001
+
+# Run the Flask application
+CMD ["python", "app.py"]

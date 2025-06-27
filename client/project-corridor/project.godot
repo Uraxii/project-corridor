@@ -17,12 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Globals="*res://global_manager.gd"
-WS="*res://web_socket_client.gd"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/protobuf/plugin.cfg")
+Globals="*res://scripts/global_manager.gd"
+API="*res://scripts/api_client.gd"
 
 [input]
 

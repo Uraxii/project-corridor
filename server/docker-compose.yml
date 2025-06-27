@@ -1,0 +1,28 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: pc-api
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+      - DEBUG=true
+      - SECRET_KEY=your-secret-key-change-this-in-production
+      - DATABASE_URL=sqlite:///./data/project_corridor.db
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=nimda
+    volumes:
+      - ./api_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  corridor_data:
+    driver: local

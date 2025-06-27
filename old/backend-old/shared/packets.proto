@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package packets;
+option go_package = "pkg/packets";
+
+// ============================================================================
+// AUTHENTICATION & IDENTIFICATION
+// ============================================================================
+
+message CredentialMessage {
+  string user = 1;
+  string secret = 2;
+}
+
+message IdMessage { uint64 id = 1; }
+
+// ============================================================================
+// CHAT SYSTEM
+// ============================================================================
+
+message ChatMessage {
+  uint64 sender = 1;
+  uint64 recipient = 2; // 0 = broadcast to all
+  uint64 channel = 3;   // 0 = general channel
+  string content = 4;
+}
+
+// ============================================================================
+// ENTITY SYSTEM
+// ============================================================================
+
+// Individual stat with current/max/bonus values
+message StatMessage {
+  string type = 1; // Name of the statistics (i.e. health, energy, vigor)
+  float current = 2;
+  float max = 3;
+  float extra = 4; // Bonus/temporary modifiers
+}
+
+// Complete entity data structure
+message EntityDataMessage {
+  uint64 authority_id = 1; // Who has authority over this entity
+  uint64 spawn_id = 2;     // Unique identifier of this entity instance
+  uint64 shard_id = 3;     // Which shard this entity is in
+  uint64 scene = 4;        // Which entity scene to load client-side
+  string display_name = 5; // Name of the entity
+  string state = 6;        // Current animation/behavior state
+
+  // Position
+  float x_pos = 7;
+  float y_pos = 8;
+  float z_pos = 9;
+
+  repeated uint64 equipped_item_ids = 10;
+  repeated StatMessage stats = 11; // health, mana, strength, etc.
+}
+
+// ============================================================================
+// PACKET WRAPPER
+// ============================================================================
+
+// Main packet container - all messages are wrapped in this
+message Packet {
+  uint64 sender_id = 1;
+
+  oneof msg {
+    // Authentication
+    CredentialMessage credential = 2;
+    IdMessage id = 3;
+
+    // Chat
+    ChatMessage chat = 4;
+
+    // Entity management
+    EntityDataMessage entity_data = 9;
+  }
+}
