@@ -2,8 +2,6 @@ class_name LoginView extends View
 
 
 func _ready() -> void:
-    signals.login_success.connect(_on_login_success)
-    
     var submit_button: Button = %SubmitButton
     submit_button.pressed.connect(_on_submit_pressed)
 
@@ -20,5 +18,4 @@ func _on_submit_pressed() -> void:
 
 
 func _on_login_success() -> void:
-    Globals.views.spawn(CharacterSelectView)
     despawn()

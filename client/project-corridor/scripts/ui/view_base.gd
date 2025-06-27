@@ -2,6 +2,7 @@ class_name View extends Control
 
 @onready var signals := Globals.signal_bus
 @onready var input := Globals.input
+@onready var log := Globals.log
 
 
 func initalize() -> void:

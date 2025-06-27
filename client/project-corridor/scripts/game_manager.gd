@@ -14,15 +14,20 @@ var pause: ViewPause
 
 
 func _ready() -> void:
-    signals.connection_closed.connect(_on_connection_closed)
-    signals.connected_to_server.connect(_on_connected_to_server)
-    signals.got_client_id.connect(_on_got_client_id)
-    signals.login_success.connect(_on_login_success)
-
+    _connect_signals()
     console = views.spawn(ConsoleView)
+    main = views.spawn(MainView)
     
 
-func _on_connected_to_server() -> void:
+func _connect_signals() -> void:
+    signals.login_success.connect(_on_login_success)
+    signals.api_status_passed.connect(_on_api_status_passed)
+
+
+func _on_api_status_passed() -> void:
+    if main:
+        main.despawn()
+        
     login = views.spawn(LoginView)
 
 
@@ -33,11 +38,9 @@ func _on_connection_closed() -> void:
     main = views.spawn(MainView)
 
 
-func _on_got_client_id(msg: PacketManager.PACKETS.IdMessage) -> void:
-    client_id = msg.get_id()
-    signals.log_new_success.emit("Got ID %d" % client_id)
-
-
 func _on_login_success() -> void:
+    if login:
+        login.despawn()
+        
     pause = views.spawn(ViewPause)
     char_select = views.spawn(CharacterSelectView)

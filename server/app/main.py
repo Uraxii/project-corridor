@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from app.api import auth
+from app.api import character
 from app.core.config import settings
 from app.db.database import init_db
 
@@ -35,12 +36,25 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(auth.router, prefix="/api/v0/auth", tags=["authentication"])
+app.include_router(
+    auth.router, 
+    prefix="/api/v0/auth", 
+    tags=["authentication"]
+)
+app.include_router(
+    character.router, 
+    prefix="/api/v0/characters", 
+    tags=["characters"]
+)
 
 
 @app.get("/")
 async def root():
-    return {"app": app.title, "description": app.description, "version": app.version}
+    return {
+        "app": app.title, 
+        "description": app.description, 
+        "version": app.version
+    }
 
 
 @app.get("/version")

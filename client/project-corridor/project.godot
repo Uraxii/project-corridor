@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 Globals="*res://scripts/global_manager.gd"
-WS="res://scripts/web_socket_client.gd"
 API="*res://scripts/api_client.gd"
 
 [input]

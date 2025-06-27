@@ -1,15 +1,25 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
 from typing import Optional
 
-from app.models.auth import CredentialRequest, LoginResponse, UserInfo, TokenData
-from app.core.security import authenticate_user, create_access_token, verify_token, get_user_id
+from app.models.auth import (
+    CredentialRequest, LoginResponse, UserInfo, TokenData
+)
+from app.core.security import (
+    authenticate_user, create_access_token, 
+    verify_token, get_user_id, get_password_hash
+)
+from app.db.database import get_db
+from app.db.crud_character import get_or_create_user
 
 router = APIRouter()
 security = HTTPBearer()
 
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> UserInfo:
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> UserInfo:
     """
     Dependency to get the current authenticated user from JWT token.
     """
@@ -30,43 +40,80 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 
 @router.post("/login", response_model=LoginResponse)
-async def login(credentials: CredentialRequest):
+async def login(
+    credentials: CredentialRequest,
+    db: Session = Depends(get_db)
+):
     """
-    Login endpoint - equivalent to handling CredentialMessage in your Go code.
+    Login endpoint - equivalent to handling CredentialMessage 
+    in your Go code.
     
-    This replaces the WebSocket credential handling from your original code.
-    Client sends POST request with username/password and gets back a JWT token.
+    This replaces the WebSocket credential handling from your 
+    original code. Client sends POST request with username/password 
+    and gets back a JWT token.
     """
-    # Authenticate user (matches your Go code's credential validation)
-    if not authenticate_user(credentials.user, credentials.secret):
+    # Authenticate user
+    user_id = authenticate_user(
+        credentials.user, credentials.secret, db
+    )
+    
+    if not user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Get user ID (equivalent to your Go code's client ID assignment)
-    player_id = get_user_id(credentials.user)
-    if player_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to get user ID"
-        )
-    
     # Create access token
     access_token = create_access_token(
-        data={"sub": credentials.user, "player_id": player_id}
+        data={"sub": credentials.user, "player_id": user_id}
     )
     
     return LoginResponse(
         access_token=access_token,
-        player_id=player_id,
+        player_id=user_id,
+        username=credentials.user
+    )
+
+
+@router.post("/register", response_model=LoginResponse)
+async def register(
+    credentials: CredentialRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Register a new user account.
+    """
+    # Check if user already exists
+    existing_user_id = get_user_id(credentials.user, db)
+    if existing_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists"
+        )
+    
+    # Create new user
+    hashed_password = get_password_hash(credentials.secret)
+    user = get_or_create_user(
+        db, credentials.user, hashed_password
+    )
+    
+    # Create access token
+    access_token = create_access_token(
+        data={"sub": credentials.user, "player_id": user.id}
+    )
+    
+    return LoginResponse(
+        access_token=access_token,
+        player_id=user.id,
         username=credentials.user
     )
 
 
 @router.get("/me", response_model=UserInfo)
-async def get_current_user_info(current_user: UserInfo = Depends(get_current_user)):
+async def get_current_user_info(
+    current_user: UserInfo = Depends(get_current_user)
+):
     """
     Get current user information.
     Equivalent to your Go code's IdMessage functionality.
@@ -78,20 +125,28 @@ async def get_current_user_info(current_user: UserInfo = Depends(get_current_use
 async def logout(current_user: UserInfo = Depends(get_current_user)):
     """
     Logout endpoint. 
-    Since we're using stateless JWT tokens, this just confirms the token is valid.
-    In a full implementation, you might want to blacklist the token.
+    Since we're using stateless JWT tokens, this just confirms 
+    the token is valid. In a full implementation, you might want 
+    to blacklist the token.
     """
-    return {"message": f"User {current_user.username} logged out successfully"}
+    return {
+        "message": f"User {current_user.username} logged out successfully"
+    }
 
 
 @router.post("/refresh")
-async def refresh_token(current_user: UserInfo = Depends(get_current_user)):
+async def refresh_token(
+    current_user: UserInfo = Depends(get_current_user)
+):
     """
     Refresh the access token.
     Creates a new token with extended expiration.
     """
     access_token = create_access_token(
-        data={"sub": current_user.username, "player_id": current_user.player_id}
+        data={
+            "sub": current_user.username, 
+            "player_id": current_user.player_id
+        }
     )
     
     return LoginResponse(

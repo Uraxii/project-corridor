@@ -7,7 +7,15 @@ func _ready() -> void:
     
     var enter_button: Button = %Enter
     enter_button.pressed.connect(_on_enter)
+    
+    signals.characters_received.connect(_on_characters_received)
+    
+    API.get_all_characters()
 
+
+func _on_characters_received(characters: Array, total: int) -> void:
+    print("characters: ", characters, " - from character select view." )
+    
 
 func _on_new_char() -> void:
     print("New Character")
