@@ -27,8 +27,8 @@ async def create_character(
     """
     # Check character limit
     character_count = crud_character.count_user_characters(
-        db, current_user.player_id
-    )
+        db, current_user.player_id)
+
     if character_count >= 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

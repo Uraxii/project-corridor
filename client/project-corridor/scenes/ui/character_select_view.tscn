@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://c2bsvcbdn35i2"]
+[gd_scene load_steps=2 format=3 uid="uid://wuxgvm8p7nc"]
 
 [ext_resource type="Script" uid="uid://cnh7qevcidx5s" path="res://scripts/ui/character_select_view.gd" id="1_xqtgq"]
 
@@ -11,23 +11,41 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_xqtgq")
 
-[node name="Enter" type="Button" parent="."]
+[node name="LoadWorld" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 1.0
 offset_left = -70.0
-offset_top = -15.5
+offset_top = -48.0
 offset_right = 70.0
-offset_bottom = 15.5
+offset_bottom = -17.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 text = "Enter"
 
-[node name="HBoxContainer" type="VBoxContainer" parent="."]
+[node name="DeleteCharacter" type="Button" parent="."]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -152.0
+offset_top = -48.0
+offset_right = -12.0
+offset_bottom = -17.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Delete"
+
+[node name="CharacterContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -37,14 +55,15 @@ offset_left = -198.0
 offset_right = 2.0
 grow_horizontal = 0
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="Label" type="Label" parent="CharacterContainer"]
 layout_mode = 2
 text = "Characters"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="NewCharacter" type="Button" parent="HBoxContainer"]
+[node name="CreateCharacter" type="Button" parent="CharacterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "New Character"

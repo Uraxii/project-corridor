@@ -21,8 +21,6 @@ class CharacterCreate(CharacterBase):
 class CharacterUpdate(BaseModel):
     """Model for updating character data."""
     name: Optional[str] = Field(None, min_length=1, max_length=50)
-    level: Optional[int] = Field(None, ge=1, le=100)
-    experience: Optional[int] = Field(None, ge=0)
     stats: Optional[Dict[str, int]] = None
     equipment: Optional[Dict[str, Any]] = None
     inventory: Optional[Dict[str, Any]] = None
@@ -37,7 +35,6 @@ class CharacterResponse(CharacterBase):
     inventory: Dict[str, Any]
     created_at: datetime
     last_played: datetime
-    time_played: int
     
     class Config:
         from_attributes = True

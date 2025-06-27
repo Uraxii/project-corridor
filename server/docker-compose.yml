@@ -1,7 +1,7 @@
 services:
   api:
     build:
-      context: ./server
+      context: ./api
       dockerfile: Dockerfile
     container_name: pc-api
     ports:
@@ -15,7 +15,7 @@ services:
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=nimda
     volumes:
-      - ./server_data:/app/data
+      - ./api_data:/app/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
