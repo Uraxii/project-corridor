@@ -24,18 +24,9 @@ class Character(Base):
     id: int = Column(Integer, primary_key=True, index=True)
     user_id: int = Column(Integer, ForeignKey("users.id"), nullable=False)
     name: str = Column(String, nullable=False, index=True)
-    level: int = Column(Integer, default=1)
-    experience: int = Column(Integer, default=0)
-    character_class: str = Column(String, nullable=False)
-    
     # Store character stats as JSON for flexibility
     stats: dict = Column(JSON, default={
-        "health": 100,
-        "mana": 50,
-        "strength": 10,
-        "defense": 10,
-        "intelligence": 10,
-        "agility": 10
+        "vigor": 1,
     })
     
     # Store equipment and inventory as JSON

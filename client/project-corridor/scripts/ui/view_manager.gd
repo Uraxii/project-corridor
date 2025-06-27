@@ -5,6 +5,7 @@ const views_dir := "res://views"
 var active_views: Array[View] = []
 var _scene_map: Dictionary[GDScript, PackedScene] = {
     CharacterSelectView: preload("res://scenes/ui/character_select_view.tscn"),
+    CreateCharacterView: preload("res://scenes/ui/create_character_view.tscn"),
     LoginView: preload("res://scenes/ui/login_view.tscn"),
     MainView: preload("res://scenes/ui/main_view.tscn"),
     ConsoleView: preload("res://scenes/ui/console_view.tscn"),

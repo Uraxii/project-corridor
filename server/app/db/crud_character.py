@@ -6,22 +6,12 @@ from app.db.models import Character, User
 from app.models.character import CharacterCreate, CharacterUpdate
 
 
-def create_character(db: Session, user_id: int, 
-                    character: CharacterCreate) -> Character:
+def create_character(db: Session, user_id: int, character: CharacterCreate) -> Character:
     """Create a new character for a user."""
     db_character = Character(
         user_id=user_id,
-        name=character.name,
-        character_class=character.character_class,
-        stats=character.stats.model_dump() if character.stats else {
-            "health": 100,
-            "mana": 50,
-            "strength": 10,
-            "defense": 10,
-            "intelligence": 10,
-            "agility": 10
-        }
-    )
+        name=character.name)
+
     db.add(db_character)
     db.commit()
     db.refresh(db_character)

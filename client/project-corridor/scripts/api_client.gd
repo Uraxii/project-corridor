@@ -49,16 +49,9 @@ func get_me() -> void:
 
 
 #region Character Management
-func create_character(name: String, character_class: String, 
-                     stats: Dictionary = {}) -> void:
+func create_character(name: String) -> void:
     var url = server + "/api/v0/characters/"
-    var body_data = {
-        "name": name,
-        "character_class": character_class
-    }
-    if not stats.is_empty():
-        body_data["stats"] = stats
-    
+    var body_data = { "name": name }
     var body = JSON.stringify(body_data)
     _post_request(url, body, _on_create_character, _get_auth_headers())
 
