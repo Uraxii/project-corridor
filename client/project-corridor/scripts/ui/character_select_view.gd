@@ -3,7 +3,7 @@ class_name CharacterSelectView extends View
 var character_info_template := preload(
     "res://scenes/ui/character_info_template.tscn")
 
-var current_character: int = -1
+var current_character: Dictionary = {}
 var character_buttons: Array[CharacterInfoTemplate] = []
 
 
@@ -48,21 +48,24 @@ func _on_create_pressed() -> void:
 
 
 func _on_delete_pressed() -> void:
-    API.delete_character(current_character)
+    if not current_character.has("id"):
+        log.error("Selected character, but not id was found.")
+        return
+    
+    API.delete_character(current_character.get("id"))
     API.get_all_characters() 
     
     
 func _on_load_pressed() -> void:
-    # Placeholder var. temp will spawn a temp character for testing.
-    var currently_select_character := "temp"
-    print("Enter World")
-    despawn()
+    if not current_character.has("id"):
+        log.warn("Cannot enter world without selecting a character!")
+        return
+        
+    log.info("Entering world as " + current_character.get("name"))
+    signals.load_world.emit()
 
 
 func _on_selected_character(character_data: Dictionary) -> void:
-    if not character_data.has("id"):
-        log.error("Selected character, but not id was found.")
-        
-    current_character = character_data.get("id")
+    current_character = character_data
     log.info("Selected character: " + str(current_character))
     

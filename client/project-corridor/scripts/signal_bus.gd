@@ -37,7 +37,7 @@ signal chat(sender_id: int, msg: PacketManager.PACKETS.Packet)
 signal login(msg: PacketManager.PACKETS.IdMessage)
 #endregion
 
-#region Views
+#region UI
 signal spawn_view(view: View)
 signal despawn_view(view: View)
 #endregion
@@ -53,6 +53,7 @@ signal log_new_announcment(message: String)
 
 #region World
 signal reload
+signal load_world
 #endregion
 
 #region Input

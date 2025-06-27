@@ -1,4 +1,4 @@
-class_name ViewPause extends View
+class_name SystemView extends View
 
 
 enum {
@@ -28,6 +28,4 @@ func _on_cancel() -> void:
      
 
 func _on_logout_pressed() -> void:
-    print("Logout pressed.")
-    #WS.disconn()
-    despawn()
+    API.logout()

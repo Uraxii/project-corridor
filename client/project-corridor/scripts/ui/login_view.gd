@@ -15,7 +15,4 @@ func _on_submit_pressed() -> void:
         return
         
     API.login(user.text, secret.text)
-
-
-func _on_login_success() -> void:
-    despawn()
+    
