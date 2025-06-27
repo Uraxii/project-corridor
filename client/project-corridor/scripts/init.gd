@@ -10,6 +10,7 @@ func _ready() -> void:
     print("Args=", args)
     
     if args.has("auto_connect"):
-        WS.connect_to_url("localhost", 5000)
+        # WS.connect_to_url("localhost", 5000)
+        pass
     else:
         views.spawn(MainView)

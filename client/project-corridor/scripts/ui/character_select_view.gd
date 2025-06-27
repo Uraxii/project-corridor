@@ -1,14 +1,12 @@
 class_name CharacterSelectView extends View
 
+
 func _ready() -> void:
     var new_char_button: Button = %NewCharacter
     new_char_button.pressed.connect(_on_new_char)
     
     var enter_button: Button = %Enter
     enter_button.pressed.connect(_on_enter)
-    
-    # TODO: Implement get_charactes before calling this.
-    # controller.get_characters()
 
 
 func _on_new_char() -> void:

@@ -39,4 +39,4 @@ func _on_submit(content: String) -> void:
     var packet := PacketManager.new_packet()
     var chat := packet.new_chat()
     chat.set_content(content)
-    WS.send(packet)
+    # WS.send(packet)

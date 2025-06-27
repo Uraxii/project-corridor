@@ -12,7 +12,6 @@ security = HTTPBearer()
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> UserInfo:
     """
     Dependency to get the current authenticated user from JWT token.
-    Similar to how your Go code tracks client state.
     """
     token = credentials.credentials
     payload = verify_token(token)

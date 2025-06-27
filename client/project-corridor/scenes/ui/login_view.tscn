@@ -45,3 +45,5 @@ secret = true
 unique_name_in_owner = true
 layout_mode = 2
 text = "Login"
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]

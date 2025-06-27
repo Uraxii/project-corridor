@@ -2,36 +2,23 @@ class_name LoginView extends View
 
 
 func _ready() -> void:
-    multiplayer.connection_failed.connect(_on_connection_failed)
-    # signals.login_resp.connect(_on_login)
+    signals.login_success.connect(_on_login_success)
     
     var submit_button: Button = %SubmitButton
     submit_button.pressed.connect(_on_submit_pressed)
 
     
 func _on_submit_pressed() -> void:
-    var user_field: LineEdit = %UsernameField
-    var pass_field: LineEdit = %PasswordField
+    var user: LineEdit = %UsernameField
+    var secret: LineEdit = %PasswordField
     
-    if user_field.text.is_empty() or pass_field.text.is_empty():
+    if user.text.is_empty() or secret.text.is_empty():
         printerr("Username and password cannot be empty!")
         return
-    
-    var packet := PacketManager.new_packet()
-    var creds := packet.new_credential()
-    creds.set_user(user_field.text)
-    creds.set_secret(pass_field.text)
-    
-    WS.send(packet)
-    _on_login_success()
-
-
-func _on_connection_failed() -> void:
-    despawn()
+        
+    API.login(user.text, secret.text)
 
 
 func _on_login_success() -> void:
-    # TODO: create login_resp packet
-    if true:
-        signals.login_success.emit()
-        despawn()
+    Globals.views.spawn(CharacterSelectView)
+    despawn()

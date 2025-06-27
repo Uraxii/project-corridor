@@ -1,5 +1,13 @@
 class_name SignalBus extends Node
 
+#region API
+signal api_status_passed()
+signal api_status_failed(http_code: int)
+
+signal login_success(data: String)
+signal login_failed(http_code: int)
+#endregion
+
 #region Network
 signal connected_to_server
 signal connection_closed
@@ -7,10 +15,6 @@ signal got_packet(packet: PacketManager.PACKETS.Packet)
 signal got_client_id(msg: PacketManager.PACKETS.IdMessage)
 signal chat(sender_id: int, msg: PacketManager.PACKETS.Packet)
 signal login(msg: PacketManager.PACKETS.IdMessage)
-#endregion
-
-#region System
-signal login_success
 #endregion
 
 #region Views

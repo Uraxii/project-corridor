@@ -29,5 +29,5 @@ func _on_cancel() -> void:
 
 func _on_logout_pressed() -> void:
     print("Logout pressed.")
-    WS.disconn()
+    #WS.disconn()
     despawn()

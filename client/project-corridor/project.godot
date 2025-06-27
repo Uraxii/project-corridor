@@ -18,11 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 Globals="*res://scripts/global_manager.gd"
-WS="*res://scripts/web_socket_client.gd"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/colex/plugin.cfg", "res://addons/protobuf/plugin.cfg")
+WS="res://scripts/web_socket_client.gd"
+API="*res://scripts/api_client.gd"
 
 [input]
 

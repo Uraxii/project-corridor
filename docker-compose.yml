@@ -1,8 +1,8 @@
 services:
   api:
     build:
-      context: .
-      dockerfile: ./server/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     container_name: pc-api
     ports:
       - "8080:8080"
@@ -15,10 +15,7 @@ services:
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=nimda
     volumes:
-      # Mount database directory for persistence
       - ./data:/app/data
-      # Mount source code for development (optional)
-      - ./app:/app/app:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
@@ -27,6 +24,5 @@ services:
       start_period: 40s
 
 volumes:
-  # Persist database data
   corridor_data:
     driver: local
