@@ -1,3 +1,4 @@
+# godot/scripts/shard_connection.gd
 class_name ShardConnection extends Node
 ## Handles connection to game shard servers
 
@@ -71,7 +72,7 @@ func send_chat_message(message: String) -> void:
     log.info("Sending chat: %s" % message)
     
     # Call RPC on server
-    rpc("receive_chat_message", message, username)
+    receive_chat_message.rpc(message, username)
 
 
 func send_player_position(position: Vector3, rotation: Vector3) -> void:
@@ -80,7 +81,7 @@ func send_player_position(position: Vector3, rotation: Vector3) -> void:
         return
     
     # Call RPC on server  
-    rpc_unreliable("receive_player_position", position, rotation)
+    receive_player_position.rpc(position, rotation)
 
 
 # Multiplayer event handlers
@@ -94,7 +95,7 @@ func _on_connected_to_server() -> void:
     var username = character_data.get("name", "Player")
     var token = API.access_token  # Use the auth token from login
     
-    rpc("authenticate_player", username, token)
+    authenticate_player.rpc(username, token)
     
     connected_to_shard.emit()
 
