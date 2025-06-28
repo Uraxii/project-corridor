@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import Optional
 
-from app.models.shard import (
+from app.models.shard_models import (
     ShardCreateRequest, ShardInfo, ShardListResponse,
     ShardConnectionInfo, ShardStatsRequest, ShardHeartbeat
 )
-from app.core.shard_manager import shard_manager
+from app.core.core import shard_manager
 
 router = APIRouter()
 

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import docker
 from docker.errors import DockerException
 
-from app.models.shard import (
+from app.models.shard_models import (
     ShardInfo, ShardType, ShardStatus, ShardCreateRequest, 
     ShardConnectionInfo
 )

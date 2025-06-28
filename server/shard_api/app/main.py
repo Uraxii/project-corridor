@@ -4,9 +4,9 @@ from contextlib import asynccontextmanager
 import uvicorn
 import asyncio
 
-from app.api import shards
+from app.api import endpoints
 from app.core.config import settings
-from app.core.shard_manager import shard_manager
+from app.core.core import shard_manager
 
 
 @asynccontextmanager
@@ -50,7 +50,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(
-    shards.router, 
+    endpoints.router, 
     prefix="/api/v0/shards", 
     tags=["shards"]
 )

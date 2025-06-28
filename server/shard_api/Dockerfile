@@ -17,12 +17,21 @@ RUN apt-get update \
         ca-certificates \
         gnupg \
         lsb-release \
+        wget \
+        unzip \
     && mkdir -p /etc/apt/keyrings \
     && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
     && apt-get update \
     && apt-get install -y --no-install-recommends docker-ce-cli \
     && rm -rf /var/lib/apt/lists/*
+
+# Download and install Godot headless server
+RUN wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip \
+    && unzip Godot_v4.3-stable_linux.x86_64.zip \
+    && mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot \
+    && chmod +x /usr/local/bin/godot \
+    && rm Godot_v4.3-stable_linux.x86_64.zip
 
 # Copy requirements first for better caching
 COPY requirements.txt .
@@ -33,6 +42,13 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 # Copy application code
 COPY app/ ./app/
+
+# Copy Godot project files
+COPY godot_server/ ./godot_server/
+
+# Create directory for Godot user data and ensure permissions
+RUN mkdir -p /root/.local/share/godot \
+    && chmod -R 755 /app/godot_server
 
 # Expose port
 EXPOSE 8081
