@@ -5,7 +5,7 @@ signal api_status_passed()
 signal api_status_failed(http_code: int)
 
 # Authentication
-signal login_success(data: Dictionary)
+signal login_success()
 signal login_failed(http_code: int)
 signal register_success(data: Dictionary)
 signal register_failed(http_code: int, error_message: String)
@@ -26,15 +26,20 @@ signal character_update_failed(http_code: int)
 signal character_deleted()
 signal character_delete_failed(http_code: int)
 signal character_not_found()
+signal character_selected(character_data: Dictionary)
 #endregion
 
-#region Network
-signal connected_to_server
+#region Shard Connection
+signal connected_to_shard
+signal disconnected_from_shard
+signal shard_connection_failed
+#endregion
+
+#region Network (Legacy - keeping for compatibility)
 signal connection_closed
-signal got_packet(packet: PacketManager.PACKETS.Packet)
-signal got_client_id(msg: PacketManager.PACKETS.IdMessage)
-signal chat(sender_id: int, msg: PacketManager.PACKETS.Packet)
-signal login(msg: PacketManager.PACKETS.IdMessage)
+signal got_packet(packet)
+signal got_client_id(msg)
+signal login(msg)
 #endregion
 
 #region UI
@@ -54,6 +59,10 @@ signal log_new_announcment(message: String)
 #region World
 signal reload
 signal load_world
+#endregion
+
+#region Chat
+signal chat(sender_name: String, message: String)
 #endregion
 
 #region Input
