@@ -179,6 +179,7 @@ class ShardManagerCore:
     async def _start_direct_shard(self, shard: ShardProcess) -> bool:
         """Start shard as direct process."""
         try:
+            # Updated command line arguments to match Godot client expectations
             cmd = [
                 settings.GODOT_SERVER_EXECUTABLE,
                 "--headless",
@@ -186,7 +187,9 @@ class ShardManagerCore:
                 f"--port={shard.shard_info.port}",
                 f"--shard-id={shard.shard_info.shard_id}",
                 f"--shard-type={shard.shard_info.shard_type}",
-                f"--max-players={shard.shard_info.max_players}"
+                f"--max-players={shard.shard_info.max_players}",
+                f"--manager-host={settings.HOST}",
+                f"--manager-port={settings.PORT}"
             ]
             
             env = os.environ.copy()
@@ -195,20 +198,35 @@ class ShardManagerCore:
                 'SHARD_TYPE': shard.shard_info.shard_type,
                 'MAX_PLAYERS': str(shard.shard_info.max_players),
                 'MANAGER_HOST': settings.HOST,
-                'MANAGER_PORT': str(settings.PORT)
+                'MANAGER_PORT': str(settings.PORT),
+                'DISPLAY': ':99'  # For headless operation
             })
+            
+            print(f"Starting shard with command: {' '.join(cmd)}")
             
             shard.process = subprocess.Popen(
                 cmd,
                 cwd=settings.GODOT_PROJECT_PATH,
                 env=env,
                 stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
+                stderr=subprocess.PIPE,
+                start_new_session=True  # Create new process group for clean shutdown
             )
             
-            shard.shard_info.status = ShardStatus.RUNNING
-            print(f"Started direct shard: {shard.shard_info.shard_id}")
-            return True
+            # Wait a moment to see if process starts successfully
+            await asyncio.sleep(2)
+            
+            if shard.process.poll() is None:
+                shard.shard_info.status = ShardStatus.RUNNING
+                print(f"Started direct shard: {shard.shard_info.shard_id} (PID: {shard.process.pid})")
+                return True
+            else:
+                stdout, stderr = shard.process.communicate()
+                print(f"Shard process failed to start:")
+                print(f"STDOUT: {stdout.decode()}")
+                print(f"STDERR: {stderr.decode()}")
+                shard.shard_info.status = ShardStatus.ERROR
+                return False
             
         except Exception as e:
             print(f"Failed to start direct shard: {e}")

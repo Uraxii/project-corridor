@@ -2,5 +2,7 @@
 .godot/
 /android/
 
+builds/
 # Container data volumes
 api_data/
+

@@ -40,7 +40,7 @@ services:
       - HOST=0.0.0.0
       - PORT=8081
       - DEBUG=true
-      - GODOT_SERVER_EXECUTABLE=/usr/local/bin/godot
+      - GODOT_SERVER_EXECUTABLE=/app/project-corridor-server
       - GODOT_PROJECT_PATH=/app/godot_server
       - SHARD_PORT_RANGE_START=9000
       - SHARD_PORT_RANGE_END=9100
@@ -53,6 +53,8 @@ services:
     volumes:
       # Mount Docker socket for container management if USE_DOCKER=true
       - /var/run/docker.sock:/var/run/docker.sock
+      # Mount shared memory for better performance
+      - /dev/shm:/dev/shm
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
       interval: 30s
