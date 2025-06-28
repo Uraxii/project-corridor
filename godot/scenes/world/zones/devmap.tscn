@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bd0ydf3xgbfoh"]
+
+[ext_resource type="PackedScene" uid="uid://pmvaqr0spcry" path="res://assets/models/DO_NOT_SHIP_kenny_platformer-kit/block-grass-hexagon.glb" id="1_n6dg4"]
+[ext_resource type="PackedScene" uid="uid://bklcgtmkg4ee5" path="res://assets/models/DO_NOT_SHIP_kenny_platformer-kit/block-grass-low.glb" id="2_7nvo8"]
+
+[node name="Devmap" type="Node3D"]
+metadata/do_not_ship = true
+
+[node name="block-grass-hexagon2" parent="." instance=ExtResource("1_n6dg4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.6198, 28.4511, 33.7975)
+
+[node name="block-grass-low2" parent="." instance=ExtResource("2_7nvo8")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 21.6516, 25.9765, 34.9605)
+
+[node name="spawn-node" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.98549, 26.7609)

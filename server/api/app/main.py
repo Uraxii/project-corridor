@@ -5,6 +5,7 @@ import uvicorn
 
 from app.api import auth
 from app.api import character
+from app.api import game
 from app.core.config import settings
 from app.db.database import init_db
 
@@ -45,6 +46,11 @@ app.include_router(
     character.router, 
     prefix="/api/v0/characters", 
     tags=["characters"]
+)
+app.include_router(
+    game.router, 
+    prefix="/api/v0/game", 
+    tags=["game"]
 )
 
 

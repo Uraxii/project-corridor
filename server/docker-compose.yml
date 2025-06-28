@@ -14,10 +14,53 @@ services:
       - DATABASE_URL=sqlite:///./data/project_corridor.db
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=nimda
+      # Shard Manager connection
+      - SHARD_MANAGER_URL=http://shard-api:8081
     volumes:
       - ./api_data:/app/data
+    depends_on:
+      - shard-api
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  shard-api:
+    build:
+      context: ./shard_api
+      dockerfile: Dockerfile
+    container_name: pc-shard-manager
+    ports:
+      - "8081:8081"
+      # Expose port range for Godot servers
+      - "9000-9100:9000-9100"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8081
+      - DEBUG=true
+      - GODOT_SERVER_EXECUTABLE=/app/project-corridor_server.x86_64
+      - GODOT_PROJECT_PATH=/app/godot_server
+      - SHARD_PORT_RANGE_START=9000
+      - SHARD_PORT_RANGE_END=9100
+      - MAX_SHARDS=50
+      - HUB_SHARD_NAME=player_hub
+      - HUB_MAX_PLAYERS=100
+      - USE_DOCKER=false
+      - DOCKER_IMAGE=project-corridor/godot-server:latest
+      - DOCKER_NETWORK=project-corridor_default
+    volumes:
+      # Mount Docker socket for container management if USE_DOCKER=true
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mount shared memory for better performance
+      - /dev/shm:/dev/shm
+      # Mount the Godot project files
+      - ../godot:/app/godot_server:ro
+      # Mount the exported server executable if it exists
+      - ./shard_api/project-corridor_server.x86_64:/app/project-corridor_server.x86_64:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
       interval: 30s
       timeout: 10s
       retries: 3
