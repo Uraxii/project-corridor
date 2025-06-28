@@ -44,16 +44,26 @@ func _initialize_server(args: Dictionary) -> void:
     
     print("Shard config: ", shard_config)
     
-    # Start the server manager
-    var server_manager = ServerManager.new()
-    add_child(server_manager)
-    server_manager.initialize_shard(shard_config)
+    # Load the init scene first to set up global managers
+    var init_scene = load("res://scenes/init.tscn")
+    if init_scene:
+        var init_instance = init_scene.instantiate()
+        get_tree().root.add_child(init_instance)
+        
+        # Wait a frame for globals to initialize
+        await get_tree().process_frame
+        
+        # Now start the server manager
+        var server_manager = ServerManager.new()
+        get_tree().root.add_child(server_manager)
+        server_manager.initialize_shard(shard_config)
+    else:
+        push_error("Failed to load init scene for server mode")
 
 
 func _initialize_client(args: Dictionary) -> void:
     """Initialize as a normal client."""
     print("Initializing as client...")
-    
     if args.has("auto_connect"):
         # Auto-connect logic for client testing
         pass

@@ -34,13 +34,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends docker-ce-cli \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Godot headless server
-RUN wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip \
-    && unzip Godot_v4.3-stable_linux.x86_64.zip \
-    && mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot \
-    && chmod +x /usr/local/bin/godot \
-    && rm Godot_v4.3-stable_linux.x86_64.zip
-
 # Copy requirements first for better caching
 COPY requirements.txt .
 
@@ -51,19 +44,12 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Copy application code
 COPY app/ ./app/
 
-# Copy the compiled Godot project (client executable renamed for server use)
-# This should be your exported Godot client that can run as both client and server
-COPY project-corridor-server /app/project-corridor-server
-RUN chmod +x /app/project-corridor-server
-
-# Create Godot project directory and copy project files
+# Create Godot project directory (will be mounted at runtime)
 RUN mkdir -p /app/godot_server
-COPY godot_server/ /app/godot_server/
 
 # Create directory for Godot user data and ensure permissions
 RUN mkdir -p /root/.local/share/godot \
-    && chmod -R 755 /app/godot_server \
-    && chmod +x /app/project-corridor-server
+    && chmod -R 755 /app/godot_server
 
 # Start Xvfb for headless display (needed even for headless Godot)
 RUN echo '#!/bin/bash\nXvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &\nexport DISPLAY=:99\nexec "$@"' > /entrypoint.sh \
