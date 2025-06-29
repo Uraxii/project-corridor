@@ -1,4 +1,4 @@
-# World & Lore Summary
+# Nous - The Still World Lore
 
 ## The Fundamental Nature of the World
 
