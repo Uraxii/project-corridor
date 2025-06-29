@@ -6,13 +6,17 @@ The world of Nous is not made of stone, soil, or physics in the traditional sens
 
 Where Nous bends tightly inward, it creates loops of recursive thought—and when those loops become stable, consciousness emerges. In this world, a person is not a soul in a body, but a localized knot of ideas, a bundle of tightly folded thought-patterns held together by conviction and feedback.
 
-> *" Woven from pure idea.
-> 	 Bending to thought.
-> Warping, like space under gravity.
-> 	Twisting upon itself. 
-> Tangling into the shapes of souls.
+> " Woven from pure idea.
 > 
-> The Nous is existence itself...
+>    Bending to thought.
+> 
+> Warping, like space under gravity.
+> 
+> 	Twisting upon itself.
+> 
+> Tangling into the shapes of souls.
+>
+> The Nous is existence itself..."
 
 ---
 
