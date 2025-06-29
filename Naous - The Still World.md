@@ -1,4 +1,4 @@
-# Nous - The Still World Lore
+# Naous - The Still World Lore
 
 ## The Fundamental Nature of the World
 
