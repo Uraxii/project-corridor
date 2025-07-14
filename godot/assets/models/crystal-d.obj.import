@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://d0a2wn6lu6elq"
+path="res://.godot/imported/crystal-d.obj-4ca1a9b0c42fb72580f77e987e4f52c5.mesh"
+
+[deps]
+
+files=["res://.godot/imported/crystal-d.obj-4ca1a9b0c42fb72580f77e987e4f52c5.mesh"]
+
+source_file="res://assets/models/crystal-d.obj"
+dest_files=["res://.godot/imported/crystal-d.obj-4ca1a9b0c42fb72580f77e987e4f52c5.mesh", "res://.godot/imported/crystal-d.obj-4ca1a9b0c42fb72580f77e987e4f52c5.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=true
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

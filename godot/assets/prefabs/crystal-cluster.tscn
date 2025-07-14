@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://c3vvmgu3op006"]
+
+[ext_resource type="Material" uid="uid://cuit4f8xjcn1" path="res://assets/materials/crystal-material.tres" id="1_26yfe"]
+[ext_resource type="ArrayMesh" uid="uid://doy71gctyntpo" path="res://assets/models/crystal-a.obj" id="2_x83xv"]
+[ext_resource type="ArrayMesh" uid="uid://cbdsq53x7cynd" path="res://assets/models/crystal-b.obj" id="3_0ec1q"]
+[ext_resource type="ArrayMesh" uid="uid://dti2n5a21yqgn" path="res://assets/models/crystal-c.obj" id="4_pmr1v"]
+[ext_resource type="ArrayMesh" uid="uid://d0a2wn6lu6elq" path="res://assets/models/crystal-d.obj" id="5_qriks"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Crystal-a" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1074, 1.19209e-07, 0.510344)
+material_override = ExtResource("1_26yfe")
+mesh = ExtResource("2_x83xv")
+
+[node name="Crystal-b" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.22575, 0, 1.48515)
+material_override = ExtResource("1_26yfe")
+mesh = ExtResource("3_0ec1q")
+
+[node name="Crystal-c" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.699329, 0, 2.08919)
+material_override = ExtResource("1_26yfe")
+mesh = ExtResource("4_pmr1v")
+
+[node name="Crystal-d" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.61196, 0, 0.739722)
+material_override = ExtResource("1_26yfe")
+mesh = ExtResource("5_qriks")
