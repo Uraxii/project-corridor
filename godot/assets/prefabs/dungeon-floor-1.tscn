@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://biml44n672tje"]
+
+[ext_resource type="Material" uid="uid://caunb0mst5ean" path="res://assets/materials/grid-material.tres" id="1_jxk0v"]
+[ext_resource type="ArrayMesh" uid="uid://ksvy3l5to3eu" path="res://assets/models/dungeon-floorplan-inside.obj" id="2_7h7hh"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Dungeon-floorplan-inside" type="MeshInstance3D" parent="."]
+material_override = ExtResource("1_jxk0v")
+mesh = ExtResource("2_7h7hh")
