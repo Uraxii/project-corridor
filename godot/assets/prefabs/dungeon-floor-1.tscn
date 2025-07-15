@@ -1,10 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://biml44n672tje"]
+[gd_scene load_steps=5 format=3 uid="uid://biml44n672tje"]
 
 [ext_resource type="Material" uid="uid://caunb0mst5ean" path="res://assets/materials/grid-material.tres" id="1_jxk0v"]
 [ext_resource type="ArrayMesh" uid="uid://ksvy3l5to3eu" path="res://assets/models/dungeon-floorplan-inside.obj" id="2_7h7hh"]
+[ext_resource type="PackedScene" uid="uid://c3vvmgu3op006" path="res://assets/prefabs/crystal-cluster.tscn" id="4_pia2v"]
+[ext_resource type="PackedScene" uid="uid://biurv6gnkorea" path="res://assets/prefabs/dungeon_floorplan.tscn" id="4_pkg5g"]
 
 [node name="Node3D" type="Node3D"]
 
-[node name="Dungeon-floorplan-inside" type="MeshInstance3D" parent="."]
+[node name="(old) Dungeon-floorplan-inside" type="MeshInstance3D" parent="."]
+visible = false
 material_override = ExtResource("1_jxk0v")
 mesh = ExtResource("2_7h7hh")
+
+[node name="crystals" parent="." instance=ExtResource("4_pia2v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127419, -2.98023e-08, -0.491845)
+
+[node name="dungeon-floorplan" parent="." instance=ExtResource("4_pkg5g")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)

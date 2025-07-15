@@ -1,0 +1,15 @@
+[gd_scene load_steps=6 format=3 uid="uid://biurv6gnkorea"]
+
+[ext_resource type="PackedScene" uid="uid://cenohjua1fcig" path="res://assets/models/dungeon-floorplan.fbx" id="1_4i4x8"]
+[ext_resource type="Material" uid="uid://0buucuhicgbt" path="res://assets/materials/dun-floor-material.tres" id="2_26l6x"]
+[ext_resource type="Material" uid="uid://81eommkr13p" path="res://assets/materials/dun-wall-material.tres" id="3_t5vlu"]
+[ext_resource type="Material" uid="uid://blb2ofehra62q" path="res://assets/materials/dun-trim-material.tres" id="4_h835n"]
+[ext_resource type="Material" uid="uid://mm5v5a0h7mw6" path="res://assets/materials/dun-ceiling-material.tres" id="5_why8q"]
+
+[node name="dungeon-floorplan" instance=ExtResource("1_4i4x8")]
+
+[node name="dungeon_floorplan" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_26l6x")
+surface_material_override/1 = ExtResource("3_t5vlu")
+surface_material_override/2 = ExtResource("4_h835n")
+surface_material_override/3 = ExtResource("5_why8q")
