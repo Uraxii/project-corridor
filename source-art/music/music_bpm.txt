@@ -1,0 +1,11 @@
+# Filename.ext
+# Tempo
+# Beats until the first downbeat
+# Time Signature
+# Time Markers[]? Could be useful.
+
+Naous_Menu.mp3
+bpm: 60
+offset: 1
+sig: 4/4
+markers: []
