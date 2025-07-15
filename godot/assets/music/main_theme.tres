@@ -1,15 +1,14 @@
-[gd_resource type="Resource" script_class="DynamicMusicTrack" load_steps=3 format=3 uid="uid://e26byi4f045n"]
+[gd_resource type="Resource" script_class="DynamicMusicTrack" load_steps=2 format=3 uid="uid://e26byi4f045n"]
 
 [ext_resource type="Script" uid="uid://c2ayc7ud2tvnl" path="res://assets/music/resource_music_dynamic.gd" id="1_lodv7"]
-[ext_resource type="AudioStream" uid="uid://014tiklr87rp" path="res://assets/music/Naous_Menu.mp3" id="2_v1fvn"]
 
 [resource]
 script = ExtResource("1_lodv7")
-track = ExtResource("2_v1fvn")
 title = "Main Theme"
 bpm = 60
 time_signature = Vector2i(4, 4)
 markers = Dictionary[StringName, int]({
 &"start": 9
 })
+treat_positional = false
 metadata/_custom_type_script = "uid://c2ayc7ud2tvnl"

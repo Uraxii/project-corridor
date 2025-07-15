@@ -1,0 +1,133 @@
+[gd_scene load_steps=5 format=3 uid="uid://fkfyhnng56ic"]
+
+[ext_resource type="Script" uid="uid://c8vuvxm8pbrf2" path="res://scripts/music/dynamic_music_test_scene.gd" id="1_hb3m7"]
+[ext_resource type="Script" uid="uid://c2ayc7ud2tvnl" path="res://assets/music/resource_music_dynamic.gd" id="2_xno0y"]
+[ext_resource type="Resource" uid="uid://e26byi4f045n" path="res://assets/music/main_theme.tres" id="3_wr1r5"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_hb3m7"]
+size = Vector2(15, 15)
+
+[node name="DynamicMusicTestScene" type="Control" node_paths=PackedStringArray("non_positional_root", "positional_root", "proto_non_positional_player", "proto_positional_player")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hb3m7")
+non_positional_root = NodePath("DynamicMusic/NonPositional")
+positional_root = NodePath("DynamicMusic/Positional")
+tracks = Array[ExtResource("2_xno0y")]([ExtResource("3_wr1r5")])
+proto_non_positional_player = NodePath("DynamicMusic/NonPositionalPrototype")
+proto_positional_player = NodePath("DynamicMusic/PositionalPrototype")
+
+[node name="DynamicMusic" type="Node" parent="."]
+
+[node name="NonPositionalPrototype" type="AudioStreamPlayer" parent="DynamicMusic"]
+bus = &"Music"
+
+[node name="NonPositional" type="Node" parent="DynamicMusic"]
+
+[node name="PositionalPrototype" type="AudioStreamPlayer3D" parent="DynamicMusic"]
+bus = &"Music"
+
+[node name="Positional" type="Node3D" parent="DynamicMusic"]
+
+[node name="Controls" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="Controls/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 10
+
+[node name="Controller" type="PanelContainer" parent="Controls/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls/VBoxContainer/GridContainer/Controller"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="StartPlayback" type="Button" parent="Controls/VBoxContainer/GridContainer/Controller/VBoxContainer"]
+layout_mode = 2
+text = "Start"
+
+[node name="Label" type="Label" parent="Controls/VBoxContainer/GridContainer/Controller/VBoxContainer"]
+layout_mode = 2
+
+[node name="Controller3" type="PanelContainer" parent="Controls/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls/VBoxContainer/GridContainer/Controller3"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Controls/VBoxContainer/GridContainer/Controller3/VBoxContainer"]
+layout_mode = 2
+
+[node name="Prev" type="Button" parent="Controls/VBoxContainer/GridContainer/Controller3/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Previous"
+
+[node name="Next" type="Button" parent="Controls/VBoxContainer/GridContainer/Controller3/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Next"
+
+[node name="SelectedTrack" type="Label" parent="Controls/VBoxContainer/GridContainer/Controller3/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Current: "
+
+[node name="Controller2" type="PanelContainer" parent="Controls/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Controls/VBoxContainer/GridContainer/Controller2"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="StopPlayback" type="Button" parent="Controls/VBoxContainer/GridContainer/Controller2/VBoxContainer"]
+layout_mode = 2
+text = "Stop"
+
+[node name="Label" type="Label" parent="Controls/VBoxContainer/GridContainer/Controller2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="Controls/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Root" type="Node3D" parent="."]
+
+[node name="AudioListener3D" type="AudioListener3D" parent="Root"]
+
+[node name="Camera3D" type="Camera3D" parent="Root"]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 15, 15, 15)
+current = true
+size = 30.0
+
+[node name="World" type="Node3D" parent="Root"]
+
+[node name="Floor" type="MeshInstance3D" parent="Root/World"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("QuadMesh_hb3m7")
+skeleton = NodePath("../..")
+
+[connection signal="pressed" from="Controls/VBoxContainer/GridContainer/Controller/VBoxContainer/StartPlayback" to="." method="_on_start_playback_pressed"]
+[connection signal="pressed" from="Controls/VBoxContainer/GridContainer/Controller3/VBoxContainer/HBoxContainer/Prev" to="." method="_on_track_select_prev_pressed"]
+[connection signal="pressed" from="Controls/VBoxContainer/GridContainer/Controller3/VBoxContainer/HBoxContainer/Next" to="." method="_on_track_select_next_pressed"]
+[connection signal="pressed" from="Controls/VBoxContainer/GridContainer/Controller2/VBoxContainer/StopPlayback" to="." method="_on_stop_playback_pressed"]
