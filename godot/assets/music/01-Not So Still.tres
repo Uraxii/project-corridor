@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DynamicMusicTrack" load_steps=3 format=3 uid="uid://e26byi4f045n"]
+
+[ext_resource type="AudioStream" uid="uid://014tiklr87rp" path="res://assets/music/01 - Not So Still.mp3" id="1_oshl5"]
+[ext_resource type="Script" uid="uid://c2ayc7ud2tvnl" path="res://assets/music/resource_music_dynamic.gd" id="2_eqarn"]
+
+[resource]
+script = ExtResource("2_eqarn")
+file = ExtResource("1_oshl5")
+title = "Not So Still"
+bpm = 60
+markers = Dictionary[StringName, int]({
+&"start": 9
+})
+metadata/_custom_type_script = "uid://c2ayc7ud2tvnl"

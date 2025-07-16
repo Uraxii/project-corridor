@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c8vuvxm8pbrf2" path="res://scripts/music/dynamic_music_test_scene.gd" id="1_hb3m7"]
 [ext_resource type="Script" uid="uid://c2ayc7ud2tvnl" path="res://assets/music/resource_music_dynamic.gd" id="2_xno0y"]
-[ext_resource type="Resource" uid="uid://e26byi4f045n" path="res://assets/music/main_theme.tres" id="3_wr1r5"]
+[ext_resource type="Resource" uid="uid://e26byi4f045n" path="res://assets/music/01-Not So Still.tres" id="3_wr1r5"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_hb3m7"]
 size = Vector2(15, 15)
