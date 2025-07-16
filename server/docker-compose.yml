@@ -58,7 +58,7 @@ services:
       # Mount the Godot project files
       - ../godot:/app/godot_server:ro
       # Mount the exported server executable if it exists
-      - ./shard_api/project-corridor_server.x86_64:/app/project-corridor_server.x86_64:ro
+      - ./shard_api/app/project-corridor_server.x86_64:/app/project-corridor_server.x86_64:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
       interval: 30s
