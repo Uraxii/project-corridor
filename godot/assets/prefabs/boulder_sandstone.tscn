@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://4no0kcoh1kij"]
+
+[ext_resource type="PackedScene" uid="uid://ccffo2av7qr2c" path="res://assets/models/blob-b.fbx" id="1_yjqyj"]
+[ext_resource type="Material" uid="uid://vaw6fuxlhupk" path="res://assets/materials/rocky-beige.tres" id="2_3f3pe"]
+
+[node name="boulder-sandstone" instance=ExtResource("1_yjqyj")]
+
+[node name="cube_sphere_32" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_3f3pe")

@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://dnevvascacxh8"]
+
+[ext_resource type="PackedScene" uid="uid://bynbav5woikdv" path="res://assets/models/blob-c.fbx" id="1_vupk1"]
+[ext_resource type="Material" uid="uid://w2rycdywn4le" path="res://assets/materials/rocky-silver.tres" id="2_2ulld"]
+
+[node name="boulder-silver" instance=ExtResource("1_vupk1")]
+
+[node name="cube_sphere_32" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_2ulld")
