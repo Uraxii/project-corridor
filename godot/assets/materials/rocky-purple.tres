@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dl6k4i7gbhnv3"]
+
+[ext_resource type="Texture2D" uid="uid://dx0w1dcr763wi" path="res://assets/materials/lines-rocky.png" id="1_bac7r"]
+
+[resource]
+albedo_color = Color(0.8340159, 0.6956122, 0.9923449, 1)
+albedo_texture = ExtResource("1_bac7r")
+detail_albedo = ExtResource("1_bac7r")
+uv1_scale = Vector3(4, 4, 4)
