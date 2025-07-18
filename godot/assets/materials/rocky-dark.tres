@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dx0w1dcr763wi" path="res://assets/materials/lines-rocky.png" id="1_l5xgl"]
 
 [resource]
-albedo_color = Color(0.23000002, 0.20826498, 0.1817, 1)
+albedo_color = Color(0.23137255, 0.20784314, 0.18039216, 1)
 albedo_texture = ExtResource("1_l5xgl")
 detail_albedo = ExtResource("1_l5xgl")
 uv1_scale = Vector3(4, 4, 4)

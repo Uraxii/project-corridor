@@ -1,0 +1,21 @@
+[gd_resource type="StandardMaterial3D" load_steps=5 format=3 uid="uid://cpccsiuabq0sr"]
+
+[ext_resource type="Texture2D" uid="uid://splr74e8dowr" path="res://assets/materials/lines-watery.png" id="1_60uls"]
+[ext_resource type="Texture2D" uid="uid://dx0w1dcr763wi" path="res://assets/materials/lines-rocky.png" id="2_e745j"]
+[ext_resource type="Shader" uid="uid://bhyq8hqi5hiwd" path="res://assets/materials/uv_scroller.gdshader" id="3_e745j"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4nhr5"]
+shader = ExtResource("3_e745j")
+shader_parameter/scroll_speed = 0.02000000095
+shader_parameter/angle_degrees = 0.0
+shader_parameter/repeat_x = 1.0
+shader_parameter/repeat_y = 1.0
+shader_parameter/row_offset = 1.0
+shader_parameter/texture_to_scroll = ExtResource("1_60uls")
+
+[resource]
+next_pass = SubResource("ShaderMaterial_4nhr5")
+albedo_color = Color(0.23517914, 0.44037116, 0.54959124, 1)
+albedo_texture = ExtResource("1_60uls")
+detail_albedo = ExtResource("2_e745j")
+uv1_scale = Vector3(4, 4, 4)

@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://c0tcxk54tuq6c"]
 
 [ext_resource type="PackedScene" uid="uid://boesdu06ngeg1" path="res://assets/models/blob-d.fbx" id="1_vwn10"]
-[ext_resource type="Material" uid="uid://csxojp5u360wh" path="res://assets/materials/rocky-dark.tres" id="2_gk8bc"]
+[ext_resource type="Material" uid="uid://cl7o7vlyu3qj5" path="res://assets/materials/rocky-dark-outlined.tres" id="2_vwn10"]
 
 [node name="boulder-dark" instance=ExtResource("1_vwn10")]
 
 [node name="cube_sphere_32" parent="." index="0"]
-surface_material_override/0 = ExtResource("2_gk8bc")
+surface_material_override/0 = ExtResource("2_vwn10")

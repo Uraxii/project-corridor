@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=4 format=3 uid="uid://be21vu4d0ukuy"]
+
+[ext_resource type="Texture2D" uid="uid://dx0w1dcr763wi" path="res://assets/materials/lines-rocky.png" id="1_562ch"]
+[ext_resource type="Shader" uid="uid://cwvn5idc0ptxu" path="res://assets/materials/outlines-nextpass-simple.gdshader" id="2_i654f"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_se7gx"]
+render_priority = 0
+shader = ExtResource("2_i654f")
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/size = 1.00999999977648
+
+[resource]
+next_pass = SubResource("ShaderMaterial_se7gx")
+albedo_color = Color(0.49803922, 0.49803922, 0.49803922, 1)
+albedo_texture = ExtResource("1_562ch")
+detail_albedo = ExtResource("1_562ch")
+uv1_scale = Vector3(4, 4, 4)

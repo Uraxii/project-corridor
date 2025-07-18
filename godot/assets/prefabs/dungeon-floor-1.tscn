@@ -1,11 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://biml44n672tje"]
+[gd_scene load_steps=12 format=3 uid="uid://biml44n672tje"]
 
 [ext_resource type="Material" uid="uid://caunb0mst5ean" path="res://assets/materials/grid-material.tres" id="1_jxk0v"]
 [ext_resource type="ArrayMesh" uid="uid://ksvy3l5to3eu" path="res://assets/models/dungeon-floorplan-inside.obj" id="2_7h7hh"]
 [ext_resource type="PackedScene" uid="uid://c3vvmgu3op006" path="res://assets/prefabs/crystal-cluster.tscn" id="4_pia2v"]
 [ext_resource type="PackedScene" uid="uid://biurv6gnkorea" path="res://assets/prefabs/dungeon_floorplan.tscn" id="4_pkg5g"]
-[ext_resource type="Material" uid="uid://xfswcd1ua7te" path="res://assets/materials/uv_scroller_material.tres" id="5_4in3t"]
-[ext_resource type="ArrayMesh" uid="uid://b1cy8beq57d34" path="res://assets/models/plane.obj" id="8_0ppp8"]
+[ext_resource type="Material" uid="uid://d32qh471fba2o" path="res://assets/materials/waterfall-lines.tres" id="5_4in3t"]
+[ext_resource type="PackedScene" uid="uid://cdmueddj0br44" path="res://assets/prefabs/waterfall.tscn" id="5_fed6n"]
+[ext_resource type="Material" uid="uid://cpccsiuabq0sr" path="res://assets/materials/waterfall-material.tres" id="7_fed6n"]
 [ext_resource type="PackedScene" uid="uid://4no0kcoh1kij" path="res://assets/prefabs/boulder_sandstone.tscn" id="8_fed6n"]
 [ext_resource type="PackedScene" uid="uid://dnevvascacxh8" path="res://assets/prefabs/boulder_silver.tscn" id="9_0ppp8"]
 [ext_resource type="PackedScene" uid="uid://bnivwxa6lr1pp" path="res://assets/prefabs/boulder-purple.tscn" id="9_p251t"]
@@ -24,20 +25,30 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.127419, -2.98023e-08, -0.49
 [node name="dungeon-floorplan" parent="." instance=ExtResource("4_pkg5g")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
-[node name="waterfall-plane" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -3.496911e-07, 1, 0, -8, -4.371139e-08, -12.156715, 0.02104187, 21.632032)
+[node name="waterfall-plane" parent="." instance=ExtResource("5_fed6n")]
+transform = Transform3D(1, 0, 0, 0, 4, 0, 0, 0, 1, -12, -2, 22)
 material_override = ExtResource("5_4in3t")
-mesh = ExtResource("8_0ppp8")
-surface_material_override/0 = ExtResource("5_4in3t")
+surface_material_override/0 = ExtResource("7_fed6n")
+
+[node name="river-plane" parent="." instance=ExtResource("5_fed6n")]
+transform = Transform3D(1, 0, 0, 0, -1.7484555e-07, 1, 0, -4, -4.371139e-08, -12, 0, 20)
+material_override = ExtResource("5_4in3t")
+surface_material_override/0 = ExtResource("7_fed6n")
 
 [node name="boulder-purple" parent="." instance=ExtResource("9_p251t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.502817, 0.0323112, 20.888714)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.995765, 0.0323112, 21.822905)
 
 [node name="boulder-sandstone" parent="." instance=ExtResource("8_fed6n")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 21)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.823707, 0, 21.825499)
+
+[node name="terrain-sandstone" parent="." instance=ExtResource("8_fed6n")]
+transform = Transform3D(10, 0, 0, 0, -4, 1.509958e-06, 0, -6.039832e-07, -10, -16.177105, 0.15275198, 14.334228)
+
+[node name="terrain-sandstone2" parent="." instance=ExtResource("8_fed6n")]
+transform = Transform3D(9.990467, -4.844869e-07, 0.43654305, -8.742278e-07, -6, 1.5099578e-06, 0.43654305, -9.280093e-07, -9.990467, -6.9874682, 0.31403977, 18.360577)
 
 [node name="boulder-silver" parent="." instance=ExtResource("9_0ppp8")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.753275, 0, 20.505903)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.753275, 0.3550262, 20.855556)
 
 [node name="boulder-dark" parent="." instance=ExtResource("10_p251t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.637463, 0.6814705, 20.231522)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.584775, 0.5944625, 21.295319)

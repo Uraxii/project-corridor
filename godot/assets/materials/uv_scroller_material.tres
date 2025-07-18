@@ -1,7 +1,7 @@
 [gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://xfswcd1ua7te"]
 
 [ext_resource type="Shader" uid="uid://bhyq8hqi5hiwd" path="res://assets/materials/uv_scroller.gdshader" id="1_7nepx"]
-[ext_resource type="Texture2D" uid="uid://penv05a5ag0f" path="res://assets/materials/grid.png" id="2_treff"]
+[ext_resource type="Texture2D" uid="uid://splr74e8dowr" path="res://assets/materials/lines-watery.png" id="2_treff"]
 
 [resource]
 shader = ExtResource("1_7nepx")
