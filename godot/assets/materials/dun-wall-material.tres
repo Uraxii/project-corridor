@@ -1,7 +1,9 @@
 [gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://81eommkr13p"]
 
-[ext_resource type="Texture2D" uid="uid://xy813tmeaq7w" path="res://assets/materials/gradient-a.tres" id="1_8oqmx"]
+[ext_resource type="Texture2D" uid="uid://dx0w1dcr763wi" path="res://assets/materials/lines-rocky.png" id="1_8oqmx"]
 
 [resource]
-albedo_color = Color(0.698943, 0.939972, 0.952339, 1)
+albedo_color = Color(0.9705267, 0.98, 0.69580007, 1)
 albedo_texture = ExtResource("1_8oqmx")
+uv1_scale = Vector3(1, 2, 1)
+uv1_triplanar = true

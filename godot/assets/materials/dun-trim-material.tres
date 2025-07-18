@@ -1,13 +1,11 @@
-[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://blb2ofehra62q"]
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://blb2ofehra62q"]
 
-[sub_resource type="Gradient" id="Gradient_i1jpu"]
-offsets = PackedFloat32Array(0, 0.993827)
-colors = PackedColorArray(1, 1, 1, 1, 0.497474, 0.497474, 0.497474, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_hejhq"]
-gradient = SubResource("Gradient_i1jpu")
-fill_to = Vector2(0, 1)
+[ext_resource type="Texture2D" uid="uid://b5qshmpwgr6fx" path="res://assets/materials/trim-simple.png" id="1_lstbv"]
 
 [resource]
-albedo_color = Color(0.786311, 0.729941, 0.345774, 1)
-albedo_texture = SubResource("GradientTexture2D_hejhq")
+albedo_color = Color(0.7187701, 0.97, 0.5626001, 1)
+albedo_texture = ExtResource("1_lstbv")
+uv1_scale = Vector3(4, 4, 2)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 100.0
+uv1_world_triplanar = true
