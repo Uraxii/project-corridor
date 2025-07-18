@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cdmueddj0br44"]
+
+[ext_resource type="Material" uid="uid://xfswcd1ua7te" path="res://assets/materials/uv_scroller_material.tres" id="1_op5op"]
+[ext_resource type="ArrayMesh" uid="uid://b1cy8beq57d34" path="res://assets/models/plane.obj" id="2_ndmrw"]
+
+[node name="waterfall-plane" type="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, -3.496911e-07, 1, 0, -8, -4.371139e-08, 0, 0, 0)
+material_override = ExtResource("1_op5op")
+mesh = ExtResource("2_ndmrw")
+surface_material_override/0 = ExtResource("1_op5op")

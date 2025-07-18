@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://bnivwxa6lr1pp"]
 
 [ext_resource type="PackedScene" uid="uid://dxkdhtdm1yino" path="res://assets/models/blob-a.fbx" id="1_75bvl"]
-[ext_resource type="Material" uid="uid://dl6k4i7gbhnv3" path="res://assets/materials/rocky-purple.tres" id="2_86d8q"]
+[ext_resource type="Material" uid="uid://dw57y516qqwb4" path="res://assets/materials/rocky-purple-outlined.tres" id="2_75bvl"]
 
 [node name="boulder-purple" instance=ExtResource("1_75bvl")]
 
 [node name="cube_sphere_32" parent="." index="0"]
-surface_material_override/0 = ExtResource("2_86d8q")
+surface_material_override/0 = ExtResource("2_75bvl")

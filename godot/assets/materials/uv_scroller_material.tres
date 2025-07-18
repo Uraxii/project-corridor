@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://xfswcd1ua7te"]
+
+[ext_resource type="Shader" uid="uid://bhyq8hqi5hiwd" path="res://assets/materials/uv_scroller.gdshader" id="1_7nepx"]
+[ext_resource type="Texture2D" uid="uid://penv05a5ag0f" path="res://assets/materials/grid.png" id="2_treff"]
+
+[resource]
+shader = ExtResource("1_7nepx")
+shader_parameter/scroll_speed = 0.10000000475000001
+shader_parameter/angle_degrees = 0.0
+shader_parameter/repeat_x = 1.0
+shader_parameter/repeat_y = 1.0
+shader_parameter/row_offset = 1.0
+shader_parameter/texture_to_scroll = ExtResource("2_treff")
