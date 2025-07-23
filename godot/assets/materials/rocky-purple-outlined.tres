@@ -6,8 +6,8 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_se7gx"]
 render_priority = 0
 shader = ExtResource("2_fxk4l")
-shader_parameter/color = Color(1, 0, 0, 1)
-shader_parameter/size = 1.05
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/size = 1.00999999977648
 
 [resource]
 next_pass = SubResource("ShaderMaterial_se7gx")

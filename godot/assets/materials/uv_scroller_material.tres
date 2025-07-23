@@ -5,7 +5,7 @@
 
 [resource]
 shader = ExtResource("1_7nepx")
-shader_parameter/scroll_speed = 0.10000000475000001
+shader_parameter/scroll_speed = 1.3930000661675002
 shader_parameter/angle_degrees = 0.0
 shader_parameter/repeat_x = 1.0
 shader_parameter/repeat_y = 1.0
